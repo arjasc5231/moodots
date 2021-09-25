@@ -110,8 +110,8 @@ def kfold(k, create_model, X, Y, lr, batchs, epochs, print_cycle):
   print()
   print('Learning Finished!')
   print(f'average train accuracy: {np.mean(fold_train_acc):.4f}')
-  print(f'average test accuracy: {np.mean(fold_train_acc):.4f}')
-  print(f'test std: {np.std(fold_train_acc):.4f}')
+  print(f'average test accuracy: {np.mean(fold_test_acc):.4f}')
+  print(f'test std: {np.std(fold_test_acc):.4f}')
   print()
 
   conf_mat_normal = []
