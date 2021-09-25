@@ -67,6 +67,9 @@ def kfold(k, create_model, X, Y, lr, batchs, epochs, print_cycle):
     X_test, Y_test = X[test_idx], Y[test_idx]
     train_dataset = tf.data.Dataset.from_tensor_slices((X_train, Y_train)).batch(batchs)
     test_dataset = tf.data.Dataset.from_tensor_slices((X_test, Y_test)).batch(batchs)
+    
+    max_train_acc = 0.
+    max_test_acc = 0.
 
     print(f'<<fold {fold}>>')
     print('Epoch\tloss\t\ttrain acc\ttest acc')
@@ -75,8 +78,6 @@ def kfold(k, create_model, X, Y, lr, batchs, epochs, print_cycle):
       loss = 0.
       train_acc = 0.
       test_acc = 0.
-      max_train_acc = 0.
-      max_test_acc = 0.
       
       for images, labels in train_dataset:
           grads = grad(model, images, labels)                
