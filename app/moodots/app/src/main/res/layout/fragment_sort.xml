@@ -6,9 +6,38 @@
     tools:context=".Sortfrag">
 
     <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="sort" />
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/button3"
+            android:layout_width="105dp"
+            android:layout_height="65dp"
+            android:backgroundTint="#EF534E"
+            android:text="Day" />
+
+        <Button
+            android:id="@+id/button4"
+            android:layout_width="105dp"
+            android:layout_height="65dp"
+            android:backgroundTint="#FFA726"
+            android:text="Week" />
+
+        <Button
+            android:id="@+id/button5"
+            android:layout_width="105dp"
+            android:layout_height="65dp"
+            android:backgroundTint="#FFEE58"
+            android:text="Month" />
+
+        <Button
+            android:id="@+id/button6"
+            android:layout_width="105dp"
+            android:layout_height="65dp"
+            android:backgroundTint="#66BB6A"
+            android:text="Year" />
+    </LinearLayout>
 
 </FrameLayout>
