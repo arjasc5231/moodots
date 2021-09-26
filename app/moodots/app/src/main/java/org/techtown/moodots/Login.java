@@ -25,6 +25,6 @@ public class Login extends AppCompatActivity {
                 intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                 startActivity(intent);
             }
-        } , 2000);
+        } , 500);
     }
 }
