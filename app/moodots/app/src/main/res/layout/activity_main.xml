@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"
+    tools:context=".Main">
+
+    <!--수평 방향으로 버튼들이 스크롤 될 수 있게 구성
+    버튼은 Day, Week, Month, Year, Setting, Extra로 구성
+    색상은 각각 #EF534E, #FFA726, #FFEE58, #66BB6A, #42A5F5, #AB47BC-->
+    //프레그먼트를 위해 위쪽 부분에 프레임 레이아웃을 설정
+
+    <FrameLayout
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+    </FrameLayout>
+    //화면 전환을 위한 아래쪽 네비게이션 뷰 설정
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_navigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:itemBackground="@color/purple_500"
+        app:itemIconTint="@drawable/item_color"
+        app:itemTextColor="@drawable/item_color"
+        app:menu="@menu/menu_bottom"/>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

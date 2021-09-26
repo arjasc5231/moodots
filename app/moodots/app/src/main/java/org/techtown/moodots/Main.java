@@ -1,16 +1,18 @@
 package org.techtown.moodots;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.os.Environment;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.pedro.library.AutoPermissions;
 import com.pedro.library.AutoPermissionsListener;
 
@@ -21,53 +23,48 @@ public class Main extends AppCompatActivity implements AutoPermissionsListener {
     MediaRecorder recorder;
     MediaPlayer player;
     String filename;
+    Settingfrag settingfrag;
+    Extrafrag extrafrag;
+    Mainfrag mainfrag;
+    Sortfrag sortfrag;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // 액티비티 중복 삭제를 위한 코드. 아래 if문 포함(if문은 login액티비티를 삭제하는 부분)
         if(Login.activity!=null){
             Login activity = (Login)Login.activity;
             activity.finish();
         }
-        Button button= findViewById(R.id.button11);
-        button.setOnClickListener(new View.OnClickListener() {
+        settingfrag=new Settingfrag();
+        extrafrag=new Extrafrag();
+        mainfrag=new Mainfrag();
+        sortfrag=new Sortfrag();
+        getSupportFragmentManager().beginTransaction().replace(R.id.container, mainfrag).commit();
+        BottomNavigationView bottomNavigation = findViewById(R.id.bottom_navigation);
+        bottomNavigation.setOnItemSelectedListener(new BottomNavigationView.OnItemSelectedListener() {
             @Override
-            public void onClick(View v) {
-                startRecording();
-            }
-        });
-        Button button12 = findViewById(R.id.button12);
-        button12.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                stopRecording();
-            }
-        });
-
-        // 세번째 버튼 클릭 시
-        Button button13 = findViewById(R.id.button13);
-        button13.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                playAudio();
-            }
-        });
-
-        // 네번째 버튼 클릭 시
-        Button button14 = findViewById(R.id.button14);
-        button14.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                stopAudio();
+            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+                switch (menuItem.getItemId()){
+                    case R.id.tab1:
+                        getSupportFragmentManager().beginTransaction().replace(R.id.container, mainfrag).commit();
+                        return true;
+                    case R.id.tab2:
+                        getSupportFragmentManager().beginTransaction().replace(R.id.container, sortfrag).commit();
+                        return true;
+                    case R.id.tab3:
+                        getSupportFragmentManager().beginTransaction().replace(R.id.container, settingfrag).commit();
+                        return true;
+                    case R.id.tab4:
+                        getSupportFragmentManager().beginTransaction().replace(R.id.container, extrafrag).commit();
+                        return true;
+                }
+                return false;
             }
         });
 
-        String sdcard = Environment.getExternalStorageDirectory().getAbsolutePath();
-        TextView textView = findViewById(R.id.textView2);
-        textView.setText(sdcard);
-        filename = sdcard + File.separator + "recorded.mp4";
-
-        AutoPermissions.Companion.loadAllPermissions(this, 101);
     }
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[],
