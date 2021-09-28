@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_above="@+id/bottom_navigation"
     tools:context=".Mainfrag">
 
     <LinearLayout
@@ -54,11 +55,24 @@
                 android:text="Pause" />
         </LinearLayout>
 
+        <Button
+            android:id="@+id/newDiaryButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Button" />
+
         <TextView
             android:id="@+id/textView2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             tools:layout_editor_absoluteX="63dp"
             tools:layout_editor_absoluteY="185dp" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            />
     </LinearLayout>
+
 </FrameLayout>
