@@ -26,9 +26,12 @@ public class Mainfrag extends Fragment {
     DiaryAdapter adapter;
     Context context;
     OnTabItemSelectedListener listener;
+    Main activity;
+
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
+        activity= (Main) getActivity();
         this.context = context;
         if(context instanceof OnTabItemSelectedListener){
             listener= (OnTabItemSelectedListener) context;
@@ -38,6 +41,7 @@ public class Mainfrag extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
+        activity = null;
         if(context != null){
             context= null;
             listener= null;
@@ -89,8 +93,10 @@ public class Mainfrag extends Fragment {
             @Override
             public void onClick(View v) {
                 if (listener != null) {
-                    listener.onTabSelected(1);
+                    Toast.makeText(getContext(), "일기 추가1 ", Toast.LENGTH_SHORT).show();
                 }
+                activity.replaceFragment(0);
+                Toast.makeText(getContext(), "일기 추가 ", Toast.LENGTH_SHORT).show();
             }
         });
         recyclerView = rootView.findViewById(R.id.recyclerView);

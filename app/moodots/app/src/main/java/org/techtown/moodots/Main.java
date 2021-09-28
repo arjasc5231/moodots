@@ -2,6 +2,8 @@ package org.techtown.moodots;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
@@ -27,6 +29,7 @@ public class Main extends AppCompatActivity implements AutoPermissionsListener {
     Extrafrag extrafrag;
     Mainfrag mainfrag;
     Sortfrag sortfrag;
+    BlankFragment blankfrag;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +45,7 @@ public class Main extends AppCompatActivity implements AutoPermissionsListener {
         extrafrag=new Extrafrag();
         mainfrag=new Mainfrag();
         sortfrag=new Sortfrag();
+        blankfrag = new BlankFragment();
         getSupportFragmentManager().beginTransaction().replace(R.id.container, mainfrag).commit();
         BottomNavigationView bottomNavigation = findViewById(R.id.bottom_navigation);
         bottomNavigation.setOnItemSelectedListener(new BottomNavigationView.OnItemSelectedListener() {
@@ -66,6 +70,15 @@ public class Main extends AppCompatActivity implements AutoPermissionsListener {
         });
 
     }
+    public void replaceFragment(int index) {
+        if(index==0){
+            getSupportFragmentManager().beginTransaction().replace(R.id.container, blankfrag).commit();// Fragment로 사용할 MainActivity내의 layout공간을 선택합니다.
+        }
+        else if(index==1){
+            getSupportFragmentManager().beginTransaction().replace(R.id.container, mainfrag).commit();
+        }
+    }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[],
                                            int[] grantResults) {
