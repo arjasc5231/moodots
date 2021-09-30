@@ -74,8 +74,8 @@ public class DiaryAdapter extends RecyclerView.Adapter<DiaryAdapter.ViewHolder> 
         }
 
         public void setItem(Diary item){
-            String mood = item.getMood();
-            int moodIndex = Integer.parseInt(mood);
+            int mood = item.getMood();
+            int moodIndex = mood;
             setMoodImage(moodIndex);
             titletextView.setText(item.getTitle());
             datetextView.setText(item.getDate());
@@ -83,22 +83,22 @@ public class DiaryAdapter extends RecyclerView.Adapter<DiaryAdapter.ViewHolder> 
 
         public void setMoodImage(int moodIndex) {
             switch(moodIndex) {
-                case 0:
+                case 1:
                     moodImageView.setImageResource(R.mipmap.ic_angry);
                     break;
-                case 1:
+                case 2:
                     moodImageView.setImageResource(R.mipmap.ic_joy);
                     break;
-                case 2:
+                case 3:
                     moodImageView.setImageResource(R.mipmap.ic_fear);
                     break;
-                case 3:
+                case 4:
                     moodImageView.setImageResource(R.mipmap.ic_sad);
                     break;
-                case 4:
+                case 5:
                     moodImageView.setImageResource(R.mipmap.ic_disgust);
                     break;
-                case 5:
+                case 6:
                     moodImageView.setImageResource(R.mipmap.ic_surprise);
                     break;
                 default:

@@ -9,6 +9,7 @@ import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.os.Environment;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -22,6 +23,7 @@ import java.io.File;
 import java.io.IOException;
 
 public class Main extends AppCompatActivity implements AutoPermissionsListener {
+    private static final String TAG = "MainActivity";
     MediaRecorder recorder;
     MediaPlayer player;
     String filename;
@@ -31,6 +33,7 @@ public class Main extends AppCompatActivity implements AutoPermissionsListener {
     Sortfrag sortfrag;
     BlankFragment blankfrag;
 
+    public static DiaryDatabase mDatabase = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,8 +71,35 @@ public class Main extends AppCompatActivity implements AutoPermissionsListener {
                 return false;
             }
         });
+        openDatabase();
 
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mDatabase != null) {
+            mDatabase.close();
+            mDatabase = null;
+        }
+    }
+
+    public void openDatabase() {
+        // open database
+        if (mDatabase != null) {
+            mDatabase.close();
+            mDatabase = null;
+        }
+
+        mDatabase = DiaryDatabase.getInstance(this);
+        boolean isOpen = mDatabase.open();
+        if (isOpen) {
+            Log.d(TAG, "database is open.");
+        } else {
+            Log.d(TAG, "database is not open.");
+        }
+    }
+
     public void replaceFragment(int index) {
         if(index==0){
             getSupportFragmentManager().beginTransaction().replace(R.id.container, blankfrag).commit();// Fragment로 사용할 MainActivity내의 layout공간을 선택합니다.

@@ -3,15 +3,18 @@ package org.techtown.moodots;
 public class Diary {
     int _id;
     String title;
+    int mood;
+    String contents;
     String date;
-    String mood;
     //String voice; 이 부분에 음성 녹음 파일 경로 설정
 
-    public Diary(int _id, String title, String date, String mood) {
+
+    public Diary(int _id, String title, Integer mood, String contents, String date) {
         this._id = _id;
         this.title = title;
-        this.date = date;
         this.mood = mood;
+        this.contents = contents;
+        this.date = date;
     }
 
     public int get_id() {
@@ -30,6 +33,22 @@ public class Diary {
         this.title = title;
     }
 
+    public Integer getMood() {
+        return mood;
+    }
+
+    public void setMood(int mood) {
+        this.mood = mood;
+    }
+
+    public String getContents() {
+        return contents;
+    }
+
+    public void setContents(String contents) {
+        this.contents = contents;
+    }
+
     public String getDate() {
         return date;
     }
@@ -37,13 +56,4 @@ public class Diary {
     public void setDate(String date) {
         this.date = date;
     }
-
-    public String getMood() {
-        return mood;
-    }
-
-    public void setMood(String mood) {
-        this.mood = mood;
-    }
-
 }

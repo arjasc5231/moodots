@@ -1,14 +1,17 @@
 package org.techtown.moodots;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Environment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,15 +22,16 @@ import android.widget.Toast;
 import com.pedro.library.AutoPermissions;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Date;
 
 public class Mainfrag extends Fragment {
-
+    private static final String TAG="Mainfrag";
     RecyclerView recyclerView;
     DiaryAdapter adapter;
     Context context;
     OnTabItemSelectedListener listener;
     Main activity;
-
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -53,6 +57,7 @@ public class Mainfrag extends Fragment {
                              Bundle savedInstanceState) {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_main,container,false);
         initUI(rootView);
+        loadDiaryListData();
         Button button= (Button) rootView.findViewById(R.id.button11);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -85,6 +90,7 @@ public class Mainfrag extends Fragment {
                 //stopAudio();
             }
         });
+
         return rootView;
     }
     private void initUI(ViewGroup rootView){
@@ -93,10 +99,12 @@ public class Mainfrag extends Fragment {
             @Override
             public void onClick(View v) {
                 if (listener != null) {
-                    Toast.makeText(getContext(), "일기 추가1 ", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "no ", Toast.LENGTH_SHORT).show();
                 }
+                Bundle result = new Bundle();
+                result.putInt("bundleKey", 1);
+                getParentFragmentManager().setFragmentResult("requestKey", result);
                 activity.replaceFragment(0);
-                Toast.makeText(getContext(), "일기 추가 ", Toast.LENGTH_SHORT).show();
             }
         });
         recyclerView = rootView.findViewById(R.id.recyclerView);
@@ -104,27 +112,74 @@ public class Mainfrag extends Fragment {
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
         adapter = new DiaryAdapter();
-
-        adapter.addItem(new Diary(0, "오늘은 재미있다", "9월 27일", "0"));
-        adapter.addItem(new Diary(1, "친구와 재미있게 놀았어", "9월 29일", "1"));
-        adapter.addItem(new Diary(2, "오늘은 공부했다", "10월 1일", "2"));
-        adapter.addItem(new Diary(3, "오늘은 재미있다", "9월 27일", "3"));
-        adapter.addItem(new Diary(4, "친구와 재미있게 놀았어", "9월 29일", "4"));
-        adapter.addItem(new Diary(5, "오늘은 공부했다", "10월 1일", "5"));
-        adapter.addItem(new Diary(6, "오늘은 재미있다", "9월 27일", "6"));
-        adapter.addItem(new Diary(7, "친구와 재미있게 놀았어", "9월 29일", "7"));
-        adapter.addItem(new Diary(8, "오늘은 공부했다", "10월 1일", "3"));
-
         recyclerView.setAdapter(adapter);
-
         adapter.setOnItemClickListener(new OnDiaryItemClickListener() {
             @Override
             public void onItemClick(DiaryAdapter.ViewHolder holder, View view, int position) {
                 Diary item = adapter.getItem(position);
-
-                Toast.makeText(getContext(), "아이템 선택됨 : " + item.getTitle(), Toast.LENGTH_LONG).show();
+                Bundle result = new Bundle();
+                result.putInt("bundleKey0", item._id);
+                result.putInt("bundleKey", 2);
+                result.putString("bundleKey1",item.title);
+                result.putInt("bundleKey2", item.mood);
+                result.putString("bundleKey3",item.contents);
+                result.putString("bundleKey4",item.date);
+                FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+                BlankFragment blankfragment = new BlankFragment();//프래그먼트2 선언
+                blankfragment.setArguments(result);//번들을 프래그먼트2로 보낼 준비
+                transaction.replace(R.id.container, blankfragment);
+                transaction.commit();
             }
         });
+    }
+
+    public int loadDiaryListData(){
+        println("loadNoteLIstData called.");
+        String sql = "SELECT _id, TITLE, MOOD, CONTENTS, DATE FROM " +DiaryDatabase.TABLE_DIARY + " ORDER BY DATE DESC;";
+        int recordCount= -1;
+        DiaryDatabase database = DiaryDatabase.getInstance(context);
+        if (database != null) {
+            Log.d(TAG, sql);
+            Cursor outCursor = database.rawQuery(sql);
+
+            recordCount = outCursor.getCount();
+            AppConstants.println("record count : " + recordCount + "\n");
+
+            ArrayList<Diary> items = new ArrayList<Diary>();
+
+            for (int i = 0; i < recordCount; i++) {
+                outCursor.moveToNext();
+
+                int _id = outCursor.getInt(0);
+                String title = outCursor.getString(1);
+                int mood = outCursor.getInt(2);
+                String contents = outCursor.getString(3);
+                String date = outCursor.getString(4);
+                if (date != null && date.length() > 10) {
+                    try {
+                        Date inDate = AppConstants.dateFormat4.parse(date);
+                        date=AppConstants.dateFormat4.format(inDate);
+                        Log.d(TAG, "sdate"+date);
+                    } catch(Exception e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    date = "";
+                }
+                items.add(new Diary(_id, title, mood, contents , date));
+            }
+
+            outCursor.close();
+
+            adapter.setItems(items);
+            adapter.notifyDataSetChanged();
+
+        }
+
+        return recordCount;
+    }
+    private void println(String data) {
+        Log.d(TAG, data);
     }
 }
 
