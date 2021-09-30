@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"
+    tools:context=".Main">
+
+    <!--수평 방향으로 버튼들이 스크롤 될 수 있게 구성
+    버튼은 Day, Week, Month, Year, Setting, Extra로 구성
+    색상은 각각 #EF534E, #FFA726, #FFEE58, #66BB6A, #42A5F5, #AB47BC-->
+
+    <HorizontalScrollView
+        android:id="@+id/horizontalScrollView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="bottom"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/button3"
+                android:layout_width="105dp"
+                android:layout_height="65dp"
+                android:backgroundTint="#EF534E"
+                android:text="Day" />
+
+            <Button
+                android:id="@+id/button4"
+                android:layout_width="105dp"
+                android:layout_height="65dp"
+                android:backgroundTint="#FFA726"
+                android:text="Week" />
+
+            <Button
+                android:id="@+id/button5"
+                android:layout_width="105dp"
+                android:layout_height="65dp"
+                android:backgroundTint="#FFEE58"
+                android:text="Month" />
+
+            <Button
+                android:id="@+id/button6"
+                android:layout_width="105dp"
+                android:layout_height="65dp"
+                android:backgroundTint="#66BB6A"
+                android:text="Year" />
+
+            <Button
+                android:id="@+id/button7"
+                android:layout_width="105dp"
+                android:layout_height="65dp"
+                android:backgroundTint="#42A5F5"
+                android:text="Setting" />
+
+            <Button
+                android:id="@+id/button8"
+                android:layout_width="105dp"
+                android:layout_height="65dp"
+                android:backgroundTint="#AB47BC"
+                android:text="Extra" />
+
+        </LinearLayout>
+    </HorizontalScrollView>
+
+    <LinearLayout
+        android:layout_width="412dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        tools:layout_editor_absoluteX="1dp"
+        tools:layout_editor_absoluteY="1dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/button11"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:backgroundTint="#8BC34A"
+                android:text="Record" />
+
+            <Button
+                android:id="@+id/button12"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:backgroundTint="#00BCD4"
+                android:text="Stop" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/button13"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:backgroundTint="#2196F3"
+                android:text="Start" />
+
+            <Button
+                android:id="@+id/button14"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:backgroundTint="#9C27B0"
+                android:text="Pause" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
