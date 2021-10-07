@@ -13,7 +13,7 @@ from tensorflow.keras.utils import to_categorical
 import numpy as np
 from sklearn.model_selection import StratifiedKFold
 
-def kfold(k, create_model, X, Y, lr, batchs, epochs, print_cycle):
+def kfold(k, create_model, X, Y, lr, batchs, epochs, print_cycle, early=0):
   """
   statified kfold
   argument:
@@ -27,6 +27,7 @@ def kfold(k, create_model, X, Y, lr, batchs, epochs, print_cycle):
     batchs : batch size
     epochs : number of epochs
     print_cycle : in train step, cycle of epochs that print accuracy
+    early=0 : for early termination, tolerance epoch (defualt=0 means no early termination)
   
   using adam opt
   
@@ -46,7 +47,7 @@ def kfold(k, create_model, X, Y, lr, batchs, epochs, print_cycle):
     
   def grad(model, images, labels):
     with tf.GradientTape() as tape: loss = loss_fn(model, images, labels)
-    return tape.gradient(loss, model.variables)
+    return tape.gradient(loss, model.trainable_variables)
     
   def evaluate(model, images, labels):
     logits = model(images, training=False)
@@ -74,6 +75,10 @@ def kfold(k, create_model, X, Y, lr, batchs, epochs, print_cycle):
     print(f'<<fold {fold}>>')
     print('Epoch\tloss\t\ttrain acc\ttest acc')
 
+    # for early termination
+    early_cnt = 0
+    prev_train_acc = float('inf')
+
     for epoch in range(1,epochs+1):
       loss = 0.
       train_acc = 0.
@@ -81,7 +86,7 @@ def kfold(k, create_model, X, Y, lr, batchs, epochs, print_cycle):
       
       for images, labels in train_dataset:
           grads = grad(model, images, labels)                
-          optimizer.apply_gradients(zip(grads, model.variables)) 
+          optimizer.apply_gradients(zip(grads, model.trainable_variables)) 
           loss += loss_fn(model, images, labels)
           train_acc += evaluate(model, images, labels)
       loss /= len(train_dataset)
@@ -92,8 +97,20 @@ def kfold(k, create_model, X, Y, lr, batchs, epochs, print_cycle):
           test_acc += evaluate(model, images, labels)
       test_acc /= len(test_dataset)  
       max_test_acc = max(max_test_acc, test_acc)
+      """
+      if max_test_acc < test_acc :
+        max_test_acc = test_acc
+        tf.saved_model.save(model, 'best_model.')
+      """
 
       if epoch%print_cycle==0: print(f'{epoch}  \t{loss:.4f}  \t{train_acc:.4f}  \t{test_acc:.4f}')
+
+      if early:
+        if prev_train_acc < train_acc:
+          if early_cnt==early: print('early stopped on', epoch); break
+          else: print('overfitting warning:', epoch); early_cnt+=1
+        else: early_cnt=0
+        prev_train_acc = train_acc
     
     print(f'max train accuracy: {max_train_acc:.4f}')
     print(f'max test accuracy: {max_test_acc:.4f}')
