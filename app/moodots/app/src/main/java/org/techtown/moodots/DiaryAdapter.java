@@ -3,6 +3,7 @@ package org.techtown.moodots;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -50,16 +51,14 @@ public class DiaryAdapter extends RecyclerView.Adapter<DiaryAdapter.ViewHolder> 
         }
     }
     static class ViewHolder extends RecyclerView.ViewHolder{
-        TextView datetextView;
-        TextView titletextView;
+
         ImageView moodImageView;
-        TextView contentsTextView;
+        ImageButton playerbutton;
 
         public ViewHolder(View itemView, final OnDiaryItemClickListener listener){
             super(itemView);
-            titletextView = itemView.findViewById(R.id.textView);
-            datetextView= itemView.findViewById(R.id.textView3);
             moodImageView = itemView.findViewById(R.id.moodImageView);
+            playerbutton=itemView.findViewById(R.id.playerbutton);
 
             itemView.setOnClickListener(new View.OnClickListener(){
 
@@ -77,32 +76,37 @@ public class DiaryAdapter extends RecyclerView.Adapter<DiaryAdapter.ViewHolder> 
             int mood = item.getMood();
             int moodIndex = mood;
             setMoodImage(moodIndex);
-            titletextView.setText(item.getTitle());
-            datetextView.setText(item.getDate());
         }
 
         public void setMoodImage(int moodIndex) {
             switch(moodIndex) {
                 case 1:
                     moodImageView.setImageResource(R.mipmap.ic_angry);
+                    playerbutton.setImageResource(R.drawable.ic_baseline_play_angry);
                     break;
                 case 2:
                     moodImageView.setImageResource(R.mipmap.ic_joy);
+                    playerbutton.setImageResource(R.drawable.ic_baseline_play_joy);
                     break;
                 case 3:
                     moodImageView.setImageResource(R.mipmap.ic_fear);
+                    playerbutton.setImageResource(R.drawable.ic_baseline_play_fear);
                     break;
                 case 4:
                     moodImageView.setImageResource(R.mipmap.ic_sad);
+                    playerbutton.setImageResource(R.drawable.ic_baseline_play_sad);
                     break;
                 case 5:
                     moodImageView.setImageResource(R.mipmap.ic_disgust);
+                    playerbutton.setImageResource(R.drawable.ic_baseline_play_disgust);
                     break;
                 case 6:
                     moodImageView.setImageResource(R.mipmap.ic_surprise);
+                    playerbutton.setImageResource(R.drawable.ic_baseline_play_surprise);
                     break;
                 default:
                     moodImageView.setImageResource(R.mipmap.ic_neutral);
+                    playerbutton.setImageResource(R.drawable.ic_baseline_play_neutral);
                     break;
             }
         }

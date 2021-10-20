@@ -16,7 +16,7 @@ public class Home extends AppCompatActivity {
         /// Login 화면으로 2초 뒤 자동 전환
         new Handler().postDelayed(new Runnable() {
             public void run() {
-                Intent intent = new Intent(Home.this, org.techtown.moodots.Login.class);
+                Intent intent = new Intent(Home.this, org.techtown.moodots.Main.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                 startActivity(intent);
             }

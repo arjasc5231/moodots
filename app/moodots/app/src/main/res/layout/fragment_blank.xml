@@ -110,16 +110,6 @@
                 android:layout_weight="1"
                 app:srcCompat="@mipmap/ic_angry" />
 
-            <EditText
-                android:id="@+id/title"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:hint="제목을 입력하세요."
-                android:inputType="text"
-                android:layout_weight="8"
-                android:scrollHorizontally="false" />
-
         </LinearLayout>
 
         <EditText

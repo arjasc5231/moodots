@@ -42,9 +42,7 @@ public class BlankFragment extends Fragment {
     ImageView currentmood;
     Button time;
     Button date;
-    EditText title;
     EditText contents;
-    String titlemod="";
     int moodmod=1;
     String contentsmod="";
     String dateall="";
@@ -84,19 +82,17 @@ public class BlankFragment extends Fragment {
         date = rootView.findViewById(R.id.date);
         time = rootView.findViewById(R.id.time);
         contents = rootView.findViewById(R.id.contents);
-        title=rootView.findViewById(R.id.title);
         if (getArguments() != null)
         {
             _id=getArguments().getInt("bundleKey0");
             mMode = getArguments().getInt("bundleKey");
-            titlemod = getArguments().getString("bundleKey1");
             moodmod = getArguments().getInt("bundleKey2");
             contentsmod = getArguments().getString("bundleKey3");
             dateall = getArguments().getString("bundleKey4");
             Log.d(TAG, "id"+_id);
         }
         if(mMode==1) {
-            Log.d(TAG, "active modify");
+            Log.d(TAG, "active add");
             date.setText(getDate());
             time.setText(getTime());
             Button angry = rootView.findViewById(R.id.angry);
@@ -164,7 +160,6 @@ public class BlankFragment extends Fragment {
                     if (mMode == AppConstants.MODE_INSERT) {
                         saveDiary();
                         moodIndex = 1;
-                        title.setText("");
                         contents.setText("");
                         activity.replaceFragment(1);
                     } else if (mMode == AppConstants.MODE_MODIFY) {
@@ -181,7 +176,6 @@ public class BlankFragment extends Fragment {
             delete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    title.setText("");
                     contents.setText("");
                     activity.replaceFragment(1);
                 }
@@ -237,7 +231,6 @@ public class BlankFragment extends Fragment {
             timecall = array[1];
             date.setText(datecall);
             time.setText(timecall);
-            title.setText(titlemod);
             contents.setText(contentsmod);
             moodIndex= moodmod;
             setMoodImage(moodIndex);
@@ -392,16 +385,12 @@ public class BlankFragment extends Fragment {
         }
     }
     private void saveDiary() {
-
-        String stitle = title.getText().toString();
         String scontents = contents.getText().toString();
         String sdate = date.getText().toString();
         String stime = time.getText().toString();
         String sdatefin=sdate+" "+stime;
-        Log.d(TAG, stitle);
         String sql = "insert into " + DiaryDatabase.TABLE_DIARY +
-                "(TITLE, MOOD, CONTENTS, DATE) values(" +
-                "'"+ stitle + "', " +
+                "(MOOD, CONTENTS, DATE) values(" +
                 "'"+ moodIndex + "', " +
                 "'"+ scontents + "', " +
                 "'"+ sdatefin + "'" +")";
@@ -416,7 +405,6 @@ public class BlankFragment extends Fragment {
      * 데이터베이스 레코드 수정
      */
     private void modifyDiary() {
-        String stitle = title.getText().toString();
         String scontents = contents.getText().toString();
         String sdate = date.getText().toString();
         String stime = time.getText().toString();
@@ -430,7 +418,6 @@ public class BlankFragment extends Fragment {
         String sdatefin = sdate+" "+stime;
         String sql = "UPDATE " + DiaryDatabase.TABLE_DIARY +
                 " SET " +
-                " TITLE = '" + stitle  + "'"+
                 " ,MOOD = '" + moodIndex + "'" +
                 " ,CONTENTS = '" + scontents + "'" +
                 " ,DATE = '" + sdatefin + "'" +

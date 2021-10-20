@@ -120,7 +120,6 @@ public class Mainfrag extends Fragment {
                 Bundle result = new Bundle();
                 result.putInt("bundleKey0", item._id);
                 result.putInt("bundleKey", 2);
-                result.putString("bundleKey1",item.title);
                 result.putInt("bundleKey2", item.mood);
                 result.putString("bundleKey3",item.contents);
                 result.putString("bundleKey4",item.date);
@@ -135,7 +134,7 @@ public class Mainfrag extends Fragment {
 
     public int loadDiaryListData(){
         println("loadNoteLIstData called.");
-        String sql = "SELECT _id, TITLE, MOOD, CONTENTS, DATE FROM " +DiaryDatabase.TABLE_DIARY + " ORDER BY DATE DESC;";
+        String sql = "SELECT _id, MOOD, CONTENTS, DATE FROM " +DiaryDatabase.TABLE_DIARY + " ORDER BY DATE DESC;";
         int recordCount= -1;
         DiaryDatabase database = DiaryDatabase.getInstance(context);
         if (database != null) {
@@ -151,10 +150,9 @@ public class Mainfrag extends Fragment {
                 outCursor.moveToNext();
 
                 int _id = outCursor.getInt(0);
-                String title = outCursor.getString(1);
-                int mood = outCursor.getInt(2);
-                String contents = outCursor.getString(3);
-                String date = outCursor.getString(4);
+                int mood = outCursor.getInt(1);
+                String contents = outCursor.getString(2);
+                String date = outCursor.getString(3);
                 if (date != null && date.length() > 10) {
                     try {
                         Date inDate = AppConstants.dateFormat4.parse(date);
@@ -166,7 +164,7 @@ public class Mainfrag extends Fragment {
                 } else {
                     date = "";
                 }
-                items.add(new Diary(_id, title, mood, contents , date));
+                items.add(new Diary(_id, mood, contents , date));
             }
 
             outCursor.close();
@@ -181,6 +179,8 @@ public class Mainfrag extends Fragment {
     private void println(String data) {
         Log.d(TAG, data);
     }
+
+
 }
 
 

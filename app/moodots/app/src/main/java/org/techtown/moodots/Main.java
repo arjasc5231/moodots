@@ -40,8 +40,8 @@ public class Main extends AppCompatActivity implements AutoPermissionsListener {
         setContentView(R.layout.activity_main);
 
         // 액티비티 중복 삭제를 위한 코드. 아래 if문 포함(if문은 login액티비티를 삭제하는 부분)
-        if(Login.activity!=null){
-            Login activity = (Login)Login.activity;
+        if(Home.activity!=null){
+            Home activity = (Home)Home.activity;
             activity.finish();
         }
         settingfrag=new Settingfrag();
@@ -49,6 +49,7 @@ public class Main extends AppCompatActivity implements AutoPermissionsListener {
         mainfrag=new Mainfrag();
         sortfrag=new Sortfrag();
         blankfrag = new BlankFragment();
+        openDatabase();
         getSupportFragmentManager().beginTransaction().replace(R.id.container, mainfrag).commit();
         BottomNavigationView bottomNavigation = findViewById(R.id.bottom_navigation);
         bottomNavigation.setOnItemSelectedListener(new BottomNavigationView.OnItemSelectedListener() {
@@ -57,6 +58,7 @@ public class Main extends AppCompatActivity implements AutoPermissionsListener {
                 switch (menuItem.getItemId()){
                     case R.id.tab1:
                         getSupportFragmentManager().beginTransaction().replace(R.id.container, mainfrag).commit();
+
                         return true;
                     case R.id.tab2:
                         getSupportFragmentManager().beginTransaction().replace(R.id.container, sortfrag).commit();
@@ -71,8 +73,6 @@ public class Main extends AppCompatActivity implements AutoPermissionsListener {
                 return false;
             }
         });
-        openDatabase();
-
     }
 
     @Override

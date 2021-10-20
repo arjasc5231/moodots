@@ -19,7 +19,7 @@ public class DiaryDatabase{
     }
     public static DiaryDatabase getInstance(Context context) {
         if (database == null) {
-            Log.d(TAG, "database is null");
+            Log.d(TAG, "database is null in recent");
             database = new DiaryDatabase(context);
         }
         return database;
@@ -29,14 +29,12 @@ public class DiaryDatabase{
         println("opening database [" + AppConstants.DATABASE_NAME + "].");
         dbHelper = new DatabaseHelper(context);
         db = dbHelper.getWritableDatabase();
-
         return true;
     }
 
     public void close() {
         println("closing database [" + AppConstants.DATABASE_NAME + "].");
         db.close();
-
         database = null;
     }
 
@@ -97,7 +95,6 @@ public class DiaryDatabase{
             // create table
             String CREATE_SQL = "CREATE TABLE " + TABLE_DIARY +
                     "( _id INTEGER  NOT NULL PRIMARY KEY AUTOINCREMENT, "
-                    + "TITLE TEXT NOT NULL, "
                     + "MOOD INTEGER NOT NULL, "
                     + "CONTENTS TEXT NOT NULL, "
                     + "DATE TIMESTAMP DEFAULT CURRENT_TIMESTAMP );";
