@@ -42,7 +42,10 @@ public class DiaryDatabase{
                 "( _id INTEGER  NOT NULL PRIMARY KEY AUTOINCREMENT, "
                 + "MOOD INTEGER NOT NULL, "
                 + "CONTENTS TEXT NOT NULL, "
-                + "DATE TIMESTAMP DEFAULT CURRENT_TIMESTAMP );";
+                + "HASHCONTENTS TEXT NOT NULL, "
+                + "CHECKMOD INTEGER NOT NULL, "
+                + "DATE TEXT, "
+                + "TIME TEXT );";
         try {
             db.execSQL(CREATE_SQL);
         } catch(Exception ex) {
@@ -131,7 +134,8 @@ public class DiaryDatabase{
                     + "CONTENTS TEXT NOT NULL, "
                     + "HASHCONTENTS TEXT NOT NULL, "
                     + "CHECKMOD INTEGER NOT NULL, "
-                    + "DATE TIMESTAMP DEFAULT CURRENT_TIMESTAMP );";
+                    + "DATE TEXT, "
+                    + "TIME TEXT );";
             try {
                 db.execSQL(CREATE_SQL);
             } catch(Exception ex) {

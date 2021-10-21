@@ -49,7 +49,7 @@ public class BlankFragment extends Fragment implements OnBackPressedListener{
     int moodmod=1;
     String contentsmod="";
     String hashcontentsmod="";
-    String dateall="";
+
     String datecall="";
     String timecall="";
     @Override
@@ -93,6 +93,7 @@ public class BlankFragment extends Fragment implements OnBackPressedListener{
 
     public void initUI(ViewGroup rootView){
         moodtext=rootView.findViewById(R.id.currentmoodtext);
+        hashcontents=rootView.findViewById(R.id.hashcontents);
         TextView textView=rootView.findViewById(R.id.dateadd);
         textView.setText(getDate());
         currentmood = rootView.findViewById(R.id.currentmood);
@@ -105,7 +106,10 @@ public class BlankFragment extends Fragment implements OnBackPressedListener{
             mMode = getArguments().getInt("bundleKey");
             moodmod = getArguments().getInt("bundleKey2");
             contentsmod = getArguments().getString("bundleKey3");
-            dateall = getArguments().getString("bundleKey4");
+            hashcontentsmod= getArguments().getString("bundleKey4");
+            moodmod = getArguments().getInt("bundleKey5");
+            datecall = getArguments().getString("bundleKey6");
+            timecall = getArguments().getString("bundleKey7");
             Log.d(TAG, "id"+_id);
         }
         if(mMode==1) {
@@ -185,6 +189,7 @@ public class BlankFragment extends Fragment implements OnBackPressedListener{
                         saveDiary();
                         moodIndex = 1;
                         contents.setText("");
+                        hashcontents.setText("");
                         activity.replaceFragment(1);
                     } else if (mMode == AppConstants.MODE_MODIFY) {
                         modifyDiary();
@@ -200,6 +205,7 @@ public class BlankFragment extends Fragment implements OnBackPressedListener{
             delete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    hashcontents.setText("");
                     contents.setText("");
                     activity.replaceFragment(1);
                 }
@@ -250,12 +256,10 @@ public class BlankFragment extends Fragment implements OnBackPressedListener{
         }
         else if(mMode==2){
             Log.d(TAG, "active modify");
-            String[] array= dateall.split(" ");
-            datecall= array[0];
-            timecall = array[1];
             date.setText(datecall);
             time.setText(timecall);
             contents.setText(contentsmod);
+            hashcontents.setText(hashcontentsmod);
             moodIndex= moodmod;
             setMoodImage(moodIndex);
             Button angry = rootView.findViewById(R.id.angry);
@@ -426,14 +430,17 @@ public class BlankFragment extends Fragment implements OnBackPressedListener{
     }
     private void saveDiary() {
         String scontents = contents.getText().toString();
+        String hcontents = hashcontents.getText().toString();
         String sdate = date.getText().toString();
         String stime = time.getText().toString();
-        String sdatefin=sdate+" "+stime;
         String sql = "insert into " + DiaryDatabase.TABLE_DIARY +
-                "(MOOD, CONTENTS, DATE) values(" +
+                "(MOOD, CONTENTS, HASHCONTENTS, CHECKMOD, DATE, TIME) values(" +
                 "'"+ moodIndex + "', " +
                 "'"+ scontents + "', " +
-                "'"+ sdatefin + "'" +")";
+                "'"+ hcontents + "', " +
+                "'"+ 1 + "', " +
+                "'"+ sdate + "', " +
+                "'"+ stime + "'" +")";
 
         Log.d(TAG, "sql : " + sql);
         DiaryDatabase database = DiaryDatabase.getInstance(context);
@@ -446,21 +453,24 @@ public class BlankFragment extends Fragment implements OnBackPressedListener{
      */
     private void modifyDiary() {
         String scontents = contents.getText().toString();
+        String hcontents = hashcontents.getText().toString();
         String sdate = date.getText().toString();
         String stime = time.getText().toString();
-        try {
+        /*try {
             Date inDate = AppConstants.dateFormat4.parse(sdate);
             sdate=AppConstants.dateFormat5.format(inDate);
             stime=AppConstants.dateFormat6.format(inDate);
         }catch(Exception e) {
             e.printStackTrace();
-        }
-        String sdatefin = sdate+" "+stime;
+        }*/
         String sql = "UPDATE " + DiaryDatabase.TABLE_DIARY +
                 " SET " +
                 " MOOD = '" + moodIndex + "'" +
                 " ,CONTENTS = '" + scontents + "'" +
-                " ,DATE = '" + sdatefin + "'" +
+                " ,HASHCONTENTS = '" + hcontents + "'" +
+                " CHECKMOD = '" + 1 + "'" +
+                " ,DATE = '" + sdate + "'" +
+                " ,TIME = '" + stime + "'" +
                 " WHERE " +
                 "_id = "+_id+";";
 

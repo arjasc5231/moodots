@@ -145,7 +145,10 @@ public class Mainfrag extends Fragment implements OnBackPressedListener{
                 result.putInt("bundleKey", 2);
                 result.putInt("bundleKey2", item.mood);
                 result.putString("bundleKey3",item.contents);
-                result.putString("bundleKey4",item.date);
+                result.putString("bundleKey4",item.hashcontents);
+                result.putInt("bundleKey", item.checkmod);
+                result.putString("bundleKey6",item.date);
+                result.putString("bundleKey7", item.time);
                 FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
                 BlankFragment blankfragment = new BlankFragment();//프래그먼트2 선언
                 blankfragment.setArguments(result);//번들을 프래그먼트2로 보낼 준비
@@ -201,7 +204,8 @@ public class Mainfrag extends Fragment implements OnBackPressedListener{
     }
     public int loadDiaryListData(){
         println("loadNoteLIstData called.");
-        String sql = "SELECT _id, MOOD, CONTENTS, DATE FROM " +DiaryDatabase.TABLE_DIARY + " ORDER BY DATE DESC;";
+        String curdate=getDate();
+        String sql = "SELECT _id, MOOD, CONTENTS, HASHCONTENTS, CHECKMOD, DATE, TIME FROM " +DiaryDatabase.TABLE_DIARY +" ORDER BY DATE ASC;";
         int recordCount= -1;
         DiaryDatabase database = DiaryDatabase.getInstance(context);
         if (database != null) {
@@ -219,19 +223,37 @@ public class Mainfrag extends Fragment implements OnBackPressedListener{
                 int _id = outCursor.getInt(0);
                 int mood = outCursor.getInt(1);
                 String contents = outCursor.getString(2);
-                String date = outCursor.getString(3);
-                if (date != null && date.length() > 10) {
-                    try {
-                        Date inDate = AppConstants.dateFormat4.parse(date);
-                        date=AppConstants.dateFormat4.format(inDate);
-                        Log.d(TAG, "sdate"+date);
-                    } catch(Exception e) {
-                        e.printStackTrace();
+                String hashcontents = outCursor.getString(3);
+                int checkmod= outCursor.getInt(4);
+                String date = outCursor.getString(5);
+                String time = outCursor.getString(6);
+                if(date.equals(curdate)) {
+                    if (date != null && date.length() > 6) {
+                        try {
+                            Date inDate = AppConstants.dateFormat5.parse(date);
+                            date = AppConstants.dateFormat5.format(inDate);
+
+                            Log.d(TAG, "sdate" + date);
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        date = "";
                     }
-                } else {
-                    date = "";
+                    if (time != null && time.length() > 2) {
+                        try {
+                            Date inTime = AppConstants.dateFormat6.parse(time);
+                            date = AppConstants.dateFormat6.format(inTime);
+                            Log.d(TAG, "stime" + time);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        date = "";
+                    }
+                    items.add(new Diary(_id, mood, contents, hashcontents, checkmod, date, time));
                 }
-                items.add(new Diary(_id, mood, contents , date));
             }
 
             outCursor.close();
