@@ -28,11 +28,11 @@ public class Main extends AppCompatActivity implements AutoPermissionsListener {
     MediaPlayer player;
     String filename;
     Settingfrag settingfrag;
-    Extrafrag extrafrag;
+    Searchfrag searchfrag;
     Mainfrag mainfrag;
     Sortfrag sortfrag;
     BlankFragment blankfrag;
-
+    OnBackPressedListener listener;
     public static DiaryDatabase mDatabase = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,14 +45,14 @@ public class Main extends AppCompatActivity implements AutoPermissionsListener {
             activity.finish();
         }
         settingfrag=new Settingfrag();
-        extrafrag=new Extrafrag();
+        searchfrag=new Searchfrag();
         mainfrag=new Mainfrag();
         sortfrag=new Sortfrag();
         blankfrag = new BlankFragment();
         openDatabase();
         getSupportFragmentManager().beginTransaction().replace(R.id.container, mainfrag).commit();
-        BottomNavigationView bottomNavigation = findViewById(R.id.bottom_navigation);
-        bottomNavigation.setOnItemSelectedListener(new BottomNavigationView.OnItemSelectedListener() {
+        //BottomNavigationView bottomNavigation = findViewById(R.id.bottom_navigation);
+        /*bottomNavigation.setOnItemSelectedListener(new BottomNavigationView.OnItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
                 switch (menuItem.getItemId()){
@@ -72,7 +72,22 @@ public class Main extends AppCompatActivity implements AutoPermissionsListener {
                 }
                 return false;
             }
-        });
+        });*/
+
+    }
+
+    public void setOnBackPressedListener(OnBackPressedListener listener){
+        this.listener = listener;
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(listener!=null){
+            listener.onBackPressed();
+        }
+        else{
+            super.onBackPressed();
+        }
     }
 
     @Override
@@ -106,6 +121,15 @@ public class Main extends AppCompatActivity implements AutoPermissionsListener {
         }
         else if(index==1){
             getSupportFragmentManager().beginTransaction().replace(R.id.container, mainfrag).commit();
+        }
+        else if(index==2){
+            getSupportFragmentManager().beginTransaction().replace(R.id.container, sortfrag).commit();
+        }
+        else if(index==3){
+            getSupportFragmentManager().beginTransaction().replace(R.id.container, searchfrag).commit();
+        }
+        else if(index==4){
+            getSupportFragmentManager().beginTransaction().replace(R.id.container, settingfrag).commit();
         }
     }
 

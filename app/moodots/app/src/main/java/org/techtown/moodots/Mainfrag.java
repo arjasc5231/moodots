@@ -1,6 +1,8 @@
 package org.techtown.moodots;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.os.Bundle;
 
@@ -25,7 +27,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class Mainfrag extends Fragment {
+public class Mainfrag extends Fragment implements OnBackPressedListener{
     private static final String TAG="Mainfrag";
     RecyclerView recyclerView;
     DiaryAdapter adapter;
@@ -56,9 +58,10 @@ public class Mainfrag extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_main,container,false);
+        buttonUI(rootView);
         initUI(rootView);
         loadDiaryListData();
-        Button button= (Button) rootView.findViewById(R.id.button11);
+        /*Button button= (Button) rootView.findViewById(R.id.button11);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -89,26 +92,46 @@ public class Mainfrag extends Fragment {
             public void onClick(View v) {
                 //stopAudio();
             }
-        });
+        });*/
 
         return rootView;
     }
-    private void initUI(ViewGroup rootView){
-        Button newDiaryButton = rootView.findViewById(R.id.newDiaryButton);
-        newDiaryButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (listener != null) {
-                    Toast.makeText(getContext(), "no ", Toast.LENGTH_SHORT).show();
-                }
-                Bundle result = new Bundle();
-                result.putInt("bundleKey", 1);
-                getParentFragmentManager().setFragmentResult("requestKey", result);
-                activity.replaceFragment(0);
-            }
-        });
-        recyclerView = rootView.findViewById(R.id.recyclerView);
 
+    @Override
+    public void onBackPressed() {
+        showdialog();
+    }
+    public void showdialog(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle("종료");
+        builder.setMessage("종료하시겠습니까?");
+        builder.setPositiveButton("아니요",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+        builder.setNegativeButton("예",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        activity.finish();
+                    }
+                });
+        builder.show();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        activity.setOnBackPressedListener(this);
+    }
+
+    private void initUI(ViewGroup rootView){
+        TextView textView=rootView.findViewById(R.id.datemain);
+        textView.setText(getDate());
+        recyclerView = rootView.findViewById(R.id.recyclerView);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
         adapter = new DiaryAdapter();
@@ -131,7 +154,51 @@ public class Mainfrag extends Fragment {
             }
         });
     }
-
+    private void buttonUI(ViewGroup rootView){
+        Button sort=rootView.findViewById(R.id.sort);
+        sort.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                if (listener != null) {
+                    Toast.makeText(getContext(), "no ", Toast.LENGTH_SHORT).show();
+                }
+                activity.replaceFragment(2);
+            }
+        });
+        Button search=rootView.findViewById(R.id.search);
+        search.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                if (listener != null) {
+                    Toast.makeText(getContext(), "no ", Toast.LENGTH_SHORT).show();
+                }
+                activity.replaceFragment(3);
+            }
+        });
+        Button setting=rootView.findViewById(R.id.setting);
+        setting.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                if (listener != null) {
+                    Toast.makeText(getContext(), "no ", Toast.LENGTH_SHORT).show();
+                }
+                activity.replaceFragment(4);
+            }
+        });
+        Button newDiaryButton = rootView.findViewById(R.id.newDiaryButton);
+        newDiaryButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (listener != null) {
+                    Toast.makeText(getContext(), "no ", Toast.LENGTH_SHORT).show();
+                }
+                Bundle result = new Bundle();
+                result.putInt("bundleKey", 1);
+                getParentFragmentManager().setFragmentResult("requestKey", result);
+                activity.replaceFragment(0);
+            }
+        });
+    }
     public int loadDiaryListData(){
         println("loadNoteLIstData called.");
         String sql = "SELECT _id, MOOD, CONTENTS, DATE FROM " +DiaryDatabase.TABLE_DIARY + " ORDER BY DATE DESC;";
@@ -179,7 +246,12 @@ public class Mainfrag extends Fragment {
     private void println(String data) {
         Log.d(TAG, data);
     }
-
+    private String getDate() {
+        long now = System.currentTimeMillis();
+        Date date = new Date(now);
+        String getDate = AppConstants.dateFormat5.format(date);
+        return getDate;
+    }
 
 }
 

@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentResultListener;
 
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,7 +31,7 @@ import java.text.SimpleDateFormat;
 import android.database.sqlite.SQLiteDatabase;
 
 
-public class BlankFragment extends Fragment {
+public class BlankFragment extends Fragment implements OnBackPressedListener{
     private static final String TAG = "blankfragment";
     Context context;
     OnTabItemSelectedListener listener;
@@ -40,11 +41,14 @@ public class BlankFragment extends Fragment {
     int _id = -1;
     Diary item;
     ImageView currentmood;
+    TextView moodtext;
     Button time;
     Button date;
+    EditText hashcontents;
     EditText contents;
     int moodmod=1;
     String contentsmod="";
+    String hashcontentsmod="";
     String dateall="";
     String datecall="";
     String timecall="";
@@ -76,8 +80,21 @@ public class BlankFragment extends Fragment {
         return rootView;
     }
 
+    @Override
+    public void onBackPressed() {
+        activity.replaceFragment(1);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        activity.setOnBackPressedListener(this);
+    }
 
     public void initUI(ViewGroup rootView){
+        moodtext=rootView.findViewById(R.id.currentmoodtext);
+        TextView textView=rootView.findViewById(R.id.dateadd);
+        textView.setText(getDate());
         currentmood = rootView.findViewById(R.id.currentmood);
         date = rootView.findViewById(R.id.date);
         time = rootView.findViewById(R.id.time);
@@ -100,6 +117,7 @@ public class BlankFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
                     currentmood.setImageResource(R.mipmap.ic_angry);
+                    moodtext.setText("화가 났나요?");
                     moodIndex = 1;
                 }
             });
@@ -108,6 +126,7 @@ public class BlankFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
                     currentmood.setImageResource(R.mipmap.ic_joy);
+                    moodtext.setText("기쁜가요?");
                     moodIndex = 2;
                 }
             });
@@ -116,6 +135,7 @@ public class BlankFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
                     currentmood.setImageResource(R.mipmap.ic_fear);
+                    moodtext.setText("두려운가요?");
                     moodIndex = 3;
                 }
             });
@@ -124,6 +144,7 @@ public class BlankFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
                     currentmood.setImageResource(R.mipmap.ic_sad);
+                    moodtext.setText("슬픈가요?");
                     moodIndex = 4;
                 }
             });
@@ -132,6 +153,7 @@ public class BlankFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
                     currentmood.setImageResource(R.mipmap.ic_disgust);
+                    moodtext.setText("혐오스러운가요?");
                     moodIndex = 5;
                 }
             });
@@ -140,6 +162,7 @@ public class BlankFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
                     currentmood.setImageResource(R.mipmap.ic_surprise);
+                    moodtext.setText("놀랐나요?");
                     moodIndex = 6;
                 }
             });
@@ -148,6 +171,7 @@ public class BlankFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
                     currentmood.setImageResource(R.mipmap.ic_neutral);
+                    moodtext.setText("아무런 감정이 느껴지지 않나요?");
                     moodIndex = 7;
                 }
             });
@@ -363,24 +387,40 @@ public class BlankFragment extends Fragment {
         switch(moodIndex) {
             case 1:
                 currentmood.setImageResource(R.mipmap.ic_angry);
+                moodtext.setGravity( Gravity.CENTER_VERTICAL);
+                moodtext.setText("화가 났나요?");
+
                 break;
             case 2:
                 currentmood.setImageResource(R.mipmap.ic_joy);
+                moodtext.setGravity( Gravity.CENTER_VERTICAL);
+                moodtext.setText("기쁜가요?");
+
                 break;
             case 3:
                 currentmood.setImageResource(R.mipmap.ic_fear);
+                moodtext.setGravity( Gravity.CENTER_VERTICAL);
+                moodtext.setText("두려운가요?");
                 break;
             case 4:
                 currentmood.setImageResource(R.mipmap.ic_sad);
+                moodtext.setGravity( Gravity.CENTER_VERTICAL);
+                moodtext.setText("슬픈가요?");
                 break;
             case 5:
                 currentmood.setImageResource(R.mipmap.ic_disgust);
+                moodtext.setGravity( Gravity.CENTER_VERTICAL);
+                moodtext.setText("혐오스러운가요?");
                 break;
             case 6:
                 currentmood.setImageResource(R.mipmap.ic_surprise);
+                moodtext.setGravity( Gravity.CENTER_VERTICAL);
+                moodtext.setText("놀랐나요?");
                 break;
             default:
                 currentmood.setImageResource(R.mipmap.ic_neutral);
+                moodtext.setGravity( Gravity.CENTER_VERTICAL);
+                moodtext.setText("아무런 감정이 느껴지지 않나요?");
                 break;
         }
     }
@@ -418,7 +458,7 @@ public class BlankFragment extends Fragment {
         String sdatefin = sdate+" "+stime;
         String sql = "UPDATE " + DiaryDatabase.TABLE_DIARY +
                 " SET " +
-                " ,MOOD = '" + moodIndex + "'" +
+                " MOOD = '" + moodIndex + "'" +
                 " ,CONTENTS = '" + scontents + "'" +
                 " ,DATE = '" + sdatefin + "'" +
                 " WHERE " +
