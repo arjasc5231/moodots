@@ -139,6 +139,7 @@ public class Mainfrag extends Fragment implements OnBackPressedListener{
         adapter.setOnItemClickListener(new OnDiaryItemClickListener() {
             @Override
             public void onItemClick(DiaryAdapter.ViewHolder holder, View view, int position) {
+                println("active here");
                 Diary item = adapter.getItem(position);
                 Bundle result = new Bundle();
                 result.putInt("bundleKey0", item._id);
@@ -146,8 +147,9 @@ public class Mainfrag extends Fragment implements OnBackPressedListener{
                 result.putInt("bundleKey2", item.mood);
                 result.putString("bundleKey3",item.contents);
                 result.putString("bundleKey4",item.hashcontents);
-                result.putInt("bundleKey", item.checkmod);
+                result.putInt("bundleKey5", item.checkmod);
                 result.putString("bundleKey6",item.date);
+                println("active here"+item.date);
                 result.putString("bundleKey7", item.time);
                 FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
                 BlankFragment blankfragment = new BlankFragment();//프래그먼트2 선언
@@ -205,7 +207,7 @@ public class Mainfrag extends Fragment implements OnBackPressedListener{
     public int loadDiaryListData(){
         println("loadNoteLIstData called.");
         String curdate=getDate();
-        String sql = "SELECT _id, MOOD, CONTENTS, HASHCONTENTS, CHECKMOD, DATE, TIME FROM " +DiaryDatabase.TABLE_DIARY +" ORDER BY DATE ASC;";
+        String sql = "SELECT _id, MOOD, CONTENTS, HASHCONTENTS, CHECKMOD, DATE, TIME FROM " +DiaryDatabase.TABLE_DIARY +" ORDER BY DATE DESC;";
         int recordCount= -1;
         DiaryDatabase database = DiaryDatabase.getInstance(context);
         if (database != null) {
@@ -244,13 +246,13 @@ public class Mainfrag extends Fragment implements OnBackPressedListener{
                     if (time != null && time.length() > 2) {
                         try {
                             Date inTime = AppConstants.dateFormat6.parse(time);
-                            date = AppConstants.dateFormat6.format(inTime);
+                            time = AppConstants.dateFormat6.format(inTime);
                             Log.d(TAG, "stime" + time);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
                     } else {
-                        date = "";
+                        time = "";
                     }
                     items.add(new Diary(_id, mood, contents, hashcontents, checkmod, date, time));
                 }

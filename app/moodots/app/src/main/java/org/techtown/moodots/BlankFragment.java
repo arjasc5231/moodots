@@ -49,7 +49,7 @@ public class BlankFragment extends Fragment implements OnBackPressedListener{
     int moodmod=1;
     String contentsmod="";
     String hashcontentsmod="";
-
+    int checkmod;
     String datecall="";
     String timecall="";
     @Override
@@ -107,7 +107,7 @@ public class BlankFragment extends Fragment implements OnBackPressedListener{
             moodmod = getArguments().getInt("bundleKey2");
             contentsmod = getArguments().getString("bundleKey3");
             hashcontentsmod= getArguments().getString("bundleKey4");
-            moodmod = getArguments().getInt("bundleKey5");
+            checkmod = getArguments().getInt("bundleKey5");
             datecall = getArguments().getString("bundleKey6");
             timecall = getArguments().getString("bundleKey7");
             Log.d(TAG, "id"+_id);
@@ -256,6 +256,7 @@ public class BlankFragment extends Fragment implements OnBackPressedListener{
         }
         else if(mMode==2){
             Log.d(TAG, "active modify");
+            Log.d(TAG, "active modify"+datecall);
             date.setText(datecall);
             time.setText(timecall);
             contents.setText(contentsmod);
@@ -468,7 +469,7 @@ public class BlankFragment extends Fragment implements OnBackPressedListener{
                 " MOOD = '" + moodIndex + "'" +
                 " ,CONTENTS = '" + scontents + "'" +
                 " ,HASHCONTENTS = '" + hcontents + "'" +
-                " CHECKMOD = '" + 1 + "'" +
+                " ,CHECKMOD = '" + 1 + "'" +
                 " ,DATE = '" + sdate + "'" +
                 " ,TIME = '" + stime + "'" +
                 " WHERE " +
