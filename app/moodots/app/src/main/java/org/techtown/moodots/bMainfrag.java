@@ -7,37 +7,37 @@ import android.database.Cursor;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.os.Environment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AnalogClock;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.pedro.library.AutoPermissions;
-
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class Mainfrag extends Fragment implements OnBackPressedListener{
+public class bMainfrag extends Fragment implements OnBackPressedListener{
     private static final String TAG="Mainfrag";
     RecyclerView recyclerView;
     DiaryAdapter adapter;
     Context context;
     OnTabItemSelectedListener listener;
-    Main activity;
+    aMain activity;
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        activity= (Main) getActivity();
+        activity= (aMain) getActivity();
         this.context = context;
         if(context instanceof OnTabItemSelectedListener){
             listener= (OnTabItemSelectedListener) context;
@@ -129,8 +129,18 @@ public class Mainfrag extends Fragment implements OnBackPressedListener{
     }
 
     private void initUI(ViewGroup rootView){
+        ConstraintLayout layout=(ConstraintLayout) rootView.findViewById(R.id.clocklayout);
         TextView textView=rootView.findViewById(R.id.datemain);
         textView.setText(getDate());
+        AnalogClock clock= rootView.findViewById(R.id.clock);
+        clock.bringToFront();
+        ImageButton iv = rootView.findViewById(R.id.moodindicate);
+        iv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                clock.bringToFront();
+            }
+        });
         recyclerView = rootView.findViewById(R.id.recyclerView);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
@@ -139,6 +149,37 @@ public class Mainfrag extends Fragment implements OnBackPressedListener{
         adapter.setOnItemClickListener(new OnDiaryItemClickListener() {
             @Override
             public void onItemClick(DiaryAdapter.ViewHolder holder, View view, int position) {
+                // 새로 추가할 imageView 생성
+                Diary item = adapter.getItem(position);
+                switch(item.mood){
+                    case 1:
+                        iv.setImageResource(R.drawable.angry);
+                        break;
+                    case 2:
+                        iv.setImageResource(R.drawable.joy);
+                        break;
+                    case 3:
+                        iv.setImageResource(R.drawable.fear);
+                        break;
+                    case 4:
+                        iv.setImageResource(R.drawable.sad);
+                        break;
+                    case 5:
+                        iv.setImageResource(R.drawable.disgust);
+                        break;
+                    case 6:
+                        iv.setImageResource(R.drawable.surprise);
+                        break;
+                    case 7:
+                        iv.setImageResource(R.drawable.neutral);
+                        break;
+                }
+                iv.bringToFront();
+            }
+        });
+        adapter.setOnItemLongClickListener(new OnItemLongClickListener() {
+            @Override
+            public void onItemLongClick(DiaryAdapter.ViewHolder holder, View view, int position) {
                 println("active here");
                 Diary item = adapter.getItem(position);
                 Bundle result = new Bundle();
@@ -215,7 +256,7 @@ public class Mainfrag extends Fragment implements OnBackPressedListener{
             Cursor outCursor = database.rawQuery(sql);
 
             recordCount = outCursor.getCount();
-            AppConstants.println("record count : " + recordCount + "\n");
+            zAppConstants.println("record count : " + recordCount + "\n");
 
             ArrayList<Diary> items = new ArrayList<Diary>();
 
@@ -232,8 +273,8 @@ public class Mainfrag extends Fragment implements OnBackPressedListener{
                 if(date.equals(curdate)) {
                     if (date != null && date.length() > 6) {
                         try {
-                            Date inDate = AppConstants.dateFormat5.parse(date);
-                            date = AppConstants.dateFormat5.format(inDate);
+                            Date inDate = zAppConstants.dateFormat5.parse(date);
+                            date = zAppConstants.dateFormat5.format(inDate);
 
                             Log.d(TAG, "sdate" + date);
 
@@ -245,8 +286,8 @@ public class Mainfrag extends Fragment implements OnBackPressedListener{
                     }
                     if (time != null && time.length() > 2) {
                         try {
-                            Date inTime = AppConstants.dateFormat6.parse(time);
-                            time = AppConstants.dateFormat6.format(inTime);
+                            Date inTime = zAppConstants.dateFormat6.parse(time);
+                            time = zAppConstants.dateFormat6.format(inTime);
                             Log.d(TAG, "stime" + time);
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -273,7 +314,7 @@ public class Mainfrag extends Fragment implements OnBackPressedListener{
     private String getDate() {
         long now = System.currentTimeMillis();
         Date date = new Date(now);
-        String getDate = AppConstants.dateFormat5.format(date);
+        String getDate = zAppConstants.dateFormat5.format(date);
         return getDate;
     }
 

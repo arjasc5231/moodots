@@ -14,15 +14,17 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
-public class Settingfrag extends Fragment implements OnBackPressedListener{
-    Main activity;
+
+public class bSearchfrag extends Fragment implements OnBackPressedListener{
+    aMain activity;
     Context context;
     OnTabItemSelectedListener listener;
+
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         this.context = context;
-        activity= (Main) getActivity();
+        activity= (aMain) getActivity();
         if(context instanceof OnTabItemSelectedListener){
             listener = (OnTabItemSelectedListener) context;
         }
@@ -41,7 +43,7 @@ public class Settingfrag extends Fragment implements OnBackPressedListener{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_setting,container,false);
+        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_search,container,false);
         buttonUI(rootView);
         return rootView;
     }
@@ -56,16 +58,6 @@ public class Settingfrag extends Fragment implements OnBackPressedListener{
                 activity.replaceFragment(2);
             }
         });
-        Button search=rootView.findViewById(R.id.search);
-        search.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                if (listener != null) {
-                    Toast.makeText(getContext(), "no ", Toast.LENGTH_SHORT).show();
-                }
-                activity.replaceFragment(3);
-            }
-        });
         Button main=rootView.findViewById(R.id.main);
         main.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -74,6 +66,16 @@ public class Settingfrag extends Fragment implements OnBackPressedListener{
                     Toast.makeText(getContext(), "no ", Toast.LENGTH_SHORT).show();
                 }
                 activity.replaceFragment(1);
+            }
+        });
+        Button setting=rootView.findViewById(R.id.setting);
+        setting.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                if (listener != null) {
+                    Toast.makeText(getContext(), "no ", Toast.LENGTH_SHORT).show();
+                }
+                activity.replaceFragment(4);
             }
         });
         Button newDiaryButton = rootView.findViewById(R.id.newDiaryButton);

@@ -1,36 +1,26 @@
 package org.techtown.moodots;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.os.Bundle;
-import android.os.Environment;
 import android.util.Log;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
 
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.pedro.library.AutoPermissions;
 import com.pedro.library.AutoPermissionsListener;
 
-import java.io.File;
 import java.io.IOException;
 
-public class Main extends AppCompatActivity implements AutoPermissionsListener {
+public class aMain extends AppCompatActivity implements AutoPermissionsListener {
     private static final String TAG = "MainActivity";
     MediaRecorder recorder;
     MediaPlayer player;
     String filename;
-    Settingfrag settingfrag;
-    Searchfrag searchfrag;
-    Mainfrag mainfrag;
-    Sortfrag sortfrag;
+    bSettingfrag bSettingfrag;
+    bSearchfrag bSearchfrag;
+    bMainfrag bMainfrag;
+    bSortfrag bSortfrag;
     BlankFragment blankfrag;
     OnBackPressedListener listener;
     public static DiaryDatabase mDatabase = null;
@@ -40,17 +30,17 @@ public class Main extends AppCompatActivity implements AutoPermissionsListener {
         setContentView(R.layout.activity_main);
 
         // 액티비티 중복 삭제를 위한 코드. 아래 if문 포함(if문은 login액티비티를 삭제하는 부분)
-        if(Home.activity!=null){
-            Home activity = (Home)Home.activity;
+        if(aHome.activity!=null){
+            aHome activity = (aHome) aHome.activity;
             activity.finish();
         }
-        settingfrag=new Settingfrag();
-        searchfrag=new Searchfrag();
-        mainfrag=new Mainfrag();
-        sortfrag=new Sortfrag();
+        bSettingfrag =new bSettingfrag();
+        bSearchfrag =new bSearchfrag();
+        bMainfrag =new bMainfrag();
+        bSortfrag =new bSortfrag();
         blankfrag = new BlankFragment();
         openDatabase();
-        getSupportFragmentManager().beginTransaction().replace(R.id.container, mainfrag).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.container, bMainfrag).commit();
         //BottomNavigationView bottomNavigation = findViewById(R.id.bottom_navigation);
         /*bottomNavigation.setOnItemSelectedListener(new BottomNavigationView.OnItemSelectedListener() {
             @Override
@@ -120,16 +110,16 @@ public class Main extends AppCompatActivity implements AutoPermissionsListener {
             getSupportFragmentManager().beginTransaction().replace(R.id.container, blankfrag).commit();// Fragment로 사용할 MainActivity내의 layout공간을 선택합니다.
         }
         else if(index==1){
-            getSupportFragmentManager().beginTransaction().replace(R.id.container, mainfrag).commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.container, bMainfrag).commit();
         }
         else if(index==2){
-            getSupportFragmentManager().beginTransaction().replace(R.id.container, sortfrag).commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.container, bSortfrag).commit();
         }
         else if(index==3){
-            getSupportFragmentManager().beginTransaction().replace(R.id.container, searchfrag).commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.container, bSearchfrag).commit();
         }
         else if(index==4){
-            getSupportFragmentManager().beginTransaction().replace(R.id.container, settingfrag).commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.container, bSettingfrag).commit();
         }
     }
 

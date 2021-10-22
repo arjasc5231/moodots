@@ -5,54 +5,126 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_above="@+id/bottom_navigation"
-    tools:context=".Sortfrag">
+    tools:context=".bSortfrag">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:orientation="horizontal">
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <Button
-            android:id="@+id/day"
-            android:layout_width="0dp"
+        <LinearLayout
+            android:id="@+id/textlayout"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="19sp"
-            android:backgroundTint="#EF534E"
-            android:layout_weight="1"
-            android:background="@layout/button_leftcorner"
-            android:text="Day" />
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toTopOf="@+id/sorttext"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            >
 
-        <Button
-            android:id="@+id/week"
-            android:layout_width="0dp"
+            <TextView
+                android:id="@+id/pagesort"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="SORT"
+                android:textSize="25sp" />
+
+            <TextView
+                android:id="@+id/datesort"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="right"
+                android:text="date"
+                android:textSize="25sp" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/sorttext"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="19sp"
-            android:backgroundTint="#FFA726"
-            android:layout_weight="1"
-            android:background="@layout/button_middle"
-            android:text="Week" />
+            android:gravity="center_horizontal"
+            android:textSize="20sp"
+            android:paddingTop="20dp"
 
-        <Button
-            android:id="@+id/month"
-            android:layout_width="0dp"
+            android:text="TextView"
+            app:layout_constraintBottom_toTopOf="@+id/containersort"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/textlayout"
+            />
+
+        <FrameLayout
+            android:id="@+id/containersort"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            app:layout_constraintBottom_toTopOf="@+id/buttonlayout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/sorttext">
+
+        </FrameLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="19sp"
-            android:backgroundTint="#FFEE58"
-            android:layout_weight="1"
-            android:background="@layout/button_middle"
-            android:text="Month" />
+            android:orientation="horizontal"
+            android:id="@+id/buttonlayout"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/containersort">
 
-        <Button
-            android:id="@+id/year"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:textSize="19sp"
-            android:backgroundTint="#A1A3A1"
-            android:layout_weight="1"
-            android:background="@layout/button_rightcorner"
-            android:text="Year" />
+            <Button
+                android:id="@+id/day"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@layout/button_leftcorner"
+                android:backgroundTint="#EF534E"
+                android:text="Day"
+                android:textSize="19sp" />
 
-    </LinearLayout>
+            <Button
+                android:id="@+id/week"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@layout/button_middle"
+                android:backgroundTint="#FFA726"
+                android:text="Week"
+                android:textSize="19sp" />
+
+            <Button
+                android:id="@+id/month"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@layout/button_middle"
+                android:backgroundTint="#FFEE58"
+                android:text="Month"
+                android:textSize="19sp" />
+
+            <Button
+                android:id="@+id/year"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@layout/button_rightcorner"
+                android:backgroundTint="#A1A3A1"
+                android:text="Year"
+                android:textSize="19sp" />
+
+        </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
 
 </FrameLayout>

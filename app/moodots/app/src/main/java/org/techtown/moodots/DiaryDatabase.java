@@ -26,7 +26,7 @@ public class DiaryDatabase{
     }
 
     public boolean open() {
-        println("opening database [" + AppConstants.DATABASE_NAME + "].");
+        println("opening database [" + zAppConstants.DATABASE_NAME + "].");
         dbHelper = new DatabaseHelper(context);
         db = dbHelper.getWritableDatabase();
         /*
@@ -68,7 +68,7 @@ public class DiaryDatabase{
     }
 
     public void close() {
-        println("closing database [" + AppConstants.DATABASE_NAME + "].");
+        println("closing database [" + zAppConstants.DATABASE_NAME + "].");
         db.close();
         database = null;
     }
@@ -109,12 +109,12 @@ public class DiaryDatabase{
     public class DatabaseHelper extends SQLiteOpenHelper {
 
         public DatabaseHelper(Context context) {
-            super(context, AppConstants.DATABASE_NAME, null, DATABASE_VERSION);
+            super(context, zAppConstants.DATABASE_NAME, null, DATABASE_VERSION);
             Log.d(TAG, "databasehelper");
         }
 
         public void onCreate(SQLiteDatabase db) {
-            println("creating database [" + AppConstants.DATABASE_NAME + "].");
+            println("creating database [" + zAppConstants.DATABASE_NAME + "].");
 
             // TABLE_NOTE
             println("creating table [" + TABLE_DIARY + "].");
@@ -154,7 +154,7 @@ public class DiaryDatabase{
         }
 
         public void onOpen(SQLiteDatabase db) {
-            println("opened database [" + AppConstants.DATABASE_NAME + "].");
+            println("opened database [" + zAppConstants.DATABASE_NAME + "].");
         }
 
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {

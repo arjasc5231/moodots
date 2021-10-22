@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FFFFFF"
-    tools:context=".Main">
+    tools:context=".aMain">
 
     <!--수평 방향으로 버튼들이 스크롤 될 수 있게 구성
     버튼은 Day, Week, Month, Year, Setting, Extra로 구성

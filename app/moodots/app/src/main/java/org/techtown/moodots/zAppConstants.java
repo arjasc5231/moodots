@@ -5,7 +5,7 @@ import android.util.Log;
 
 import java.text.SimpleDateFormat;
 
-public class AppConstants {
+public class zAppConstants {
     public static final int REQ_LOCATION_BY_ADDRESS = 101;
     public static final int REQ_WEATHER_BY_GRID = 102;
 

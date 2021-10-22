@@ -3,12 +3,10 @@ package org.techtown.moodots;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
-import android.database.Cursor;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentResultListener;
 
 import android.util.Log;
 import android.view.Gravity;
@@ -21,22 +19,17 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.TimePicker;
-import android.widget.Toast;
 
-import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.text.SimpleDateFormat;
-import android.database.sqlite.SQLiteDatabase;
 
 
 public class BlankFragment extends Fragment implements OnBackPressedListener{
     private static final String TAG = "blankfragment";
     Context context;
     OnTabItemSelectedListener listener;
-    Main activity;
-    int mMode = AppConstants.MODE_INSERT;
+    aMain activity;
+    int mMode = zAppConstants.MODE_INSERT;
     int moodIndex = 1;
     int _id = -1;
     Diary item;
@@ -56,7 +49,7 @@ public class BlankFragment extends Fragment implements OnBackPressedListener{
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         this.context = context;
-        activity= (Main) getActivity();
+        activity= (aMain) getActivity();
         if(context instanceof OnTabItemSelectedListener){
             listener = (OnTabItemSelectedListener) context;
         }
@@ -185,13 +178,13 @@ public class BlankFragment extends Fragment implements OnBackPressedListener{
             addDiaryButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (mMode == AppConstants.MODE_INSERT) {
+                    if (mMode == zAppConstants.MODE_INSERT) {
                         saveDiary();
                         moodIndex = 1;
                         contents.setText("");
                         hashcontents.setText("");
                         activity.replaceFragment(1);
-                    } else if (mMode == AppConstants.MODE_MODIFY) {
+                    } else if (mMode == zAppConstants.MODE_MODIFY) {
                         modifyDiary();
                         activity.replaceFragment(1);
                     }
@@ -221,8 +214,8 @@ public class BlankFragment extends Fragment implements OnBackPressedListener{
                         @Override
                         public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                             try {
-                                Date indate = AppConstants.dateFormat5.parse(year + "-" + (month + 1) + "-" + dayOfMonth);
-                                String day= AppConstants.dateFormat5.format(indate);
+                                Date indate = zAppConstants.dateFormat5.parse(year + "-" + (month + 1) + "-" + dayOfMonth);
+                                String day= zAppConstants.dateFormat5.format(indate);
                                 date.setText(day);
                             }catch(Exception e){
                                 e.printStackTrace();
@@ -242,8 +235,8 @@ public class BlankFragment extends Fragment implements OnBackPressedListener{
                         @Override
                         public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
                             try {
-                                Date indate = AppConstants.dateFormat6.parse(hourOfDay + ":" + minute);
-                                String tim= AppConstants.dateFormat6.format(indate);
+                                Date indate = zAppConstants.dateFormat6.parse(hourOfDay + ":" + minute);
+                                String tim= zAppConstants.dateFormat6.format(indate);
                                 time.setText(tim);
                             }catch(Exception e){
                                 e.printStackTrace();
@@ -353,8 +346,8 @@ public class BlankFragment extends Fragment implements OnBackPressedListener{
                         @Override
                         public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                             try {
-                                Date indate = AppConstants.dateFormat5.parse(year + "-" + (month + 1) + "-" + dayOfMonth);
-                                String day= AppConstants.dateFormat5.format(indate);
+                                Date indate = zAppConstants.dateFormat5.parse(year + "-" + (month + 1) + "-" + dayOfMonth);
+                                String day= zAppConstants.dateFormat5.format(indate);
                                 date.setText(day);
                             }catch(Exception e){
                                 e.printStackTrace();
@@ -374,8 +367,8 @@ public class BlankFragment extends Fragment implements OnBackPressedListener{
                         @Override
                         public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
                             try {
-                                Date indate = AppConstants.dateFormat6.parse(hourOfDay + ":" + minute);
-                                String tim= AppConstants.dateFormat6.format(indate);
+                                Date indate = zAppConstants.dateFormat6.parse(hourOfDay + ":" + minute);
+                                String tim= zAppConstants.dateFormat6.format(indate);
                                 time.setText(tim);
                             }catch(Exception e){
                                 e.printStackTrace();
@@ -486,7 +479,7 @@ public class BlankFragment extends Fragment implements OnBackPressedListener{
      * 레코드 삭제
      */
     private void deleteDiary() {
-        AppConstants.println("deleteNote called.");
+        zAppConstants.println("deleteNote called.");
 
         // delete note
         String sql = "DELETE FROM " + DiaryDatabase.TABLE_DIARY +
@@ -501,13 +494,13 @@ public class BlankFragment extends Fragment implements OnBackPressedListener{
     private String getDate() {
         long now = System.currentTimeMillis();
         Date date = new Date(now);
-        String getDate = AppConstants.dateFormat5.format(date);
+        String getDate = zAppConstants.dateFormat5.format(date);
         return getDate;
     }
     private String getTime() {
         long now = System.currentTimeMillis();
         Date date = new Date(now);
-        String getTime = AppConstants.dateFormat6.format(date);
+        String getTime = zAppConstants.dateFormat6.format(date);
         return getTime;
     }
 }
