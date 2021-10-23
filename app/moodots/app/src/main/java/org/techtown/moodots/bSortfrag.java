@@ -25,7 +25,6 @@ public class bSortfrag extends Fragment implements OnBackPressedListener{
     cweekfragment weekfragment=new cweekfragment();
     cmonthfragment monthfragment=new cmonthfragment();
     cyearfragment yearfragment=new cyearfragment();
-
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -98,7 +97,7 @@ public class bSortfrag extends Fragment implements OnBackPressedListener{
         super.onResume();
         activity.setOnBackPressedListener(this);
     }
-    private String getDate() {
+    static String getDate() {
         long now = System.currentTimeMillis();
         Date date = new Date(now);
         String getDate = zAppConstants.dateFormat5.format(date);

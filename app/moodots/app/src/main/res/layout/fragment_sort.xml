@@ -53,8 +53,7 @@
             android:gravity="center_horizontal"
             android:textSize="20sp"
             android:paddingTop="20dp"
-
-            android:text="TextView"
+            android:text="Day"
             app:layout_constraintBottom_toTopOf="@+id/containersort"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
