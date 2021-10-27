@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/mainfrag">
+
+    <fragment
+        android:id="@+id/mainfrag"
+        android:name="org.techtown.moodots.bMainfrag"
+        android:label="fragment_main"
+        tools:layout="@layout/fragment_main" >
+        <action
+            android:id="@+id/action_mainfrag_to_blankFragment"
+            app:destination="@id/blankFragment" />
+        <action
+            android:id="@+id/action_mainfrag_to_sortfrag"
+            app:destination="@id/sortfrag" />
+    </fragment>
+    <fragment
+        android:id="@+id/blankFragment"
+        android:name="org.techtown.moodots.BlankFragment"
+        android:label="fragment_blank"
+        tools:layout="@layout/fragment_blank" >
+        <action
+            android:id="@+id/action_blankFragment_to_mainfrag"
+            app:destination="@id/mainfrag" />
+    </fragment>
+    <fragment
+        android:id="@+id/sortfrag"
+        android:name="org.techtown.moodots.bSortfrag"
+        android:label="fragment_sort"
+        tools:layout="@layout/fragment_sort" >
+        <action
+            android:id="@+id/action_sortfrag_to_mainfrag"
+            app:destination="@id/mainfrag" />
+    </fragment>
+</navigation>

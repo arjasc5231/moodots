@@ -3,14 +3,13 @@ package org.techtown.moodots;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
-import android.database.Cursor;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentResultListener;
 
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,41 +19,37 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.TimePicker;
-import android.widget.Toast;
 
-import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.text.SimpleDateFormat;
-import android.database.sqlite.SQLiteDatabase;
 
 
-public class BlankFragment extends Fragment {
+public class BlankFragment extends Fragment implements OnBackPressedListener{
     private static final String TAG = "blankfragment";
     Context context;
     OnTabItemSelectedListener listener;
-    Main activity;
-    int mMode = AppConstants.MODE_INSERT;
+    aMain activity;
+    int mMode = zAppConstants.MODE_INSERT;
     int moodIndex = 1;
     int _id = -1;
     Diary item;
     ImageView currentmood;
+    TextView moodtext;
     Button time;
     Button date;
-    EditText title;
+    EditText hashcontents;
     EditText contents;
-    String titlemod="";
     int moodmod=1;
     String contentsmod="";
-    String dateall="";
+    String hashcontentsmod="";
+    int checkmod;
     String datecall="";
     String timecall="";
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         this.context = context;
-        activity= (Main) getActivity();
+        activity= (aMain) getActivity();
         if(context instanceof OnTabItemSelectedListener){
             listener = (OnTabItemSelectedListener) context;
         }
@@ -78,25 +73,40 @@ public class BlankFragment extends Fragment {
         return rootView;
     }
 
+    @Override
+    public void onBackPressed() {
+        activity.replaceFragment(1);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        activity.setOnBackPressedListener(this);
+    }
 
     public void initUI(ViewGroup rootView){
+        moodtext=rootView.findViewById(R.id.currentmoodtext);
+        hashcontents=rootView.findViewById(R.id.hashcontents);
+        TextView textView=rootView.findViewById(R.id.dateadd);
+        textView.setText(getDate());
         currentmood = rootView.findViewById(R.id.currentmood);
         date = rootView.findViewById(R.id.date);
         time = rootView.findViewById(R.id.time);
         contents = rootView.findViewById(R.id.contents);
-        title=rootView.findViewById(R.id.title);
         if (getArguments() != null)
         {
             _id=getArguments().getInt("bundleKey0");
             mMode = getArguments().getInt("bundleKey");
-            titlemod = getArguments().getString("bundleKey1");
             moodmod = getArguments().getInt("bundleKey2");
             contentsmod = getArguments().getString("bundleKey3");
-            dateall = getArguments().getString("bundleKey4");
+            hashcontentsmod= getArguments().getString("bundleKey4");
+            checkmod = getArguments().getInt("bundleKey5");
+            datecall = getArguments().getString("bundleKey6");
+            timecall = getArguments().getString("bundleKey7");
             Log.d(TAG, "id"+_id);
         }
         if(mMode==1) {
-            Log.d(TAG, "active modify");
+            Log.d(TAG, "active add");
             date.setText(getDate());
             time.setText(getTime());
             Button angry = rootView.findViewById(R.id.angry);
@@ -104,6 +114,7 @@ public class BlankFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
                     currentmood.setImageResource(R.mipmap.ic_angry);
+                    moodtext.setText("화가 났나요?");
                     moodIndex = 1;
                 }
             });
@@ -112,6 +123,7 @@ public class BlankFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
                     currentmood.setImageResource(R.mipmap.ic_joy);
+                    moodtext.setText("기쁜가요?");
                     moodIndex = 2;
                 }
             });
@@ -120,6 +132,7 @@ public class BlankFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
                     currentmood.setImageResource(R.mipmap.ic_fear);
+                    moodtext.setText("두려운가요?");
                     moodIndex = 3;
                 }
             });
@@ -128,6 +141,7 @@ public class BlankFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
                     currentmood.setImageResource(R.mipmap.ic_sad);
+                    moodtext.setText("슬픈가요?");
                     moodIndex = 4;
                 }
             });
@@ -136,6 +150,7 @@ public class BlankFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
                     currentmood.setImageResource(R.mipmap.ic_disgust);
+                    moodtext.setText("혐오스러운가요?");
                     moodIndex = 5;
                 }
             });
@@ -144,6 +159,7 @@ public class BlankFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
                     currentmood.setImageResource(R.mipmap.ic_surprise);
+                    moodtext.setText("놀랐나요?");
                     moodIndex = 6;
                 }
             });
@@ -152,6 +168,7 @@ public class BlankFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
                     currentmood.setImageResource(R.mipmap.ic_neutral);
+                    moodtext.setText("아무런 감정이 느껴지지 않나요?");
                     moodIndex = 7;
                 }
             });
@@ -161,13 +178,13 @@ public class BlankFragment extends Fragment {
             addDiaryButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (mMode == AppConstants.MODE_INSERT) {
+                    if (mMode == zAppConstants.MODE_INSERT) {
                         saveDiary();
                         moodIndex = 1;
-                        title.setText("");
                         contents.setText("");
+                        hashcontents.setText("");
                         activity.replaceFragment(1);
-                    } else if (mMode == AppConstants.MODE_MODIFY) {
+                    } else if (mMode == zAppConstants.MODE_MODIFY) {
                         modifyDiary();
                         activity.replaceFragment(1);
                     }
@@ -181,7 +198,7 @@ public class BlankFragment extends Fragment {
             delete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    title.setText("");
+                    hashcontents.setText("");
                     contents.setText("");
                     activity.replaceFragment(1);
                 }
@@ -197,8 +214,8 @@ public class BlankFragment extends Fragment {
                         @Override
                         public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                             try {
-                                Date indate = AppConstants.dateFormat5.parse(year + "-" + (month + 1) + "-" + dayOfMonth);
-                                String day= AppConstants.dateFormat5.format(indate);
+                                Date indate = zAppConstants.dateFormat5.parse(year + "-" + (month + 1) + "-" + dayOfMonth);
+                                String day= zAppConstants.dateFormat5.format(indate);
                                 date.setText(day);
                             }catch(Exception e){
                                 e.printStackTrace();
@@ -218,8 +235,8 @@ public class BlankFragment extends Fragment {
                         @Override
                         public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
                             try {
-                                Date indate = AppConstants.dateFormat6.parse(hourOfDay + ":" + minute);
-                                String tim= AppConstants.dateFormat6.format(indate);
+                                Date indate = zAppConstants.dateFormat6.parse(hourOfDay + ":" + minute);
+                                String tim= zAppConstants.dateFormat6.format(indate);
                                 time.setText(tim);
                             }catch(Exception e){
                                 e.printStackTrace();
@@ -232,13 +249,11 @@ public class BlankFragment extends Fragment {
         }
         else if(mMode==2){
             Log.d(TAG, "active modify");
-            String[] array= dateall.split(" ");
-            datecall= array[0];
-            timecall = array[1];
+            Log.d(TAG, "active modify"+datecall);
             date.setText(datecall);
             time.setText(timecall);
-            title.setText(titlemod);
             contents.setText(contentsmod);
+            hashcontents.setText(hashcontentsmod);
             moodIndex= moodmod;
             setMoodImage(moodIndex);
             Button angry = rootView.findViewById(R.id.angry);
@@ -331,8 +346,8 @@ public class BlankFragment extends Fragment {
                         @Override
                         public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                             try {
-                                Date indate = AppConstants.dateFormat5.parse(year + "-" + (month + 1) + "-" + dayOfMonth);
-                                String day= AppConstants.dateFormat5.format(indate);
+                                Date indate = zAppConstants.dateFormat5.parse(year + "-" + (month + 1) + "-" + dayOfMonth);
+                                String day= zAppConstants.dateFormat5.format(indate);
                                 date.setText(day);
                             }catch(Exception e){
                                 e.printStackTrace();
@@ -352,8 +367,8 @@ public class BlankFragment extends Fragment {
                         @Override
                         public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
                             try {
-                                Date indate = AppConstants.dateFormat6.parse(hourOfDay + ":" + minute);
-                                String tim= AppConstants.dateFormat6.format(indate);
+                                Date indate = zAppConstants.dateFormat6.parse(hourOfDay + ":" + minute);
+                                String tim= zAppConstants.dateFormat6.format(indate);
                                 time.setText(tim);
                             }catch(Exception e){
                                 e.printStackTrace();
@@ -370,41 +385,56 @@ public class BlankFragment extends Fragment {
         switch(moodIndex) {
             case 1:
                 currentmood.setImageResource(R.mipmap.ic_angry);
+                moodtext.setGravity( Gravity.CENTER_VERTICAL);
+                moodtext.setText("화가 났나요?");
+
                 break;
             case 2:
                 currentmood.setImageResource(R.mipmap.ic_joy);
+                moodtext.setGravity( Gravity.CENTER_VERTICAL);
+                moodtext.setText("기쁜가요?");
+
                 break;
             case 3:
                 currentmood.setImageResource(R.mipmap.ic_fear);
+                moodtext.setGravity( Gravity.CENTER_VERTICAL);
+                moodtext.setText("두려운가요?");
                 break;
             case 4:
                 currentmood.setImageResource(R.mipmap.ic_sad);
+                moodtext.setGravity( Gravity.CENTER_VERTICAL);
+                moodtext.setText("슬픈가요?");
                 break;
             case 5:
                 currentmood.setImageResource(R.mipmap.ic_disgust);
+                moodtext.setGravity( Gravity.CENTER_VERTICAL);
+                moodtext.setText("혐오스러운가요?");
                 break;
             case 6:
                 currentmood.setImageResource(R.mipmap.ic_surprise);
+                moodtext.setGravity( Gravity.CENTER_VERTICAL);
+                moodtext.setText("놀랐나요?");
                 break;
             default:
                 currentmood.setImageResource(R.mipmap.ic_neutral);
+                moodtext.setGravity( Gravity.CENTER_VERTICAL);
+                moodtext.setText("아무런 감정이 느껴지지 않나요?");
                 break;
         }
     }
     private void saveDiary() {
-
-        String stitle = title.getText().toString();
         String scontents = contents.getText().toString();
+        String hcontents = hashcontents.getText().toString();
         String sdate = date.getText().toString();
         String stime = time.getText().toString();
-        String sdatefin=sdate+" "+stime;
-        Log.d(TAG, stitle);
         String sql = "insert into " + DiaryDatabase.TABLE_DIARY +
-                "(TITLE, MOOD, CONTENTS, DATE) values(" +
-                "'"+ stitle + "', " +
+                "(MOOD, CONTENTS, HASHCONTENTS, CHECKMOD, DATE, TIME) values(" +
                 "'"+ moodIndex + "', " +
                 "'"+ scontents + "', " +
-                "'"+ sdatefin + "'" +")";
+                "'"+ hcontents + "', " +
+                "'"+ 1 + "', " +
+                "'"+ sdate + "', " +
+                "'"+ stime + "'" +")";
 
         Log.d(TAG, "sql : " + sql);
         DiaryDatabase database = DiaryDatabase.getInstance(context);
@@ -416,24 +446,25 @@ public class BlankFragment extends Fragment {
      * 데이터베이스 레코드 수정
      */
     private void modifyDiary() {
-        String stitle = title.getText().toString();
         String scontents = contents.getText().toString();
+        String hcontents = hashcontents.getText().toString();
         String sdate = date.getText().toString();
         String stime = time.getText().toString();
-        try {
+        /*try {
             Date inDate = AppConstants.dateFormat4.parse(sdate);
             sdate=AppConstants.dateFormat5.format(inDate);
             stime=AppConstants.dateFormat6.format(inDate);
         }catch(Exception e) {
             e.printStackTrace();
-        }
-        String sdatefin = sdate+" "+stime;
+        }*/
         String sql = "UPDATE " + DiaryDatabase.TABLE_DIARY +
                 " SET " +
-                " TITLE = '" + stitle  + "'"+
-                " ,MOOD = '" + moodIndex + "'" +
+                " MOOD = '" + moodIndex + "'" +
                 " ,CONTENTS = '" + scontents + "'" +
-                " ,DATE = '" + sdatefin + "'" +
+                " ,HASHCONTENTS = '" + hcontents + "'" +
+                " ,CHECKMOD = '" + 1 + "'" +
+                " ,DATE = '" + sdate + "'" +
+                " ,TIME = '" + stime + "'" +
                 " WHERE " +
                 "_id = "+_id+";";
 
@@ -448,7 +479,7 @@ public class BlankFragment extends Fragment {
      * 레코드 삭제
      */
     private void deleteDiary() {
-        AppConstants.println("deleteNote called.");
+        zAppConstants.println("deleteNote called.");
 
         // delete note
         String sql = "DELETE FROM " + DiaryDatabase.TABLE_DIARY +
@@ -463,13 +494,13 @@ public class BlankFragment extends Fragment {
     private String getDate() {
         long now = System.currentTimeMillis();
         Date date = new Date(now);
-        String getDate = AppConstants.dateFormat5.format(date);
+        String getDate = zAppConstants.dateFormat5.format(date);
         return getDate;
     }
     private String getTime() {
         long now = System.currentTimeMillis();
         Date date = new Date(now);
-        String getTime = AppConstants.dateFormat6.format(date);
+        String getTime = zAppConstants.dateFormat6.format(date);
         return getTime;
     }
 }

@@ -6,8 +6,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 
-public class Home extends AppCompatActivity {
-    public static Home activity = null; // 액티비티 중복 삭제를 위해 액티비티 변수 설정
+public class aHome extends AppCompatActivity {
+    public static aHome activity = null; // 액티비티 중복 삭제를 위해 액티비티 변수 설정
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -16,7 +16,7 @@ public class Home extends AppCompatActivity {
         /// Login 화면으로 2초 뒤 자동 전환
         new Handler().postDelayed(new Runnable() {
             public void run() {
-                Intent intent = new Intent(Home.this, org.techtown.moodots.Login.class);
+                Intent intent = new Intent(aHome.this, aMain.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                 startActivity(intent);
             }
