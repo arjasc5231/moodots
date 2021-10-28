@@ -13,12 +13,23 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.SeekBar;
+import android.widget.TextView;
 
 import com.github.mikephil.charting.animation.Easing;
+import com.github.mikephil.charting.charts.Chart;
 import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.charts.ScatterChart;
+import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
+import com.github.mikephil.charting.data.ScatterData;
+import com.github.mikephil.charting.data.ScatterDataSet;
+import com.github.mikephil.charting.interfaces.datasets.IScatterDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
 import java.util.ArrayList;
@@ -27,8 +38,10 @@ import java.util.Date;
 
 public class cweekfragment extends Fragment {
     PieChart pieChart;
+    ScatterChart scatterChart;
     Context context;
     aMain activity;
+
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -52,9 +65,11 @@ public class cweekfragment extends Fragment {
         // Inflate the layout for this fragment
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_week,container,false);
         int[] percent= bringdata();
+        scatterchart(rootView);
         piechart(rootView, percent);
         return rootView;
     }
+
     public int[] bringdata(){
         int[] percent = new int[0];
         String curdate=bSortfrag.getDate();
@@ -98,6 +113,8 @@ public class cweekfragment extends Fragment {
         pieChart.setDrawHoleEnabled(true); //차트 가운데 구멍을 넣을것인지
         pieChart.setHoleColor(Color.WHITE); //그 가운데 구멍의 색 결정
         pieChart.setTransparentCircleRadius(0f);
+        Legend l = pieChart.getLegend();
+        l.setEnabled(false);
         ArrayList<PieEntry> yValues = new ArrayList<PieEntry>();
         yValues.add(new PieEntry(34f,"Angry"));
         yValues.add(new PieEntry(23f,"Joy"));
@@ -118,5 +135,68 @@ public class cweekfragment extends Fragment {
         data.setValueTextColor(Color.BLACK);
 
         pieChart.setData(data);
+    }
+    public void scatterchart(ViewGroup rootView){
+        scatterChart = rootView.findViewById(R.id.scatterchart);
+        scatterChart.getDescription().setEnabled(false);
+        scatterChart.setDrawGridBackground(false);
+        scatterChart.setTouchEnabled(true);
+        scatterChart.setMaxHighlightDistance(0f);
+        scatterChart.setHighlightPerTapEnabled(false);
+        // enable scaling and dragging
+        scatterChart.setDragEnabled(true);
+        scatterChart.setScaleYEnabled(true);
+        scatterChart.setScaleXEnabled(false);
+        scatterChart.setDoubleTapToZoomEnabled(false);
+        scatterChart.setMaxVisibleValueCount(999999999);
+        scatterChart.setPinchZoom(false);
+
+        /*Legend l = scatterChart.getLegend();
+        l.setEnabled(false);
+        l.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
+        l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.RIGHT);
+        l.setOrientation(Legend.LegendOrientation.VERTICAL);
+        l.setDrawInside(false);
+        //l.setTypeface(tfLight);
+        l.setXOffset(5f);*/
+
+        YAxis yl = scatterChart.getAxisLeft();
+        //yl.setTypeface(tfLight);
+        yl.setDrawGridLines(false);
+        yl.setAxisMinimum(0f);// this replaces setStartAtZero(true)
+
+        scatterChart.getAxisRight().setEnabled(false);
+        XAxis xl = scatterChart.getXAxis();
+        //xl.setTypeface(tfLight);
+        xl.setDrawGridLines(false);
+        yl.setInverted(true);
+
+        ArrayList<Entry> yValues = new ArrayList<>();
+        yValues.add(new Entry(1,3));
+        yValues.add(new Entry(1,30));
+        yValues.add(new Entry(1,40));
+        yValues.add(new Entry(1,300));
+        yValues.add(new Entry(2,8));
+        yValues.add(new Entry(3,9));
+        yValues.add(new Entry(4,10));
+        yValues.add(new Entry(5,4));
+        yValues.add(new Entry(6,6));
+        yValues.add(new Entry(7,15));
+        ScatterDataSet dataSet = new ScatterDataSet(yValues,"Mood");
+        dataSet.setScatterShape(ScatterChart.ScatterShape.CIRCLE);
+        int[] colorset={0Xef534e,0Xffee58,0X9c27b0 };
+        dataSet.setColor(ColorTemplate.COLORFUL_COLORS[0]);
+        dataSet.setScatterShapeSize(20);
+
+        ArrayList<IScatterDataSet> dataSets = new ArrayList<>();
+        dataSets.add(dataSet); // add the data sets
+        //dataSet.setColors(ColorTemplate.JOYFUL_COLORS);
+
+        ScatterData data = new ScatterData(dataSets);
+        //data.setValueTextSize(10f);
+        //data.setValueTextColor(Color.BLACK);
+        scatterChart.animateY(3000);
+        scatterChart.setData(data);
+
     }
 }

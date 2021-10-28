@@ -8,6 +8,8 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -19,6 +21,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -87,12 +90,50 @@ public class BlankFragment extends Fragment implements OnBackPressedListener{
     public void initUI(ViewGroup rootView){
         moodtext=rootView.findViewById(R.id.currentmoodtext);
         hashcontents=rootView.findViewById(R.id.hashcontents);
+        final int[] max = {0};
+        //hashcontents.setText("#");
+        //hashcontents.setSelection(1);
         TextView textView=rootView.findViewById(R.id.dateadd);
         textView.setText(getDate());
         currentmood = rootView.findViewById(R.id.currentmood);
         date = rootView.findViewById(R.id.date);
         time = rootView.findViewById(R.id.time);
         contents = rootView.findViewById(R.id.contents);
+        hashcontents.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                String text= s.toString();
+                String newtext;
+                int length= text.length();
+                int index=text.lastIndexOf(" ");
+                if(length-1==index&&length>0){
+                    max[0] = max[0] +1;
+                    if(max[0]>4){
+                        Toast maxhash=Toast.makeText(context,"해시태그는 5개만 입력 가능합니다.",Toast.LENGTH_SHORT);
+                        maxhash.show();
+                        newtext = text.substring(0, length - 1);
+                        hashcontents.setText(newtext);
+                        hashcontents.setSelection(length-1);
+                    }
+                    else {
+                        /*if (!text.substring(0, 1).equals("#")) {
+                            text = "#" + text.substring(0, length);
+                            newtext = text.substring(0, length) + "#";
+                        } else {*/
+                            newtext = text.substring(0, length - 1) + "#";
+                        //}
+                        hashcontents.setText(newtext);
+                        hashcontents.setSelection(length);
+                    }
+                }
+            }
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
         if (getArguments() != null)
         {
             _id=getArguments().getInt("bundleKey0");
