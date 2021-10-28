@@ -226,9 +226,23 @@
                     android:background="@drawable/diaryadd_contents_border"
                     android:ems="10"
                     android:gravity="top"
-                    android:hint="해시태그를 입력하세요"
+                    android:hint="#을 눌러 해시태그 입력을 시작하세요. 뛰어쓰기를 하면 자동으로 #이 생성됩니다. 최대 5개의 해시태그 입력이 가능합니다."
                     android:inputType="textMultiLine"
                     android:scrollHorizontally="false" />
+                <!--<HashTagEditTextView
+                    android:id="@+id/hashcontents"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="5"
+                    android:background="@drawable/diaryadd_contents_border"
+                    android:ems="10"
+                    android:gravity="top"
+                    android:itemMaxLength="5"
+                    android:itemMaxCount="5"
+                    android:autoPoundSign="true"
+                    android:itemMaxLengthOverMent="The tag is too long."
+                    android:itemMaxCountOverMent="Too many tags."
+                    />-->
             </LinearLayout>
 
             <LinearLayout

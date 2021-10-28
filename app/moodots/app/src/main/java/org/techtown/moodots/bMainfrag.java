@@ -130,6 +130,8 @@ public class bMainfrag extends Fragment implements OnBackPressedListener{
 
     private void initUI(ViewGroup rootView){
         ConstraintLayout layout=(ConstraintLayout) rootView.findViewById(R.id.clocklayout);
+        TextView moodtime=rootView.findViewById(R.id.moodtime);
+        TextView moodtext=rootView.findViewById(R.id.moodtext);
         TextView textView=rootView.findViewById(R.id.datemain);
         textView.setText(getDate());
         AnalogClock clock= rootView.findViewById(R.id.clock);
@@ -153,28 +155,44 @@ public class bMainfrag extends Fragment implements OnBackPressedListener{
                 Diary item = adapter.getItem(position);
                 switch(item.mood){
                     case 1:
-                        iv.setImageResource(R.drawable.angry);
+                        iv.setImageResource(R.drawable.angry_main_foreground);
+                        moodtime.setText(item.time);
+                        moodtext.setText("분노");
                         break;
                     case 2:
-                        iv.setImageResource(R.drawable.joy);
+                        iv.setImageResource(R.drawable.joy_main_foreground);
+                        moodtime.setText(item.time);
+                        moodtext.setText("기쁨");
                         break;
                     case 3:
-                        iv.setImageResource(R.drawable.fear);
+                        iv.setImageResource(R.drawable.fear_main_foreground);
+                        moodtime.setText(item.time);
+                        moodtext.setText("두려움");
                         break;
                     case 4:
-                        iv.setImageResource(R.drawable.sad);
+                        iv.setImageResource(R.drawable.sad_main_foreground);
+                        moodtime.setText(item.time);
+                        moodtext.setText("슬픔");
                         break;
                     case 5:
-                        iv.setImageResource(R.drawable.disgust);
+                        iv.setImageResource(R.drawable.disgust_main_foreground);
+                        moodtime.setText(item.time);
+                        moodtext.setText("혐오");
                         break;
                     case 6:
-                        iv.setImageResource(R.drawable.surprise);
+                        iv.setImageResource(R.drawable.surprise_main_foreground);
+                        moodtime.setText(item.time);
+                        moodtext.setText("놀람");
                         break;
                     case 7:
-                        iv.setImageResource(R.drawable.neutral);
+                        iv.setImageResource(R.drawable.neutral_main_foreground);
+                        moodtime.setText(item.time);
+                        moodtext.setText("중립");
                         break;
                 }
                 iv.bringToFront();
+                moodtime.bringToFront();
+                moodtext.bringToFront();
             }
         });
         adapter.setOnItemLongClickListener(new OnItemLongClickListener() {
@@ -248,7 +266,7 @@ public class bMainfrag extends Fragment implements OnBackPressedListener{
     public int loadDiaryListData(){
         println("loadNoteLIstData called.");
         String curdate=getDate();
-        String sql = "SELECT _id, MOOD, CONTENTS, HASHCONTENTS, CHECKMOD, DATE, TIME FROM " +DiaryDatabase.TABLE_DIARY +" ORDER BY DATE DESC;";
+        String sql = "SELECT _id, MOOD, CONTENTS, HASHCONTENTS, CHECKMOD, DATE, TIME FROM " +DiaryDatabase.TABLE_DIARY +" ORDER BY _id DESC;";
         int recordCount= -1;
         DiaryDatabase database = DiaryDatabase.getInstance(context);
         if (database != null) {

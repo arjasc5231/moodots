@@ -11,11 +11,20 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.charts.ScatterChart;
+import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
+import com.github.mikephil.charting.data.ScatterData;
+import com.github.mikephil.charting.data.ScatterDataSet;
+import com.github.mikephil.charting.interfaces.datasets.IScatterDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
 import org.checkerframework.checker.units.qual.A;
@@ -26,6 +35,7 @@ import java.util.Date;
 
 public class cdayfragment extends Fragment {
     PieChart pieChart;
+    ScatterChart scatterChart;
     Context context;
     aMain activity;
     @Override
@@ -52,6 +62,7 @@ public class cdayfragment extends Fragment {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_day,container,false);
         ArrayList<Integer> percent= bringdata();
         piechart(rootView, percent);
+        scatterchart(rootView);
         return rootView;
     }
     public ArrayList<Integer> bringdata(){
@@ -89,7 +100,14 @@ public class cdayfragment extends Fragment {
         return percent;
     }
     public void piechart(ViewGroup rootView, ArrayList<Integer> percent){
-        pieChart=(PieChart) rootView.findViewById(R.id.piechart);
+        TextView angry= rootView.findViewById(R.id.angry);
+        TextView joy= rootView.findViewById(R.id.joy);
+        TextView fear= rootView.findViewById(R.id.fear);
+        TextView sad= rootView.findViewById(R.id.sad);
+        TextView disgust= rootView.findViewById(R.id.disgust);
+        TextView surprise= rootView.findViewById(R.id.surprise);
+        TextView neutral= rootView.findViewById(R.id.neutral);
+        pieChart=rootView.findViewById(R.id.piechart);
         pieChart.setUsePercentValues(true);
         pieChart.getDescription().setEnabled(false);
         pieChart.setExtraOffsets(5,10,5,5);
@@ -97,11 +115,21 @@ public class cdayfragment extends Fragment {
         pieChart.setDrawHoleEnabled(true); //차트 가운데 구멍을 넣을것인지
         pieChart.setHoleColor(Color.WHITE); //그 가운데 구멍의 색 결정
         pieChart.setTransparentCircleRadius(0f);
+        Legend l = pieChart.getLegend();
+        l.setEnabled(false);
         int[] moodlist=new int[7];
         for(int i=0;i<percent.size();i++){
             int p=percent.get(i)-1;
             moodlist[p]+=1;
         }
+        angry.setText("화남:"+moodlist[0]+"회");
+        joy.setText("공포:"+moodlist[1]+"회");
+        fear.setText("두려움:"+moodlist[2]+"회");
+        sad.setText("슬픔:"+moodlist[3]+"회");
+        disgust.setText("혐오:"+moodlist[4]+"회");
+        surprise.setText("놀람:"+moodlist[5]+"회");
+        neutral.setText("중립:"+moodlist[6]+"회");
+
         ArrayList<Integer> colorset=new ArrayList<Integer>();
         ArrayList<PieEntry> yValues = new ArrayList<PieEntry>();
         if(moodlist[0]!=0) {
@@ -118,7 +146,7 @@ public class cdayfragment extends Fragment {
         }
         if(moodlist[3]!=0) {
             yValues.add(new PieEntry(moodlist[3], "Sad"));
-            colorset.add(Color.parseColor("#EF534E"));
+            colorset.add(Color.parseColor("#2196F3"));
         }
         if(moodlist[4]!=0) {
             yValues.add(new PieEntry(moodlist[4], "Disgust"));
@@ -132,9 +160,9 @@ public class cdayfragment extends Fragment {
             yValues.add(new PieEntry(moodlist[6], "Neutral"));
             colorset.add(Color.parseColor("#A1A3A1"));
         }
-        PieDataSet dataSet = new PieDataSet(yValues,"Mood");
+        PieDataSet dataSet = new PieDataSet(yValues,"");
         dataSet.setSliceSpace(3f);
-        //dataSet.setSelectionShift(5f);
+        dataSet.setSelectionShift(0f);
         dataSet.setColors(colorset);
 
         PieData data = new PieData((dataSet));
@@ -142,5 +170,68 @@ public class cdayfragment extends Fragment {
         data.setValueTextColor(Color.BLACK);
 
         pieChart.setData(data);
+    }
+    public void scatterchart(ViewGroup rootView){
+        scatterChart = rootView.findViewById(R.id.scatterchart);
+        scatterChart.getDescription().setEnabled(false);
+        scatterChart.setDrawGridBackground(false);
+        scatterChart.setTouchEnabled(true);
+        scatterChart.setMaxHighlightDistance(0f);
+        scatterChart.setHighlightPerTapEnabled(false);
+        // enable scaling and dragging
+        scatterChart.setDragEnabled(true);
+        scatterChart.setScaleYEnabled(true);
+        scatterChart.setScaleXEnabled(false);
+        scatterChart.setDoubleTapToZoomEnabled(false);
+        scatterChart.setMaxVisibleValueCount(999999999);
+        scatterChart.setPinchZoom(false);
+
+        /*Legend l = scatterChart.getLegend();
+        l.setEnabled(false);
+        l.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
+        l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.RIGHT);
+        l.setOrientation(Legend.LegendOrientation.VERTICAL);
+        l.setDrawInside(false);
+        //l.setTypeface(tfLight);
+        l.setXOffset(5f);*/
+
+        YAxis yl = scatterChart.getAxisLeft();
+        //yl.setTypeface(tfLight);
+        yl.setDrawGridLines(false);
+        yl.setAxisMinimum(0f);// this replaces setStartAtZero(true)
+
+        scatterChart.getAxisRight().setEnabled(false);
+        XAxis xl = scatterChart.getXAxis();
+        //xl.setTypeface(tfLight);
+        xl.setDrawGridLines(false);
+        yl.setInverted(true);
+
+        ArrayList<Entry> yValues = new ArrayList<>();
+        yValues.add(new Entry(1,3));
+        yValues.add(new Entry(1,30));
+        yValues.add(new Entry(1,40));
+        yValues.add(new Entry(1,300));
+        yValues.add(new Entry(2,8));
+        yValues.add(new Entry(3,9));
+        yValues.add(new Entry(4,10));
+        yValues.add(new Entry(5,4));
+        yValues.add(new Entry(6,6));
+        yValues.add(new Entry(7,15));
+        ScatterDataSet dataSet = new ScatterDataSet(yValues,"Mood");
+        dataSet.setScatterShape(ScatterChart.ScatterShape.CIRCLE);
+        int[] colorset={0Xef534e,0Xffee58,0X9c27b0 };
+        dataSet.setColor(ColorTemplate.COLORFUL_COLORS[0]);
+        dataSet.setScatterShapeSize(20);
+
+        ArrayList<IScatterDataSet> dataSets = new ArrayList<>();
+        dataSets.add(dataSet); // add the data sets
+        //dataSet.setColors(ColorTemplate.JOYFUL_COLORS);
+
+        ScatterData data = new ScatterData(dataSets);
+        //data.setValueTextSize(10f);
+        //data.setValueTextColor(Color.BLACK);
+        scatterChart.animateY(3000);
+        scatterChart.setData(data);
+
     }
 }

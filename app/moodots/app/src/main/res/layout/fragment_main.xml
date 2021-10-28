@@ -111,12 +111,35 @@
                 android:id="@+id/moodindicate"
                 android:layout_width="210dp"
                 android:layout_height="210dp"
+                android:backgroundTint="@color/white"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                android:src="@drawable/angry"
+                android:src="@drawable/angry_main_foreground"
                 />
+
+            <TextView
+                android:id="@+id/moodtime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="PM 00:00"
+                android:textSize="25sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/moodtext"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="분노"
+                app:layout_constraintBottom_toTopOf="@+id/moodtime"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/clock"
+                app:layout_constraintVertical_bias="0.642" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.recyclerview.widget.RecyclerView
