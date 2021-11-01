@@ -123,7 +123,7 @@ public class cdayfragment extends Fragment {
             moodlist[p]+=1;
         }
         angry.setText("화남:"+moodlist[0]+"회");
-        joy.setText("공포:"+moodlist[1]+"회");
+        joy.setText("기쁨:"+moodlist[1]+"회");
         fear.setText("두려움:"+moodlist[2]+"회");
         sad.setText("슬픔:"+moodlist[3]+"회");
         disgust.setText("혐오:"+moodlist[4]+"회");

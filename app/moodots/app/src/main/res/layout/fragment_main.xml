@@ -150,7 +150,8 @@
             app:layout_constraintBottom_toTopOf="@+id/buttonlayout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/clocklayout">
+            app:layout_constraintTop_toBottomOf="@+id/clocklayout"
+            android:scrollbars="horizontal">
 
         </androidx.recyclerview.widget.RecyclerView>
 

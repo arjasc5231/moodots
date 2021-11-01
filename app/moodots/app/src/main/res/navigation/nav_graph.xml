@@ -19,7 +19,7 @@
     </fragment>
     <fragment
         android:id="@+id/blankFragment"
-        android:name="org.techtown.moodots.BlankFragment"
+        android:name="org.techtown.moodots.bBlankFragment"
         android:label="fragment_blank"
         tools:layout="@layout/fragment_blank" >
         <action

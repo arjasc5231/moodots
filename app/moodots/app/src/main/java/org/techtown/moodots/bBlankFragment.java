@@ -1,14 +1,21 @@
 package org.techtown.moodots;
 
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
+import android.database.Cursor;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.text.Editable;
+import android.text.Html;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
@@ -23,11 +30,12 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
 
-public class BlankFragment extends Fragment implements OnBackPressedListener{
+public class bBlankFragment extends Fragment implements OnBackPressedListener{
     private static final String TAG = "blankfragment";
     Context context;
     OnTabItemSelectedListener listener;
@@ -48,6 +56,8 @@ public class BlankFragment extends Fragment implements OnBackPressedListener{
     int checkmod;
     String datecall="";
     String timecall="";
+    RecyclerView recyclerView;
+    DiaryAdapter_blank adapter;
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -73,6 +83,7 @@ public class BlankFragment extends Fragment implements OnBackPressedListener{
                              Bundle savedInstanceState) {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_blank,container,false);
         initUI(rootView);
+        loadDiaryListData();
         return rootView;
     }
 
@@ -132,6 +143,43 @@ public class BlankFragment extends Fragment implements OnBackPressedListener{
             }
             @Override
             public void afterTextChanged(Editable s) {
+            }
+        });
+        recyclerView = rootView.findViewById(R.id.recyclerView);
+        //LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+        //layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+        GridLayoutManager layoutManager = new GridLayoutManager(getContext(),1);
+        layoutManager.setOrientation(GridLayoutManager.HORIZONTAL);
+        recyclerView.setLayoutManager(layoutManager);
+        adapter = new DiaryAdapter_blank();
+        recyclerView.setAdapter(adapter);
+        adapter.setOnblankItemClickListener(new OnDiaryblankItemClickListener() {
+            @Override
+            public void onBlankItemClick(DiaryAdapter_blank.ViewHolder holder, View view, int position) {
+                // 새로 추가할 imageView 생성
+                Diary item = adapter.getItem(position);
+                Toast temp =Toast.makeText(getContext(), "누르는거 확인", Toast.LENGTH_SHORT);
+                temp.show();
+            }
+        });
+        adapter.setOnblankItemLongClickListener(new OnblankItemLongClickListener() {
+            @Override
+            public void onBlankItemLongClick(DiaryAdapter_blank.ViewHolder holder, View view, int position) {
+                Diary item = adapter.getItem(position);
+                Bundle result = new Bundle();
+                result.putInt("bundleKey0", item._id);
+                result.putInt("bundleKey", 2);
+                result.putInt("bundleKey2", item.mood);
+                result.putString("bundleKey3",item.contents);
+                result.putString("bundleKey4",item.hashcontents);
+                result.putInt("bundleKey5", item.checkmod);
+                result.putString("bundleKey6",item.date);
+                result.putString("bundleKey7", item.time);
+                FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+                bBlankFragment blankfragment = new bBlankFragment();//프래그먼트2 선언
+                blankfragment.setArguments(result);//번들을 프래그먼트2로 보낼 준비
+                transaction.replace(R.id.container, blankfragment);
+                transaction.commit();
             }
         });
         if (getArguments() != null)
@@ -382,20 +430,19 @@ public class BlankFragment extends Fragment implements OnBackPressedListener{
                     final Calendar c = Calendar.getInstance();
                     int mYear = c.get(Calendar.YEAR);
                     int mMonth = c.get(Calendar.MONTH);
-                    int mDay = c.get(Calendar.DAY_OF_MONTH);
+
+                    /*int mDay = c.get(Calendar.DAY_OF_MONTH);
                     DatePickerDialog datePickerDialog = new DatePickerDialog(context, new DatePickerDialog.OnDateSetListener() {
                         @Override
                         public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                             try {
                                 Date indate = zAppConstants.dateFormat5.parse(year + "-" + (month + 1) + "-" + dayOfMonth);
                                 String day= zAppConstants.dateFormat5.format(indate);
-                                date.setText(day);
-                            }catch(Exception e){
                                 e.printStackTrace();
                             }
                         }
                     }, mYear, mMonth, mDay);
-                    datePickerDialog.show();
+                    datePickerDialog.show();*/
                 }
             });
             time.setOnClickListener(new View.OnClickListener() {
@@ -543,5 +590,66 @@ public class BlankFragment extends Fragment implements OnBackPressedListener{
         Date date = new Date(now);
         String getTime = zAppConstants.dateFormat6.format(date);
         return getTime;
+    }
+    public int loadDiaryListData(){
+        String curdate=getDate();
+        String sql = "SELECT _id, MOOD, CONTENTS, HASHCONTENTS, CHECKMOD, DATE, TIME FROM " +DiaryDatabase.TABLE_DIARY +" ORDER BY _id DESC;";
+        int recordCount= -1;
+        DiaryDatabase database = DiaryDatabase.getInstance(context);
+        if (database != null) {
+            Log.d(TAG, sql);
+            Cursor outCursor = database.rawQuery(sql);
+
+            recordCount = outCursor.getCount();
+            zAppConstants.println("record count : " + recordCount + "\n");
+
+            ArrayList<Diary> items = new ArrayList<Diary>();
+
+            for (int i = 0; i < recordCount; i++) {
+                outCursor.moveToNext();
+
+                int _id = outCursor.getInt(0);
+                int mood = outCursor.getInt(1);
+                String contents = outCursor.getString(2);
+                String hashcontents = outCursor.getString(3);
+                int checkmod= outCursor.getInt(4);
+                String date = outCursor.getString(5);
+                String time = outCursor.getString(6);
+                if(date.equals(curdate)) {
+                    if (date != null && date.length() > 6) {
+                        try {
+                            Date inDate = zAppConstants.dateFormat5.parse(date);
+                            date = zAppConstants.dateFormat5.format(inDate);
+
+                            Log.d(TAG, "sdate" + date);
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        date = "";
+                    }
+                    if (time != null && time.length() > 2) {
+                        try {
+                            Date inTime = zAppConstants.dateFormat6.parse(time);
+                            time = zAppConstants.dateFormat6.format(inTime);
+                            Log.d(TAG, "stime" + time);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        time = "";
+                    }
+                    items.add(new Diary(_id, mood, contents, hashcontents, checkmod, date, time));
+                }
+            }
+
+            outCursor.close();
+
+            adapter.setItems(items);
+            adapter.notifyDataSetChanged();
+        }
+
+        return recordCount;
     }
 }

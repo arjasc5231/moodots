@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -20,7 +21,6 @@ import android.view.ViewGroup;
 import android.widget.AnalogClock;
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -145,6 +145,8 @@ public class bMainfrag extends Fragment implements OnBackPressedListener{
         });
         recyclerView = rootView.findViewById(R.id.recyclerView);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+        //layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+        //GridLayoutManager layoutManager = new GridLayoutManager(getContext(),2);
         recyclerView.setLayoutManager(layoutManager);
         adapter = new DiaryAdapter();
         recyclerView.setAdapter(adapter);
@@ -211,7 +213,7 @@ public class bMainfrag extends Fragment implements OnBackPressedListener{
                 println("active here"+item.date);
                 result.putString("bundleKey7", item.time);
                 FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
-                BlankFragment blankfragment = new BlankFragment();//프래그먼트2 선언
+                bBlankFragment blankfragment = new bBlankFragment();//프래그먼트2 선언
                 blankfragment.setArguments(result);//번들을 프래그먼트2로 보낼 준비
                 transaction.replace(R.id.container, blankfragment);
                 transaction.commit();
@@ -321,7 +323,6 @@ public class bMainfrag extends Fragment implements OnBackPressedListener{
 
             adapter.setItems(items);
             adapter.notifyDataSetChanged();
-
         }
 
         return recordCount;
