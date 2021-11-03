@@ -25,6 +25,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.Toolbar;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,7 +39,9 @@ public class bMainfrag extends Fragment implements OnBackPressedListener{
     Context context;
     OnTabItemSelectedListener listener;
     aMain activity;
-
+    ImageButton playerbutton;
+    private MediaPlayer mediaPlayer = null;
+    private Boolean isPlaying = false;
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -139,6 +142,7 @@ public class bMainfrag extends Fragment implements OnBackPressedListener{
         TextView moodtext=rootView.findViewById(R.id.moodtext);
         TextView textView=rootView.findViewById(R.id.datemain);
         textView.setText(getDate());
+
         AnalogClock clock= rootView.findViewById(R.id.clock);
         clock.bringToFront();
         ImageButton iv = rootView.findViewById(R.id.moodindicate);
@@ -155,7 +159,35 @@ public class bMainfrag extends Fragment implements OnBackPressedListener{
         recyclerView.setLayoutManager(layoutManager);
         adapter = new DiaryAdapter();
         recyclerView.setAdapter(adapter);
-
+        adapter.setOnButtonClickListener(new OnDiaryButtonClickListener() {
+            @Override
+            public void onButtonClick(DiaryAdapter.ViewHolder holder, View view, int position) {
+                Diary item = adapter.getItem(position);
+                if(!item.getVoice().isEmpty()) {
+                    File file = new File(item.getVoice());
+                    if (isPlaying) {
+                        // 음성 녹화 파일이 여러개를 클릭했을 때 재생중인 파일의 Icon을 비활성화(비 재생중)으로 바꾸기 위함.
+                        if (playerbutton == (ImageButton) view) {
+                            // 같은 파일을 클릭했을 경우
+                            stopAudio(1);
+                        } else {
+                            // 다른 음성 파일을 클릭했을 경우
+                            // 기존의 재생중인 파일 중지
+                            stopAudio(1);
+                            // 새로 파일 재생하기
+                            playerbutton = (ImageButton) view;
+                            playAudio(file);
+                        }
+                    } else {
+                        playerbutton = (ImageButton) view;
+                        playAudio(file);
+                    }
+                }
+                else{
+                    Toast.makeText(getContext(),"녹음 파일이 없습니다.",Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
         adapter.setOnItemClickListener(new OnDiaryItemClickListener() {
             @Override
             public void onItemClick(DiaryAdapter.ViewHolder holder, View view, int position) {
@@ -235,6 +267,7 @@ public class bMainfrag extends Fragment implements OnBackPressedListener{
                 if (listener != null) {
                     Toast.makeText(getContext(), "no ", Toast.LENGTH_SHORT).show();
                 }
+                stopAudio(0);
                 activity.replaceFragment(2);
             }
         });
@@ -245,6 +278,7 @@ public class bMainfrag extends Fragment implements OnBackPressedListener{
                 if (listener != null) {
                     Toast.makeText(getContext(), "no ", Toast.LENGTH_SHORT).show();
                 }
+                stopAudio(0);
                 activity.replaceFragment(3);
             }
         });
@@ -255,6 +289,7 @@ public class bMainfrag extends Fragment implements OnBackPressedListener{
                 if (listener != null) {
                     Toast.makeText(getContext(), "no ", Toast.LENGTH_SHORT).show();
                 }
+                stopAudio(0);
                 activity.replaceFragment(4);
             }
         });
@@ -268,6 +303,7 @@ public class bMainfrag extends Fragment implements OnBackPressedListener{
                 Bundle result = new Bundle();
                 result.putInt("bundleKey", 1);
                 getParentFragmentManager().setFragmentResult("requestKey", result);
+                stopAudio(0);
                 activity.replaceFragment(0);
             }
         });
@@ -345,6 +381,40 @@ public class bMainfrag extends Fragment implements OnBackPressedListener{
         Date date = new Date(now);
         String getDate = zAppConstants.dateFormat5.format(date);
         return getDate;
+    }
+
+    private void playAudio(File file) {
+        mediaPlayer = new MediaPlayer();
+
+        try {
+            mediaPlayer.setDataSource(file.getAbsolutePath());
+            mediaPlayer.prepare();
+            mediaPlayer.start();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        isPlaying = true;
+        playerbutton.setImageResource(R.drawable.ic_audio_pause);
+        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                stopAudio(1);
+            }
+        });
+
+    }
+
+    // 녹음 파일 중지
+    private void stopAudio(int mode) {
+        if(mode ==1){
+            playerbutton.setImageResource(R.drawable.ic_audio_play);
+        }
+        //playerbutton.setImageResource(R.drawable.ic_audio_play);
+        if(isPlaying==true){
+            isPlaying = false;
+            mediaPlayer.stop();
+        }
     }
 
 }

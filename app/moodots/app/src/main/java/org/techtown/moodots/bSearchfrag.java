@@ -1,24 +1,55 @@
 package org.techtown.moodots;
 
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.database.Cursor;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.DatePicker;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.charts.ScatterChart;
+import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.PieData;
+import com.github.mikephil.charting.data.PieDataSet;
+import com.github.mikephil.charting.data.PieEntry;
+import com.github.mikephil.charting.data.ScatterData;
+import com.github.mikephil.charting.data.ScatterDataSet;
+import com.github.mikephil.charting.interfaces.datasets.IScatterDataSet;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Iterator;
 
 
 public class bSearchfrag extends Fragment implements OnBackPressedListener{
     aMain activity;
     Context context;
     OnTabItemSelectedListener listener;
+    PieChart pieChart;
+    ScatterChart scatterChart;
+    Button btnkeywordPicker;
+    String temp;
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -44,7 +75,20 @@ public class bSearchfrag extends Fragment implements OnBackPressedListener{
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_search,container,false);
+        ArrayList<Diary> first=loadfirstdata();
+        HashSet<String> hash=new HashSet<>();
+        for(int i=0;i<first.size();i++){
+            String hashtotal=first.get(i).getHashcontents();
+            String[] hashlist=hashtotal.split("#");
+            for(int j=0; j<hashlist.length;j++){
+                if(!hashlist[j].trim().isEmpty()) {
+                    hash.add(hashlist[j]);
+                    zAppConstants.println("hash"+hashlist[j]);
+                }
+            }
+        }
         buttonUI(rootView);
+        initUI(rootView, hash);
         return rootView;
     }
     private void buttonUI(ViewGroup rootView){
@@ -120,5 +164,381 @@ public class bSearchfrag extends Fragment implements OnBackPressedListener{
     public void onResume() {
         super.onResume();
         activity.setOnBackPressedListener(this);
+    }
+    public void initUI(ViewGroup rootView, HashSet hashSet){
+        Iterator<String> iter= hashSet.iterator();
+        String hash= new String();
+
+        if(iter.hasNext()){
+            hash=iter.next();
+            ArrayList<Diary> percent= bringdata(hash);
+            scatterchart(rootView, percent);
+            piechart(rootView, percent);
+        }
+        iter=hashSet.iterator();
+        String[] hashlist=new String[hashSet.size()];
+        for(int j=0; iter.hasNext();j++){
+            hashlist[j]=iter.next();
+        }
+        btnkeywordPicker = rootView.findViewById(R.id.keywordpick);
+        btnkeywordPicker.setText(hash);
+        btnkeywordPicker.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder keydialog = new AlertDialog.Builder(getContext());
+                keydialog.setSingleChoiceItems(hashlist, 0, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        temp=hashlist[which];
+                    }
+                })
+                .setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        btnkeywordPicker.setText(temp);
+                        ArrayList<Diary> percent= bringdata(temp);
+                        scatterchart(rootView, percent);
+                        piechart(rootView, percent);
+                    }
+                })
+                .setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+                keydialog.create();
+                keydialog.show();
+            }
+        });
+    }
+    public ArrayList<Diary> bringdata(String hash){
+        ArrayList<Diary> percent=new ArrayList<Diary>();
+        String sql = "SELECT _id, MOOD, CONTENTS, HASHCONTENTS, CHECKMOD, DATE, TIME, VOICE FROM " +DiaryDatabase.TABLE_DIARY +" WHERE HASHCONTENTS LIKE '%"+hash+"%' ORDER BY DATE DESC;";
+        int recordCount= -1;
+        DiaryDatabase database = DiaryDatabase.getInstance(context);
+        if (database != null) {
+            Cursor outCursor = database.rawQuery(sql);
+            recordCount = outCursor.getCount();
+            zAppConstants.println("record count : " + recordCount + "\n");
+            for (int i = 0; i < recordCount; i++) {
+                outCursor.moveToNext();
+                int _id = outCursor.getInt(0);
+                int mood = outCursor.getInt(1);
+                String contents = outCursor.getString(2);
+                String hashcontents = outCursor.getString(3);
+                int checkmod= outCursor.getInt(4);
+                String date = outCursor.getString(5);
+                String time = outCursor.getString(6);
+                String voice = outCursor.getString(7);
+                if (date != null && date.length() > 6) {
+                    try {
+                        Date inDate = zAppConstants.dateFormat5.parse(date);
+                        date = zAppConstants.dateFormat5.format(inDate);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    date = "";
+                }
+                if (time != null && time.length() > 2) {
+                    try {
+                        Date inTime = zAppConstants.dateFormat6.parse(time);
+                        time = zAppConstants.dateFormat6.format(inTime);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    time = "";
+                }
+                percent.add(new Diary(_id, mood, contents, hashcontents, checkmod, date, time, voice));
+
+            }
+            outCursor.close();
+        }
+        return percent;
+    }
+    public ArrayList<Diary> loadfirstdata(){
+        ArrayList<Diary> percent=new ArrayList<Diary>();
+        String sql = "SELECT _id, MOOD, CONTENTS, HASHCONTENTS, CHECKMOD, DATE, TIME, VOICE FROM " +DiaryDatabase.TABLE_DIARY +" ORDER BY DATE DESC;";
+        int recordCount= -1;
+        DiaryDatabase database = DiaryDatabase.getInstance(context);
+        if (database != null) {
+            Cursor outCursor = database.rawQuery(sql);
+            recordCount = outCursor.getCount();
+            zAppConstants.println("record count : " + recordCount + "\n");
+            for (int i = 0; i < recordCount; i++) {
+                outCursor.moveToNext();
+                int _id = outCursor.getInt(0);
+                int mood = outCursor.getInt(1);
+                String contents = outCursor.getString(2);
+                String hashcontents = outCursor.getString(3);
+                int checkmod= outCursor.getInt(4);
+                String date = outCursor.getString(5);
+                String[] datecut= date.split("-");
+                String time = outCursor.getString(6);
+                String voice = outCursor.getString(7);
+                if (date != null && date.length() > 6) {
+                    try {
+                        Date inDate = zAppConstants.dateFormat5.parse(date);
+                        date = zAppConstants.dateFormat5.format(inDate);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    date = "";
+                }
+                if (time != null && time.length() > 2) {
+                    try {
+                        Date inTime = zAppConstants.dateFormat6.parse(time);
+                        time = zAppConstants.dateFormat6.format(inTime);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    time = "";
+                }
+                percent.add(new Diary(_id, mood, contents, hashcontents, checkmod, date, time, voice));
+
+            }
+            outCursor.close();
+        }
+        return percent;
+    }
+    public void piechart(ViewGroup rootView, ArrayList<Diary> percent){
+        TextView angry= rootView.findViewById(R.id.angry);
+        TextView joy= rootView.findViewById(R.id.joy);
+        TextView fear= rootView.findViewById(R.id.fear);
+        TextView sad= rootView.findViewById(R.id.sad);
+        TextView disgust= rootView.findViewById(R.id.disgust);
+        TextView surprise= rootView.findViewById(R.id.surprise);
+        TextView neutral= rootView.findViewById(R.id.neutral);
+        pieChart=rootView.findViewById(R.id.piechart);
+        pieChart.setUsePercentValues(true);
+        pieChart.getDescription().setEnabled(false);
+        pieChart.setExtraOffsets(5,10,5,5);
+        pieChart.setDragDecelerationFrictionCoef(0f);
+        pieChart.setDrawHoleEnabled(true); //차트 가운데 구멍을 넣을것인지
+        pieChart.setHoleColor(Color.WHITE); //그 가운데 구멍의 색 결정
+        pieChart.setTransparentCircleRadius(0f);
+        pieChart.setRotationEnabled(false);
+        pieChart.animateY(2000);
+        Legend l = pieChart.getLegend();
+        l.setEnabled(false);
+        int[] moodlist=new int[7];
+        for(int i=0;i<percent.size();i++){
+            int p=percent.get(i).getMood()-1;
+            moodlist[p]+=1;
+        }
+        angry.setText("화남:"+moodlist[0]+"회");
+        joy.setText("기쁨:"+moodlist[1]+"회");
+        fear.setText("두려움:"+moodlist[2]+"회");
+        sad.setText("슬픔:"+moodlist[3]+"회");
+        disgust.setText("혐오:"+moodlist[4]+"회");
+        surprise.setText("놀람:"+moodlist[5]+"회");
+        neutral.setText("중립:"+moodlist[6]+"회");
+
+        ArrayList<Integer> colorset=new ArrayList<Integer>();
+        ArrayList<PieEntry> yValues = new ArrayList<PieEntry>();
+
+        if(moodlist[0]!=0) {
+            yValues.add(new PieEntry(moodlist[0], "Angry"));
+            colorset.add(Color.parseColor("#EF534E"));
+        }
+        if(moodlist[1]!=0) {
+            yValues.add(new PieEntry(moodlist[1], "Joy"));
+            colorset.add(Color.parseColor("#FFEE58"));
+        }
+        if(moodlist[2]!=0) {
+            yValues.add(new PieEntry(moodlist[2], "Fear"));
+            colorset.add(Color.parseColor("#66BB6A"));
+        }
+        if(moodlist[3]!=0) {
+            yValues.add(new PieEntry(moodlist[3], "Sad"));
+            colorset.add(Color.parseColor("#2196F3"));
+        }
+        if(moodlist[4]!=0) {
+            yValues.add(new PieEntry(moodlist[4], "Disgust"));
+            colorset.add(Color.parseColor("#9C27B0"));
+        }
+        if(moodlist[5]!=0) {
+            yValues.add(new PieEntry(moodlist[5], "Surprise"));
+            colorset.add(Color.parseColor("#FFA726"));
+        }
+        if(moodlist[6]!=0) {
+            yValues.add(new PieEntry(moodlist[6], "Neutral"));
+            colorset.add(Color.parseColor("#A1A3A1"));
+        }
+        PieDataSet dataSet = new PieDataSet(yValues,"");
+        dataSet.setSliceSpace(0f);
+        dataSet.setSelectionShift(0f);
+        dataSet.setColors(colorset);
+        pieChart.setEntryLabelColor(Color.BLACK);
+        PieData data = new PieData((dataSet));
+        data.setValueTextSize(15f);
+        data.setValueTextColor(Color.BLACK);
+        double temp=0;
+        if((moodlist[0]+moodlist[1]+moodlist[2]+moodlist[3]+moodlist[4]+moodlist[5]+moodlist[6])==0){
+            pieChart.setCenterText("작성된 일기가 없습니다.");
+        }
+        else{
+            temp= Math.round(((float) moodlist[0]/(moodlist[0]+moodlist[1]+moodlist[2]+moodlist[3]+moodlist[4]+moodlist[5]+moodlist[6]))*100*100)/100.0;
+            pieChart.setCenterText(Html.fromHtml("화남"+"<br />"+(temp)+"%"));
+        }
+        pieChart.setData(data);
+    }
+    public void scatterchart(ViewGroup rootView, ArrayList<Diary> percent){
+        scatterChart = rootView.findViewById(R.id.scatterchart);
+        scatterChart.getDescription().setEnabled(false);
+        scatterChart.setDrawGridBackground(false);
+        scatterChart.setTouchEnabled(true);
+        scatterChart.setMaxHighlightDistance(0f);
+        scatterChart.setHighlightPerTapEnabled(false);
+        // enable scaling and dragging
+        scatterChart.setDragEnabled(true);
+        scatterChart.setScaleYEnabled(true);
+        scatterChart.setScaleXEnabled(false);
+        scatterChart.setDoubleTapToZoomEnabled(false);
+        scatterChart.setMaxVisibleValueCount(999999999);
+        scatterChart.setPinchZoom(false);
+
+        Legend l = scatterChart.getLegend();
+        l.setEnabled(false);
+        /*l.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
+        l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.RIGHT);
+        l.setOrientation(Legend.LegendOrientation.VERTICAL);
+        l.setDrawInside(false);
+        //l.setTypeface(tfLight);
+        l.setXOffset(5f);*/
+
+        YAxis yl = scatterChart.getAxisLeft();
+        //yl.setTypeface(tfLight);
+        yl.setDrawGridLines(false);
+        yl.setAxisMinimum(-2f);// this replaces setStartAtZero(true)
+        yl.setAxisMaximum(26f);
+        yl.setGranularityEnabled(true);
+        yl.setGranularity(1f);
+        yl.setInverted(true);
+
+        scatterChart.getAxisRight().setEnabled(false);
+        XAxis xl = scatterChart.getXAxis();
+        xl.setAxisMinimum(-1f);
+        xl.setAxisMaximum(32f);
+        //xl.setTypeface(tfLight);
+        xl.setDrawGridLines(false);
+
+
+        ArrayList<Entry> angry = new ArrayList<>();
+        ArrayList<Entry> joy = new ArrayList<>();
+        ArrayList<Entry> fear = new ArrayList<>();
+        ArrayList<Entry> sad = new ArrayList<>();
+        ArrayList<Entry> disgust = new ArrayList<>();
+        ArrayList<Entry> surprise = new ArrayList<>();
+        ArrayList<Entry> neutral = new ArrayList<>();
+        for(int i=0;i<percent.size();i++){
+            int p=percent.get(i).getMood();
+            String[] date=percent.get(i).getDate().split("-");
+            String[] time=percent.get(i).getTime().split(":");
+            int dateint=0;
+            int timeint1=0;
+            int timeint2=0;
+            try {
+                dateint=Integer.parseInt(date[2],10);
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+            try {
+                timeint1=Integer.parseInt(time[0],10);
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+            try {
+                timeint2=Integer.parseInt(time[1],10);
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+            switch (p){
+                case 1:
+                    angry.add(new Entry(dateint,(float)(timeint1+timeint2/60.0)));
+                    break;
+                case 2:
+                    joy.add(new Entry(dateint,(float)(timeint1+timeint2/60.0)));
+                    break;
+                case 3:
+                    fear.add(new Entry(dateint,(float)(timeint1+timeint2/60.0)));
+                    break;
+                case 4:
+                    sad.add(new Entry(dateint,(float)(timeint1+timeint2/60.0)));
+                    break;
+                case 5:
+                    disgust.add(new Entry(dateint,(float)(timeint1+timeint2/60.0)));
+                    break;
+                case 6:
+                    surprise.add(new Entry(dateint,(float)(timeint1+timeint2/60.0)));
+                    break;
+                case 7:
+                    neutral.add(new Entry(dateint,(float)(timeint1+timeint2/60.0)));
+                    break;
+            }
+        }
+        ScatterDataSet dataSet1 = new ScatterDataSet(angry,"angry");
+        dataSet1.setScatterShape(ScatterChart.ScatterShape.CIRCLE);
+        dataSet1.setColor(Color.parseColor("#EF534E"));
+        dataSet1.setScatterShapeSize(50);
+        dataSet1.setDrawValues(false);
+
+        ScatterDataSet dataSet2 = new ScatterDataSet(joy,"joy");
+        dataSet2.setScatterShape(ScatterChart.ScatterShape.CIRCLE);
+        dataSet2.setColor(Color.parseColor("#FFEE58"));
+        dataSet2.setScatterShapeSize(50);
+        dataSet2.setDrawValues(false);
+
+        ScatterDataSet dataSet3 = new ScatterDataSet(fear,"fear");
+        dataSet3.setScatterShape(ScatterChart.ScatterShape.CIRCLE);
+        dataSet3.setColor(Color.parseColor("#66BB6A"));
+        dataSet3.setScatterShapeSize(50);
+        dataSet3.setDrawValues(false);
+
+        ScatterDataSet dataSet4 = new ScatterDataSet(sad,"sad");
+        dataSet4.setScatterShape(ScatterChart.ScatterShape.CIRCLE);
+        dataSet4.setColor(Color.parseColor("#2196F3"));
+        dataSet4.setScatterShapeSize(50);
+        dataSet4.setDrawValues(false);
+
+        ScatterDataSet dataSet5 = new ScatterDataSet(disgust,"disgust");
+        dataSet5.setScatterShape(ScatterChart.ScatterShape.CIRCLE);
+        dataSet5.setColor(Color.parseColor("#9C27B0"));
+        dataSet5.setScatterShapeSize(50);
+        dataSet5.setDrawValues(false);
+
+        ScatterDataSet dataSet6 = new ScatterDataSet(surprise,"surprise");
+
+        dataSet6.setScatterShape(ScatterChart.ScatterShape.CIRCLE);
+        dataSet6.setColor(Color.parseColor("#FFA726"));
+        dataSet6.setScatterShapeSize(50);
+        dataSet6.setDrawValues(false);
+
+        ScatterDataSet dataSet7 = new ScatterDataSet(neutral,"neutral");
+        dataSet7.setScatterShape(ScatterChart.ScatterShape.CIRCLE);
+        dataSet7.setColor(Color.parseColor("#A1A3A1"));
+        dataSet7.setScatterShapeSize(50);
+        dataSet7.setDrawValues(false); //entry위쪽 부분에 보이는 entry값 제거 코드
+
+        ArrayList<IScatterDataSet> dataSets = new ArrayList<>();
+        dataSets.add(dataSet1); // add the data sets
+        dataSets.add(dataSet2);
+        dataSets.add(dataSet3);
+        dataSets.add(dataSet4);
+        dataSets.add(dataSet5);
+        dataSets.add(dataSet6);
+        dataSets.add(dataSet7);
+        //dataSet.setColors(ColorTemplate.JOYFUL_COLORS);
+        ScatterData data = new ScatterData(dataSets);
+
+        //data.setValueTextSize(10f);
+        //data.setValueTextColor(Color.BLACK);
+        scatterChart.animateY(1500); //y축으로 내려오는 애니메이션
+        scatterChart.setData(data);
+        scatterChart.invalidate();
     }
 }

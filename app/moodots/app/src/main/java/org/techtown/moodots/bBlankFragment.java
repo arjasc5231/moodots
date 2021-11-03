@@ -97,6 +97,7 @@ public class bBlankFragment extends Fragment implements OnBackPressedListener{
 
     @Override
     public void onBackPressed() {
+        stopAudio();
         activity.replaceFragment(1);
     }
 
@@ -109,7 +110,7 @@ public class bBlankFragment extends Fragment implements OnBackPressedListener{
     public void initUI(ViewGroup rootView){
         moodtext=rootView.findViewById(R.id.currentmoodtext);
         hashcontents=rootView.findViewById(R.id.hashcontents);
-        final int[] max = {0};
+        //final int[] max = {0};
         //hashcontents.setText("#");
         //hashcontents.setSelection(1);
         TextView textView=rootView.findViewById(R.id.dateadd);
@@ -130,15 +131,15 @@ public class bBlankFragment extends Fragment implements OnBackPressedListener{
                 int length= text.length();
                 int index=text.lastIndexOf(" ");
                 if(length-1==index&&length>0){
-                    max[0] = max[0] +1;
-                    if(max[0]>4){
-                        Toast maxhash=Toast.makeText(context,"해시태그는 5개만 입력 가능합니다.",Toast.LENGTH_SHORT);
+                    //max[0] = max[0] +1;
+                    /*if(max[0]>4){
+                        Toast maxhash=Toast.makeText(context,"#을 눌러 입력을 시작하세요.",Toast.LENGTH_SHORT);
                         maxhash.show();
                         newtext = text.substring(0, length - 1);
                         hashcontents.setText(newtext);
                         hashcontents.setSelection(length-1);
-                    }
-                    else {
+                    }*/
+
                         /*if (!text.substring(0, 1).equals("#")) {
                             text = "#" + text.substring(0, length);
                             newtext = text.substring(0, length) + "#";
@@ -147,7 +148,7 @@ public class bBlankFragment extends Fragment implements OnBackPressedListener{
                         //}
                         hashcontents.setText(newtext);
                         hashcontents.setSelection(length);
-                    }
+
                 }
             }
             @Override
@@ -300,9 +301,11 @@ public class bBlankFragment extends Fragment implements OnBackPressedListener{
                         moodIndex = 1;
                         contents.setText("");
                         hashcontents.setText("");
+                        stopAudio();
                         activity.replaceFragment(1);
                     } else if (mMode == zAppConstants.MODE_MODIFY) {
                         modifyDiary();
+                        stopAudio();
                         activity.replaceFragment(1);
                     }
                     if (listener != null) {
@@ -317,6 +320,7 @@ public class bBlankFragment extends Fragment implements OnBackPressedListener{
                 public void onClick(View v) {
                     hashcontents.setText("");
                     contents.setText("");
+                    stopAudio();
                     activity.replaceFragment(1);
                 }
             });
@@ -437,6 +441,7 @@ public class bBlankFragment extends Fragment implements OnBackPressedListener{
                 public void onClick(View v) {
                     checkmod=1;
                     modifyDiary();
+                    stopAudio();
                     activity.replaceFragment(1);
 
                     if (listener != null) {
@@ -450,6 +455,7 @@ public class bBlankFragment extends Fragment implements OnBackPressedListener{
                 @Override
                 public void onClick(View v) {
                     deleteDiary();
+                    stopAudio();
                     activity.replaceFragment(1);
                 }
             });
@@ -542,6 +548,11 @@ public class bBlankFragment extends Fragment implements OnBackPressedListener{
     private void saveDiary() {
         String scontents = contents.getText().toString();
         String hcontents = hashcontents.getText().toString();
+        int firsthash=hcontents.indexOf("#");
+        String hashstring=new String();
+        if(firsthash>=0) {
+            hashstring = hcontents.substring(firsthash);
+        }
         String sdate = date.getText().toString();
         String stime = time.getText().toString();
         String voice = "";
@@ -549,7 +560,7 @@ public class bBlankFragment extends Fragment implements OnBackPressedListener{
                 "(MOOD, CONTENTS, HASHCONTENTS, CHECKMOD, DATE, TIME, VOICE) values(" +
                 "'"+ moodIndex + "', " +
                 "'"+ scontents + "', " +
-                "'"+ hcontents + "', " +
+                "'"+ hashstring + "', " +
                 "'"+ checkmod + "', " +
                 "'"+ sdate + "', " +
                 "'"+ stime + "', " +
@@ -567,6 +578,8 @@ public class bBlankFragment extends Fragment implements OnBackPressedListener{
     private void modifyDiary() {
         String scontents = contents.getText().toString();
         String hcontents = hashcontents.getText().toString();
+        int firsthash=hcontents.indexOf("#");
+        String hashstring=hcontents.substring(firsthash);
         String sdate = date.getText().toString();
         String stime = time.getText().toString();
         /*try {
@@ -580,7 +593,7 @@ public class bBlankFragment extends Fragment implements OnBackPressedListener{
                 " SET " +
                 " MOOD = '" + moodIndex + "'" +
                 " ,CONTENTS = '" + scontents + "'" +
-                " ,HASHCONTENTS = '" + hcontents + "'" +
+                " ,HASHCONTENTS = '" + hashstring + "'" +
                 " ,CHECKMOD = '" + checkmod + "'" +
                 " ,DATE = '" + sdate + "'" +
                 " ,TIME = '" + stime + "'" +
@@ -708,7 +721,9 @@ public class bBlankFragment extends Fragment implements OnBackPressedListener{
     // 녹음 파일 중지
     private void stopAudio() {
         //playerbutton.setImageResource(R.drawable.ic_audio_play);
-        isPlaying = false;
-        mediaPlayer.stop();
+        if(isPlaying==true){
+            isPlaying = false;
+            mediaPlayer.stop();
+        }
     }
 }

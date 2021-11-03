@@ -4,6 +4,7 @@ import android.app.DatePickerDialog;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -19,6 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -44,6 +46,8 @@ import com.github.mikephil.charting.utils.Utils;
 
 import org.checkerframework.checker.units.qual.A;
 
+import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -57,6 +61,9 @@ public class cdayfragment extends Fragment {
     DiaryAdapter adapter;
     OnTabItemSelectedListener listener;
     Button date;
+    ImageButton playerbutton;
+    private MediaPlayer mediaPlayer = null;
+    private Boolean isPlaying = false;
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -71,6 +78,7 @@ public class cdayfragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         activity = null;
+        stopAudio(0);
         if(context != null){
             context= null;
             listener= null;
@@ -237,6 +245,35 @@ public class cdayfragment extends Fragment {
         recyclerView.setLayoutManager(layoutManager);
         adapter = new DiaryAdapter();
         recyclerView.setAdapter(adapter);
+        adapter.setOnButtonClickListener(new OnDiaryButtonClickListener() {
+            @Override
+            public void onButtonClick(DiaryAdapter.ViewHolder holder, View view, int position) {
+                Diary item = adapter.getItem(position);
+                if(!item.getVoice().isEmpty()) {
+                    File file = new File(item.getVoice());
+                    if (isPlaying) {
+                        // 음성 녹화 파일이 여러개를 클릭했을 때 재생중인 파일의 Icon을 비활성화(비 재생중)으로 바꾸기 위함.
+                        if (playerbutton == (ImageButton) view) {
+                            // 같은 파일을 클릭했을 경우
+                            stopAudio(1);
+                        } else {
+                            // 다른 음성 파일을 클릭했을 경우
+                            // 기존의 재생중인 파일 중지
+                            stopAudio(1);
+                            // 새로 파일 재생하기
+                            playerbutton = (ImageButton) view;
+                            playAudio(file);
+                        }
+                    } else {
+                        playerbutton = (ImageButton) view;
+                        playAudio(file);
+                    }
+                }
+                else{
+                    Toast.makeText(getContext(),"녹음 파일이 없습니다.",Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
         adapter.setOnItemClickListener(new OnDiaryItemClickListener() {
             @Override
             public void onItemClick(DiaryAdapter.ViewHolder holder, View view, int position) {
@@ -312,6 +349,38 @@ public class cdayfragment extends Fragment {
             return new MPPointF(-(getWidth() / 2), -getHeight());
         }
     }*/
+    private void playAudio(File file) {
+        mediaPlayer = new MediaPlayer();
 
+        try {
+            mediaPlayer.setDataSource(file.getAbsolutePath());
+            mediaPlayer.prepare();
+            mediaPlayer.start();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        isPlaying = true;
+        playerbutton.setImageResource(R.drawable.ic_audio_pause);
+        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                stopAudio(1);
+            }
+        });
+
+    }
+
+    // 녹음 파일 중지
+    private void stopAudio(int mode) {
+        if(mode ==1){
+            playerbutton.setImageResource(R.drawable.ic_audio_play);
+        }
+        //playerbutton.setImageResource(R.drawable.ic_audio_play);
+        if(isPlaying==true){
+            isPlaying = false;
+            mediaPlayer.stop();
+        }
+    }
 }
 
