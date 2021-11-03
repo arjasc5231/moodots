@@ -29,6 +29,7 @@ public class DiaryDatabase{
         println("opening database [" + zAppConstants.DATABASE_NAME + "].");
         dbHelper = new DatabaseHelper(context);
         db = dbHelper.getWritableDatabase();
+
         /*
         String DROP_SQL = "drop table if exists " + TABLE_DIARY;
         try {
@@ -39,13 +40,14 @@ public class DiaryDatabase{
 
         // create table
         String CREATE_SQL = "CREATE TABLE " + TABLE_DIARY +
-                "( _id INTEGER  NOT NULL PRIMARY KEY AUTOINCREMENT, "
-                + "MOOD INTEGER NOT NULL, "
-                + "CONTENTS TEXT NOT NULL, "
-                + "HASHCONTENTS TEXT NOT NULL, "
-                + "CHECKMOD INTEGER NOT NULL, "
-                + "DATE TEXT, "
-                + "TIME TEXT );";
+                    "( _id INTEGER  NOT NULL PRIMARY KEY AUTOINCREMENT, "
+                    + "MOOD INTEGER NOT NULL, "
+                    + "CONTENTS TEXT NOT NULL, "
+                    + "HASHCONTENTS TEXT NOT NULL, "
+                    + "CHECKMOD INTEGER NOT NULL, "
+                    + "DATE TEXT, "
+                    + "TIME TEXT, "
+                    + "VOICE TEXT );";
         try {
             db.execSQL(CREATE_SQL);
         } catch(Exception ex) {
@@ -135,7 +137,8 @@ public class DiaryDatabase{
                     + "HASHCONTENTS TEXT NOT NULL, "
                     + "CHECKMOD INTEGER NOT NULL, "
                     + "DATE TEXT, "
-                    + "TIME TEXT );";
+                    + "TIME TEXT, "
+                    + "VOICE TEXT NOT NULL );";
             try {
                 db.execSQL(CREATE_SQL);
             } catch(Exception ex) {

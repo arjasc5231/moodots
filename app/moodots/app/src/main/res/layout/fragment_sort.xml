@@ -52,7 +52,7 @@
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
             android:textSize="20sp"
-            android:paddingTop="20dp"
+            android:paddingTop="5dp"
             android:text="Day"
             app:layout_constraintBottom_toTopOf="@+id/containersort"
             app:layout_constraintEnd_toEndOf="parent"

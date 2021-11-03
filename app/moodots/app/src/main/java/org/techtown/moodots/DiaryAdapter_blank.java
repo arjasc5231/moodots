@@ -1,5 +1,6 @@
 package org.techtown.moodots;
 
+import android.media.MediaPlayer;
 import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +12,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class DiaryAdapter_blank extends RecyclerView.Adapter<DiaryAdapter_blank.ViewHolder> implements OnDiaryblankItemClickListener, OnblankItemLongClickListener{
@@ -64,10 +67,13 @@ public class DiaryAdapter_blank extends RecyclerView.Adapter<DiaryAdapter_blank.
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder{
-
+        String voice;
         ImageView moodImageView;
         TextView date;
-
+        View temp;
+        //녹음 관련 변수
+        private MediaPlayer mediaPlayer = null;
+        private Boolean isPlaying = false;
         public ViewHolder(View itemView, final OnDiaryblankItemClickListener listener, final OnblankItemLongClickListener longlistener){
             super(itemView);
             moodImageView = itemView.findViewById(R.id.moodblank);
@@ -78,6 +84,25 @@ public class DiaryAdapter_blank extends RecyclerView.Adapter<DiaryAdapter_blank.
                     int position = getAdapterPosition();
                     if(listener != null){
                         listener.onBlankItemClick(ViewHolder.this, v, position);
+                        File file= new File(voice);
+                        if(isPlaying){
+                            // 음성 녹화 파일이 여러개를 클릭했을 때 재생중인 파일의 Icon을 비활성화(비 재생중)으로 바꾸기 위함.
+                            if(temp == v){
+                                // 같은 파일을 클릭했을 경우
+                                stopAudio();
+                            } else {
+                                // 다른 음성 파일을 클릭했을 경우
+                                // 기존의 재생중인 파일 중지
+                                stopAudio();
+
+                                // 새로 파일 재생하기
+                                temp = v;
+                                playAudio(file);
+                            }
+                        } else {
+                            temp = v;
+                            playAudio(file);
+                        }
                     }
                 }
             });
@@ -97,6 +122,7 @@ public class DiaryAdapter_blank extends RecyclerView.Adapter<DiaryAdapter_blank.
             int mood = item.getMood();
             int moodIndex = mood;
             setMoodImage(moodIndex);
+            voice= item.getVoice();
             date.setText(Html.fromHtml(item.getDate()+"<br />"+item.getTime()));
         }
 
@@ -124,6 +150,35 @@ public class DiaryAdapter_blank extends RecyclerView.Adapter<DiaryAdapter_blank.
                     moodImageView.setImageResource(R.mipmap.ic_neutral);
                     break;
             }
+        }
+        private void playAudio(File file) {
+            mediaPlayer = new MediaPlayer();
+
+            try {
+                mediaPlayer.setDataSource(file.getAbsolutePath());
+                mediaPlayer.prepare();
+                mediaPlayer.start();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            //playerbutton.setImageResource(R.drawable.ic_audio_pause);
+            isPlaying = true;
+
+            mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer mp) {
+                    stopAudio();
+                }
+            });
+
+        }
+
+        // 녹음 파일 중지
+        private void stopAudio() {
+            //playerbutton.setImageResource(R.drawable.ic_audio_play);
+            isPlaying = false;
+            mediaPlayer.stop();
         }
     }
 }

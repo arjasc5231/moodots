@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.database.Cursor;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -21,9 +22,12 @@ import android.view.ViewGroup;
 import android.widget.AnalogClock;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -34,6 +38,8 @@ public class bMainfrag extends Fragment implements OnBackPressedListener{
     Context context;
     OnTabItemSelectedListener listener;
     aMain activity;
+
+
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -150,6 +156,7 @@ public class bMainfrag extends Fragment implements OnBackPressedListener{
         recyclerView.setLayoutManager(layoutManager);
         adapter = new DiaryAdapter();
         recyclerView.setAdapter(adapter);
+
         adapter.setOnItemClickListener(new OnDiaryItemClickListener() {
             @Override
             public void onItemClick(DiaryAdapter.ViewHolder holder, View view, int position) {
@@ -219,6 +226,7 @@ public class bMainfrag extends Fragment implements OnBackPressedListener{
                 transaction.commit();
             }
         });
+
     }
     private void buttonUI(ViewGroup rootView){
         Button sort=rootView.findViewById(R.id.sort);
@@ -268,7 +276,7 @@ public class bMainfrag extends Fragment implements OnBackPressedListener{
     public int loadDiaryListData(){
         println("loadNoteLIstData called.");
         String curdate=getDate();
-        String sql = "SELECT _id, MOOD, CONTENTS, HASHCONTENTS, CHECKMOD, DATE, TIME FROM " +DiaryDatabase.TABLE_DIARY +" ORDER BY _id DESC;";
+        String sql = "SELECT _id, MOOD, CONTENTS, HASHCONTENTS, CHECKMOD, DATE, TIME , VOICE FROM " +DiaryDatabase.TABLE_DIARY +" ORDER BY _id DESC;";
         int recordCount= -1;
         DiaryDatabase database = DiaryDatabase.getInstance(context);
         if (database != null) {
@@ -290,6 +298,7 @@ public class bMainfrag extends Fragment implements OnBackPressedListener{
                 int checkmod= outCursor.getInt(4);
                 String date = outCursor.getString(5);
                 String time = outCursor.getString(6);
+                String voice = outCursor.getString(7);
                 if(date.equals(curdate)) {
                     if (date != null && date.length() > 6) {
                         try {
@@ -315,7 +324,9 @@ public class bMainfrag extends Fragment implements OnBackPressedListener{
                     } else {
                         time = "";
                     }
-                    items.add(new Diary(_id, mood, contents, hashcontents, checkmod, date, time));
+
+                    items.add(new Diary(_id, mood, contents, hashcontents, checkmod, date, time, voice));
+
                 }
             }
 

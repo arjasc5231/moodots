@@ -60,7 +60,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@layout/button_rightcorner"
-            android:text="설정" />
+            android:text="녹음" />
 
     </LinearLayout>
 

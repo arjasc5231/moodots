@@ -9,10 +9,12 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -74,7 +76,7 @@ public class cweekfragment extends Fragment {
         ArrayList<Integer> percent=new ArrayList<Integer>();
         String curdate=bSortfrag.getDate();
         String[] cutdate=curdate.split("-");
-        String sql = "SELECT _id, MOOD, CONTENTS, HASHCONTENTS, CHECKMOD, DATE, TIME FROM " +DiaryDatabase.TABLE_DIARY +" ORDER BY DATE DESC;";
+        String sql = "SELECT _id, MOOD, CONTENTS, HASHCONTENTS, CHECKMOD, DATE, TIME, VOICE FROM " +DiaryDatabase.TABLE_DIARY +" ORDER BY DATE DESC;";
         int recordCount= -1;
         DiaryDatabase database = DiaryDatabase.getInstance(context);
         if (database != null) {
@@ -121,6 +123,8 @@ public class cweekfragment extends Fragment {
         pieChart.setDrawHoleEnabled(true); //차트 가운데 구멍을 넣을것인지
         pieChart.setHoleColor(Color.WHITE); //그 가운데 구멍의 색 결정
         pieChart.setTransparentCircleRadius(0f);
+        pieChart.setRotationEnabled(false);
+        pieChart.animateY(2000);
         Legend l = pieChart.getLegend();
         l.setEnabled(false);
         int[] moodlist=new int[7];
@@ -138,6 +142,7 @@ public class cweekfragment extends Fragment {
 
         ArrayList<Integer> colorset=new ArrayList<Integer>();
         ArrayList<PieEntry> yValues = new ArrayList<PieEntry>();
+
         if(moodlist[0]!=0) {
             yValues.add(new PieEntry(moodlist[0], "Angry"));
             colorset.add(Color.parseColor("#EF534E"));
@@ -167,14 +172,21 @@ public class cweekfragment extends Fragment {
             colorset.add(Color.parseColor("#A1A3A1"));
         }
         PieDataSet dataSet = new PieDataSet(yValues,"");
-        dataSet.setSliceSpace(3f);
+        dataSet.setSliceSpace(0f);
         dataSet.setSelectionShift(0f);
         dataSet.setColors(colorset);
-
+        pieChart.setEntryLabelColor(Color.BLACK);
         PieData data = new PieData((dataSet));
-        data.setValueTextSize(10f);
+        data.setValueTextSize(15f);
         data.setValueTextColor(Color.BLACK);
-
+        double temp=0;
+        if((moodlist[0]+moodlist[1]+moodlist[2]+moodlist[3]+moodlist[4]+moodlist[5]+moodlist[6])==0){
+            pieChart.setCenterText("작성된 일기가 없습니다.");
+        }
+        else{
+            temp= Math.round(((float) moodlist[0]/(moodlist[0]+moodlist[1]+moodlist[2]+moodlist[3]+moodlist[4]+moodlist[5]+moodlist[6]))*100*100)/100.0;
+            pieChart.setCenterText(Html.fromHtml("화남"+"<br />"+(temp)+"%"));
+        }
         pieChart.setData(data);
     }
     public void scatterchart(ViewGroup rootView){
@@ -205,12 +217,15 @@ public class cweekfragment extends Fragment {
         //yl.setTypeface(tfLight);
         yl.setDrawGridLines(false);
         yl.setAxisMinimum(0f);// this replaces setStartAtZero(true)
+        yl.setAxisMaximum(24f);
 
         scatterChart.getAxisRight().setEnabled(false);
         XAxis xl = scatterChart.getXAxis();
+        xl.setAxisMinimum(1f);
+        xl.setAxisMaximum(31f);
         //xl.setTypeface(tfLight);
         xl.setDrawGridLines(false);
-        yl.setInverted(true);
+        //yl.setInverted(true);
 
         ArrayList<Entry> yValues = new ArrayList<>();
         yValues.add(new Entry(1,3));

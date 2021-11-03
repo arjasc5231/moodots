@@ -5,6 +5,7 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.database.Cursor;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -25,11 +26,14 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -58,6 +62,10 @@ public class bBlankFragment extends Fragment implements OnBackPressedListener{
     String timecall="";
     RecyclerView recyclerView;
     DiaryAdapter_blank adapter;
+    String voice;
+    MediaPlayer mediaPlayer;
+    int playingposition=-1;
+    boolean isPlaying;
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -110,6 +118,7 @@ public class bBlankFragment extends Fragment implements OnBackPressedListener{
         date = rootView.findViewById(R.id.date);
         time = rootView.findViewById(R.id.time);
         contents = rootView.findViewById(R.id.contents);
+
         hashcontents.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -153,13 +162,31 @@ public class bBlankFragment extends Fragment implements OnBackPressedListener{
         recyclerView.setLayoutManager(layoutManager);
         adapter = new DiaryAdapter_blank();
         recyclerView.setAdapter(adapter);
+         //현재 플레이 중인 음성 파일을 알기 위함
         adapter.setOnblankItemClickListener(new OnDiaryblankItemClickListener() {
             @Override
             public void onBlankItemClick(DiaryAdapter_blank.ViewHolder holder, View view, int position) {
                 // 새로 추가할 imageView 생성
                 Diary item = adapter.getItem(position);
-                Toast temp =Toast.makeText(getContext(), "누르는거 확인", Toast.LENGTH_SHORT);
-                temp.show();
+                File file= new File(item.getVoice());
+                if(isPlaying){
+                    // 음성 녹화 파일이 여러개를 클릭했을 때 재생중인 파일의 Icon을 비활성화(비 재생중)으로 바꾸기 위함.
+                    if(playingposition == position){
+                        // 같은 파일을 클릭했을 경우
+                        stopAudio();
+                    } else {
+                        // 다른 음성 파일을 클릭했을 경우
+                        // 기존의 재생중인 파일 중지
+                        stopAudio();
+
+                        // 새로 파일 재생하기
+                        playingposition = position;
+                        playAudio(file);
+                    }
+                } else {
+                    playingposition = position;
+                    playAudio(file);
+                }
             }
         });
         adapter.setOnblankItemLongClickListener(new OnblankItemLongClickListener() {
@@ -268,6 +295,7 @@ public class bBlankFragment extends Fragment implements OnBackPressedListener{
                 @Override
                 public void onClick(View v) {
                     if (mMode == zAppConstants.MODE_INSERT) {
+                        checkmod=1;
                         saveDiary();
                         moodIndex = 1;
                         contents.setText("");
@@ -407,6 +435,7 @@ public class bBlankFragment extends Fragment implements OnBackPressedListener{
             addDiaryButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    checkmod=1;
                     modifyDiary();
                     activity.replaceFragment(1);
 
@@ -515,14 +544,16 @@ public class bBlankFragment extends Fragment implements OnBackPressedListener{
         String hcontents = hashcontents.getText().toString();
         String sdate = date.getText().toString();
         String stime = time.getText().toString();
+        String voice = "";
         String sql = "insert into " + DiaryDatabase.TABLE_DIARY +
-                "(MOOD, CONTENTS, HASHCONTENTS, CHECKMOD, DATE, TIME) values(" +
+                "(MOOD, CONTENTS, HASHCONTENTS, CHECKMOD, DATE, TIME, VOICE) values(" +
                 "'"+ moodIndex + "', " +
                 "'"+ scontents + "', " +
                 "'"+ hcontents + "', " +
-                "'"+ 1 + "', " +
+                "'"+ checkmod + "', " +
                 "'"+ sdate + "', " +
-                "'"+ stime + "'" +")";
+                "'"+ stime + "', " +
+                "'"+ voice + "'" +")";
 
         Log.d(TAG, "sql : " + sql);
         DiaryDatabase database = DiaryDatabase.getInstance(context);
@@ -550,7 +581,7 @@ public class bBlankFragment extends Fragment implements OnBackPressedListener{
                 " MOOD = '" + moodIndex + "'" +
                 " ,CONTENTS = '" + scontents + "'" +
                 " ,HASHCONTENTS = '" + hcontents + "'" +
-                " ,CHECKMOD = '" + 1 + "'" +
+                " ,CHECKMOD = '" + checkmod + "'" +
                 " ,DATE = '" + sdate + "'" +
                 " ,TIME = '" + stime + "'" +
                 " WHERE " +
@@ -593,7 +624,7 @@ public class bBlankFragment extends Fragment implements OnBackPressedListener{
     }
     public int loadDiaryListData(){
         String curdate=getDate();
-        String sql = "SELECT _id, MOOD, CONTENTS, HASHCONTENTS, CHECKMOD, DATE, TIME FROM " +DiaryDatabase.TABLE_DIARY +" ORDER BY _id DESC;";
+        String sql = "SELECT _id, MOOD, CONTENTS, HASHCONTENTS, CHECKMOD, DATE, TIME, VOICE FROM " +DiaryDatabase.TABLE_DIARY +" WHERE CHECKMOD =0 ORDER BY _id DESC;";
         int recordCount= -1;
         DiaryDatabase database = DiaryDatabase.getInstance(context);
         if (database != null) {
@@ -615,6 +646,7 @@ public class bBlankFragment extends Fragment implements OnBackPressedListener{
                 int checkmod= outCursor.getInt(4);
                 String date = outCursor.getString(5);
                 String time = outCursor.getString(6);
+                String voice = outCursor.getString(7);
                 if(date.equals(curdate)) {
                     if (date != null && date.length() > 6) {
                         try {
@@ -640,7 +672,7 @@ public class bBlankFragment extends Fragment implements OnBackPressedListener{
                     } else {
                         time = "";
                     }
-                    items.add(new Diary(_id, mood, contents, hashcontents, checkmod, date, time));
+                    items.add(new Diary(_id, mood, contents, hashcontents, checkmod, date, time, voice));
                 }
             }
 
@@ -651,5 +683,32 @@ public class bBlankFragment extends Fragment implements OnBackPressedListener{
         }
 
         return recordCount;
+    }
+    private void playAudio(File file) {
+        mediaPlayer = new MediaPlayer();
+
+        try {
+            mediaPlayer.setDataSource(file.getAbsolutePath());
+            mediaPlayer.prepare();
+            mediaPlayer.start();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        isPlaying = true;
+
+        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                stopAudio();
+            }
+        });
+
+    }
+
+    // 녹음 파일 중지
+    private void stopAudio() {
+        //playerbutton.setImageResource(R.drawable.ic_audio_play);
+        isPlaying = false;
+        mediaPlayer.stop();
     }
 }

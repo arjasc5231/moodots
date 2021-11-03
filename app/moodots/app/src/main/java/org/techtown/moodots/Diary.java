@@ -8,10 +8,10 @@ public class Diary {
     int checkmod;
     String date;
     String time;
-    //String voice; 이 부분에 음성 녹음 파일 경로 설정
+    String voice; //이 부분에 음성 녹음 파일 경로 설정
 
 
-    public Diary(int _id, Integer mood, String contents, String hashcontents, Integer checkmod, String date, String time) {
+    public Diary(int _id, Integer mood, String contents, String hashcontents, Integer checkmod, String date, String time, String voice) {
         this._id = _id;
         this.mood = mood;
         this.contents = contents;
@@ -19,6 +19,7 @@ public class Diary {
         this.checkmod= checkmod;
         this.date = date;
         this.time= time;
+        this.voice= voice;
     }
 
     public int get_id() {
@@ -75,5 +76,13 @@ public class Diary {
 
     public void setTime(String time) {
         this.time = time;
+    }
+
+    public String getVoice() {
+        return voice;
+    }
+
+    public void setVoice(String voice) {
+        this.voice = voice;
     }
 }

@@ -10,24 +10,37 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <Button
+            android:id="@+id/datepick"
+            android:layout_width="wrap_content"
+            style="?android:attr/borderlessButtonStyle"
+            android:backgroundTint="@color/white"
+            android:layout_height="wrap_content"
+            android:text="TextView"
+            android:textSize="20sp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            app:layout_constraintBottom_toTopOf="@id/recyclerlayout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="20"
             android:orientation="horizontal"
-            android:id="@+id/scatterchartlayout"
+            android:id="@+id/recyclerlayout"
             app:layout_constraintBottom_toTopOf="@id/piechartlayout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toBottomOf="@id/datepick">
 
-            <com.github.mikephil.charting.charts.ScatterChart
-                android:id="@+id/scatterchart"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerView"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                >
-
-            </com.github.mikephil.charting.charts.ScatterChart>
+                android:layout_height="match_parent" />
         </LinearLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -38,7 +51,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/scatterchartlayout">
+            app:layout_constraintTop_toBottomOf="@id/recyclerlayout">
 
             <LinearLayout
                 android:layout_width="wrap_content"

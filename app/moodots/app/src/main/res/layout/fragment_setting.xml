@@ -6,62 +6,131 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".bSettingfrag">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="setting" />
-    <LinearLayout
-        android:id="@+id/buttonlayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/recyclerView">
-
-        <Button
-            android:id="@+id/main"
-            android:layout_width="wrap_content"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:id="@+id/textlayout"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@layout/button_leftcorner"
-            android:layout_weight="1"
-            android:text="메인" />
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toTopOf="@+id/tempview"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            >
 
-        <Button
-            android:id="@+id/sort"
-            android:layout_width="wrap_content"
+            <TextView
+                android:id="@+id/pagesetting"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="RECORD"
+                android:textSize="25sp" />
+
+            <TextView
+                android:id="@+id/datesetting"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1.4"
+                android:gravity="right"
+                android:text="date"
+                android:textSize="25sp" />
+        </LinearLayout>
+        <View
+            android:id="@+id/tempview"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toTopOf="@id/recordLayout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textlayout"/>
+
+        <LinearLayout
+            android:id="@+id/recordLayout"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@layout/button_middle"
-            android:text="정렬" />
+            android:layout_marginBottom="4dp"
+            android:gravity="center"
+            android:orientation="vertical"
+            app:layout_constraintTop_toBottomOf="@+id/tempview"
+            app:layout_constraintBottom_toTopOf="@id/buttonlayout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
 
-        <Button
-            android:id="@+id/newDiaryButton"
-            android:layout_width="wrap_content"
+            <!--녹음 실행 및 중지 버튼-->
+            <ImageButton
+                android:id="@+id/audioRecordImageBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:src="@drawable/ic_record" />
+
+            <TextView
+                android:id="@+id/audioRecordText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="녹음 시작"
+                android:textSize="24dp" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/buttonlayout"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@layout/button_middle"
-            android:text="추가" />
+            android:layout_gravity="bottom"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/recordLayout">
 
-        <Button
-            android:id="@+id/search"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@layout/button_middle"
-            android:text="검색" />
+            <Button
+                android:id="@+id/main"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@layout/button_leftcorner"
+                android:text="메인" />
 
-        <Button
-            android:id="@+id/setting"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@layout/button_rightcorner"
-            android:text="설정" />
+            <Button
+                android:id="@+id/sort"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@layout/button_middle"
+                android:text="정렬" />
 
-    </LinearLayout>
+            <Button
+                android:id="@+id/newDiaryButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@layout/button_middle"
+                android:text="추가" />
+
+            <Button
+                android:id="@+id/search"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@layout/button_middle"
+                android:text="검색" />
+
+            <Button
+                android:id="@+id/setting"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@layout/button_rightcorner"
+                android:text="녹음" />
+
+        </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
 
 </FrameLayout>
