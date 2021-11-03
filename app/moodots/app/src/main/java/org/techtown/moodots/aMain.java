@@ -21,7 +21,7 @@ public class aMain extends AppCompatActivity implements AutoPermissionsListener 
     bSearchfrag bSearchfrag;
     bMainfrag bMainfrag;
     bSortfrag bSortfrag;
-    BlankFragment blankfrag;
+    bBlankFragment blankfrag;
     OnBackPressedListener listener;
     public static DiaryDatabase mDatabase = null;
     @Override
@@ -38,7 +38,7 @@ public class aMain extends AppCompatActivity implements AutoPermissionsListener 
         bSearchfrag =new bSearchfrag();
         bMainfrag =new bMainfrag();
         bSortfrag =new bSortfrag();
-        blankfrag = new BlankFragment();
+        blankfrag = new bBlankFragment();
         openDatabase();
         getSupportFragmentManager().beginTransaction().replace(R.id.container, bMainfrag).commit();
         //BottomNavigationView bottomNavigation = findViewById(R.id.bottom_navigation);
