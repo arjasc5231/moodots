@@ -21,6 +21,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.ImageButton;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -53,6 +54,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
+import static android.os.SystemClock.sleep;
+
 public class cdayfragment extends Fragment {
     PieChart pieChart;
     Context context;
@@ -62,6 +65,7 @@ public class cdayfragment extends Fragment {
     OnTabItemSelectedListener listener;
     Button date;
     ImageButton playerbutton;
+    SeekBar seekbartemp;
     private MediaPlayer mediaPlayer = null;
     private Boolean isPlaying = false;
     @Override
@@ -223,14 +227,14 @@ public class cdayfragment extends Fragment {
         PieData data = new PieData((dataSet));
         data.setValueTextSize(15f);
         data.setValueTextColor(Color.BLACK);
-        double temp=0;
+        /*double temp=0;
         if((moodlist[0]+moodlist[1]+moodlist[2]+moodlist[3]+moodlist[4]+moodlist[5]+moodlist[6])==0){
             pieChart.setCenterText("작성된 일기가 없습니다.");
         }
         else{
             temp= Math.round(((float) moodlist[0]/(moodlist[0]+moodlist[1]+moodlist[2]+moodlist[3]+moodlist[4]+moodlist[5]+moodlist[6]))*100*100)/100.0;
             pieChart.setCenterText(Html.fromHtml("화남"+"<br />"+(temp)+"%"));
-        }
+        }*/
         pieChart.setData(data);
 
 
@@ -247,7 +251,7 @@ public class cdayfragment extends Fragment {
         recyclerView.setAdapter(adapter);
         adapter.setOnButtonClickListener(new OnDiaryButtonClickListener() {
             @Override
-            public void onButtonClick(DiaryAdapter.ViewHolder holder, View view, int position) {
+            public void onButtonClick(DiaryAdapter.ViewHolder holder, SeekBar seekBar, View view, int position) {
                 Diary item = adapter.getItem(position);
                 if(!item.getVoice().isEmpty()) {
                     File file = new File(item.getVoice());
@@ -259,14 +263,18 @@ public class cdayfragment extends Fragment {
                         } else {
                             // 다른 음성 파일을 클릭했을 경우
                             // 기존의 재생중인 파일 중지
+
                             stopAudio(1);
+                            sleep(600); //쓰레드의 지연시간을 적용시키기 위해서 필요.
                             // 새로 파일 재생하기
                             playerbutton = (ImageButton) view;
-                            playAudio(file);
+                            seekbartemp=seekBar;
+                            playAudio(file, seekBar);
                         }
                     } else {
                         playerbutton = (ImageButton) view;
-                        playAudio(file);
+                        seekbartemp=seekBar;
+                        playAudio(file, seekBar);
                     }
                 }
                 else{
@@ -328,6 +336,25 @@ public class cdayfragment extends Fragment {
             }
         });
     }
+    public void Thread(SeekBar seekbar){
+        Runnable task = new Runnable(){
+            public void run(){
+                while(isPlaying){
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    seekbar.setProgress(mediaPlayer.getCurrentPosition());
+                }
+                seekbar.setProgress(0);
+                Thread.interrupted();
+                zAppConstants.println("정상적으로 종료됨");
+            }
+        };
+        Thread thread = new Thread(task);
+        thread.start();
+    }
     /*public class MyMarkerView extends MarkerView {
         public MyMarkerView(Context context, int layoutResource) {
             super(context, layoutResource); }
@@ -349,13 +376,32 @@ public class cdayfragment extends Fragment {
             return new MPPointF(-(getWidth() / 2), -getHeight());
         }
     }*/
-    private void playAudio(File file) {
+    private void playAudio(File file, SeekBar seekbar) {
         mediaPlayer = new MediaPlayer();
-
         try {
             mediaPlayer.setDataSource(file.getAbsolutePath());
             mediaPlayer.prepare();
+            seekbar.setMax(mediaPlayer.getDuration());
+            seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                @Override
+                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                    if(fromUser){
+                        mediaPlayer.seekTo(progress);
+                    }
+                }
+
+                @Override
+                public void onStartTrackingTouch(SeekBar seekBar) {
+
+                }
+
+                @Override
+                public void onStopTrackingTouch(SeekBar seekBar) {
+
+                }
+            });
             mediaPlayer.start();
+            Thread(seekbar);
         } catch (IOException e) {
             e.printStackTrace();
         }

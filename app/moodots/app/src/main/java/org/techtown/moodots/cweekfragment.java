@@ -1,6 +1,7 @@
 package org.techtown.moodots;
 
 import android.app.Activity;
+import android.app.DatePickerDialog;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Color;
@@ -15,8 +16,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.Chart;
@@ -35,6 +38,7 @@ import com.github.mikephil.charting.interfaces.datasets.IScatterDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 
 
@@ -43,7 +47,10 @@ public class cweekfragment extends Fragment {
     ScatterChart scatterChart;
     Context context;
     aMain activity;
-
+    Button btnYearMonthPicker;
+    final Calendar c = Calendar.getInstance();
+    int chooseyear=c.get(Calendar.YEAR);
+    int choosemonth=c.get(Calendar.MONTH)+1;
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -66,16 +73,41 @@ public class cweekfragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_week,container,false);
-        ArrayList<Integer> percent= bringdata();
-        scatterchart(rootView);
-        piechart(rootView, percent);
+        initUI(rootView);
         return rootView;
     }
-
-    public ArrayList<Integer> bringdata(){
-        ArrayList<Integer> percent=new ArrayList<Integer>();
-        String curdate=bSortfrag.getDate();
-        String[] cutdate=curdate.split("-");
+    public void initUI(ViewGroup rootView){
+        ArrayList<Diary> percent= bringdata(chooseyear, choosemonth);
+        scatterchart(rootView, percent);
+        piechart(rootView, percent);
+        btnYearMonthPicker = rootView.findViewById(R.id.datepick);
+        btnYearMonthPicker.setText(chooseyear+"-"+choosemonth);
+        btnYearMonthPicker.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                YearMonthPickerDialog pd = new YearMonthPickerDialog();
+                DatePickerDialog.OnDateSetListener d = new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth){
+                        chooseyear=year;
+                        choosemonth=monthOfYear;
+                        btnYearMonthPicker.setText(chooseyear+"-"+choosemonth);
+                        ArrayList<Diary> temp= bringdata(year, monthOfYear);
+                        piechart(rootView, temp);
+                        scatterchart(rootView, temp);
+                        Log.d("YearMonthPickerTest", "year = " + year + ", month = " + monthOfYear + ", day = " + dayOfMonth);
+                    }
+                };
+                pd.setListener(d);
+                pd.show(getActivity().getSupportFragmentManager(), "YearMonthPickerTest");
+                Toast temp =Toast.makeText(getContext(), "누르는거 확인", Toast.LENGTH_SHORT);
+                temp.show();
+            }
+        });
+    }
+    public ArrayList<Diary> bringdata( int year, int month){
+        ArrayList<Diary> percent=new ArrayList<Diary>();
+        String[] cutdate={Integer.toString(year),Integer.toString(month)};
         String sql = "SELECT _id, MOOD, CONTENTS, HASHCONTENTS, CHECKMOD, DATE, TIME, VOICE FROM " +DiaryDatabase.TABLE_DIARY +" ORDER BY DATE DESC;";
         int recordCount= -1;
         DiaryDatabase database = DiaryDatabase.getInstance(context);
@@ -87,9 +119,14 @@ public class cweekfragment extends Fragment {
                 outCursor.moveToNext();
                 int _id = outCursor.getInt(0);
                 int mood = outCursor.getInt(1);
+                String contents = outCursor.getString(2);
+                String hashcontents = outCursor.getString(3);
+                int checkmod= outCursor.getInt(4);
                 String date = outCursor.getString(5);
                 String[] datecut= date.split("-");
-                if(datecut[1].equals(cutdate[1])&&datecut[0].equals(cutdate[0])) {
+                String time = outCursor.getString(6);
+                String voice = outCursor.getString(7);
+                if(Integer.parseInt(datecut[0],10)==year&&Integer.parseInt(datecut[1],10)==month) {
                     if (date != null && date.length() > 6) {
                         try {
                             Date inDate = zAppConstants.dateFormat5.parse(date);
@@ -100,14 +137,24 @@ public class cweekfragment extends Fragment {
                     } else {
                         date = "";
                     }
-                    percent.add(mood);
+                    if (time != null && time.length() > 2) {
+                        try {
+                            Date inTime = zAppConstants.dateFormat6.parse(time);
+                            time = zAppConstants.dateFormat6.format(inTime);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        time = "";
+                    }
+                    percent.add(new Diary(_id, mood, contents, hashcontents, checkmod, date, time, voice));
                 }
             }
             outCursor.close();
         }
         return percent;
     }
-    public void piechart(ViewGroup rootView, ArrayList<Integer> percent){
+    public void piechart(ViewGroup rootView, ArrayList<Diary> percent){
         TextView angry= rootView.findViewById(R.id.angry);
         TextView joy= rootView.findViewById(R.id.joy);
         TextView fear= rootView.findViewById(R.id.fear);
@@ -129,7 +176,7 @@ public class cweekfragment extends Fragment {
         l.setEnabled(false);
         int[] moodlist=new int[7];
         for(int i=0;i<percent.size();i++){
-            int p=percent.get(i)-1;
+            int p=percent.get(i).getMood()-1;
             moodlist[p]+=1;
         }
         angry.setText("화남:"+moodlist[0]+"회");
@@ -179,17 +226,17 @@ public class cweekfragment extends Fragment {
         PieData data = new PieData((dataSet));
         data.setValueTextSize(15f);
         data.setValueTextColor(Color.BLACK);
-        double temp=0;
+        /*double temp=0;
         if((moodlist[0]+moodlist[1]+moodlist[2]+moodlist[3]+moodlist[4]+moodlist[5]+moodlist[6])==0){
             pieChart.setCenterText("작성된 일기가 없습니다.");
         }
         else{
             temp= Math.round(((float) moodlist[0]/(moodlist[0]+moodlist[1]+moodlist[2]+moodlist[3]+moodlist[4]+moodlist[5]+moodlist[6]))*100*100)/100.0;
             pieChart.setCenterText(Html.fromHtml("화남"+"<br />"+(temp)+"%"));
-        }
+        }*/
         pieChart.setData(data);
     }
-    public void scatterchart(ViewGroup rootView){
+    public void scatterchart(ViewGroup rootView, ArrayList<Diary> percent){
         scatterChart = rootView.findViewById(R.id.scatterchart);
         scatterChart.getDescription().setEnabled(false);
         scatterChart.setDrawGridBackground(false);
@@ -204,9 +251,9 @@ public class cweekfragment extends Fragment {
         scatterChart.setMaxVisibleValueCount(999999999);
         scatterChart.setPinchZoom(false);
 
-        /*Legend l = scatterChart.getLegend();
+        Legend l = scatterChart.getLegend();
         l.setEnabled(false);
-        l.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
+        /*l.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
         l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.RIGHT);
         l.setOrientation(Legend.LegendOrientation.VERTICAL);
         l.setDrawInside(false);
@@ -216,43 +263,131 @@ public class cweekfragment extends Fragment {
         YAxis yl = scatterChart.getAxisLeft();
         //yl.setTypeface(tfLight);
         yl.setDrawGridLines(false);
-        yl.setAxisMinimum(0f);// this replaces setStartAtZero(true)
-        yl.setAxisMaximum(24f);
+        yl.setAxisMinimum(-2f);// this replaces setStartAtZero(true)
+        yl.setAxisMaximum(26f);
+        yl.setGranularityEnabled(true);
+        yl.setGranularity(1f);
+        yl.setInverted(true);
 
         scatterChart.getAxisRight().setEnabled(false);
         XAxis xl = scatterChart.getXAxis();
-        xl.setAxisMinimum(1f);
-        xl.setAxisMaximum(31f);
+        xl.setAxisMinimum(-1f);
+        xl.setAxisMaximum(32f);
         //xl.setTypeface(tfLight);
         xl.setDrawGridLines(false);
-        //yl.setInverted(true);
 
-        ArrayList<Entry> yValues = new ArrayList<>();
-        yValues.add(new Entry(1,3));
-        yValues.add(new Entry(1,30));
-        yValues.add(new Entry(1,40));
-        yValues.add(new Entry(1,300));
-        yValues.add(new Entry(2,8));
-        yValues.add(new Entry(3,9));
-        yValues.add(new Entry(4,10));
-        yValues.add(new Entry(5,4));
-        yValues.add(new Entry(6,6));
-        yValues.add(new Entry(7,15));
-        ScatterDataSet dataSet = new ScatterDataSet(yValues,"Mood");
-        dataSet.setScatterShape(ScatterChart.ScatterShape.CIRCLE);
-        int[] colorset={0Xef534e,0Xffee58,0X9c27b0 };
-        dataSet.setColor(ColorTemplate.COLORFUL_COLORS[0]);
-        dataSet.setScatterShapeSize(20);
+
+        ArrayList<Entry> angry = new ArrayList<>();
+        ArrayList<Entry> joy = new ArrayList<>();
+        ArrayList<Entry> fear = new ArrayList<>();
+        ArrayList<Entry> sad = new ArrayList<>();
+        ArrayList<Entry> disgust = new ArrayList<>();
+        ArrayList<Entry> surprise = new ArrayList<>();
+        ArrayList<Entry> neutral = new ArrayList<>();
+        for(int i=0;i<percent.size();i++){
+            int p=percent.get(i).getMood();
+            String[] date=percent.get(i).getDate().split("-");
+            String[] time=percent.get(i).getTime().split(":");
+            int dateint=0;
+            int timeint1=0;
+            int timeint2=0;
+            try {
+                dateint=Integer.parseInt(date[2],10);
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+            try {
+                timeint1=Integer.parseInt(time[0],10);
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+            try {
+                timeint2=Integer.parseInt(time[1],10);
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+            switch (p){
+                case 1:
+                    angry.add(new Entry(dateint,(float)(timeint1+timeint2/60.0)));
+                    break;
+                case 2:
+                    joy.add(new Entry(dateint,(float)(timeint1+timeint2/60.0)));
+                    break;
+                case 3:
+                    fear.add(new Entry(dateint,(float)(timeint1+timeint2/60.0)));
+                    break;
+                case 4:
+                    sad.add(new Entry(dateint,(float)(timeint1+timeint2/60.0)));
+                    break;
+                case 5:
+                    disgust.add(new Entry(dateint,(float)(timeint1+timeint2/60.0)));
+                    break;
+                case 6:
+                    surprise.add(new Entry(dateint,(float)(timeint1+timeint2/60.0)));
+                    break;
+                case 7:
+                    neutral.add(new Entry(dateint,(float)(timeint1+timeint2/60.0)));
+                    break;
+            }
+        }
+        ScatterDataSet dataSet1 = new ScatterDataSet(angry,"angry");
+        dataSet1.setScatterShape(ScatterChart.ScatterShape.CIRCLE);
+        dataSet1.setColor(Color.parseColor("#EF534E"));
+        dataSet1.setScatterShapeSize(50);
+        dataSet1.setDrawValues(false);
+
+        ScatterDataSet dataSet2 = new ScatterDataSet(joy,"joy");
+        dataSet2.setScatterShape(ScatterChart.ScatterShape.CIRCLE);
+        dataSet2.setColor(Color.parseColor("#FFEE58"));
+        dataSet2.setScatterShapeSize(50);
+        dataSet2.setDrawValues(false);
+
+        ScatterDataSet dataSet3 = new ScatterDataSet(fear,"fear");
+        dataSet3.setScatterShape(ScatterChart.ScatterShape.CIRCLE);
+        dataSet3.setColor(Color.parseColor("#66BB6A"));
+        dataSet3.setScatterShapeSize(50);
+        dataSet3.setDrawValues(false);
+
+        ScatterDataSet dataSet4 = new ScatterDataSet(sad,"sad");
+        dataSet4.setScatterShape(ScatterChart.ScatterShape.CIRCLE);
+        dataSet4.setColor(Color.parseColor("#2196F3"));
+        dataSet4.setScatterShapeSize(50);
+        dataSet4.setDrawValues(false);
+
+        ScatterDataSet dataSet5 = new ScatterDataSet(disgust,"disgust");
+        dataSet5.setScatterShape(ScatterChart.ScatterShape.CIRCLE);
+        dataSet5.setColor(Color.parseColor("#9C27B0"));
+        dataSet5.setScatterShapeSize(50);
+        dataSet5.setDrawValues(false);
+
+        ScatterDataSet dataSet6 = new ScatterDataSet(surprise,"surprise");
+
+        dataSet6.setScatterShape(ScatterChart.ScatterShape.CIRCLE);
+        dataSet6.setColor(Color.parseColor("#FFA726"));
+        dataSet6.setScatterShapeSize(50);
+        dataSet6.setDrawValues(false);
+
+        ScatterDataSet dataSet7 = new ScatterDataSet(neutral,"neutral");
+        dataSet7.setScatterShape(ScatterChart.ScatterShape.CIRCLE);
+        dataSet7.setColor(Color.parseColor("#A1A3A1"));
+        dataSet7.setScatterShapeSize(50);
+        dataSet7.setDrawValues(false); //entry위쪽 부분에 보이는 entry값 제거 코드
 
         ArrayList<IScatterDataSet> dataSets = new ArrayList<>();
-        dataSets.add(dataSet); // add the data sets
+        dataSets.add(dataSet1); // add the data sets
+        dataSets.add(dataSet2);
+        dataSets.add(dataSet3);
+        dataSets.add(dataSet4);
+        dataSets.add(dataSet5);
+        dataSets.add(dataSet6);
+        dataSets.add(dataSet7);
         //dataSet.setColors(ColorTemplate.JOYFUL_COLORS);
-
         ScatterData data = new ScatterData(dataSets);
+
         //data.setValueTextSize(10f);
         //data.setValueTextColor(Color.BLACK);
-        scatterChart.animateY(3000);
+        scatterChart.animateY(1500); //y축으로 내려오는 애니메이션
         scatterChart.setData(data);
-
+        scatterChart.invalidate();
     }
 }

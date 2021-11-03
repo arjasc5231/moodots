@@ -218,14 +218,14 @@ public class cyearfragment extends Fragment {
         PieData data = new PieData((dataSet));
         data.setValueTextSize(15f);
         data.setValueTextColor(Color.BLACK);
-        double temp=0;
+        /*double temp=0;
         if((moodlist[0]+moodlist[1]+moodlist[2]+moodlist[3]+moodlist[4]+moodlist[5]+moodlist[6])==0){
             pieChart.setCenterText("작성된 일기가 없습니다.");
         }
         else{
             temp= Math.round(((float) moodlist[0]/(moodlist[0]+moodlist[1]+moodlist[2]+moodlist[3]+moodlist[4]+moodlist[5]+moodlist[6]))*100*100)/100.0;
             pieChart.setCenterText(Html.fromHtml("화남"+"<br />"+(temp)+"%"));
-        }
+        }*/
         pieChart.setData(data);
     }
     public void scatterchart(ViewGroup rootView, ArrayList<Diary> percent){

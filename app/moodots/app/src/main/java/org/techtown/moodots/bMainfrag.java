@@ -23,6 +23,7 @@ import android.widget.AnalogClock;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.Toolbar;
@@ -32,6 +33,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 
+import static android.os.SystemClock.sleep;
+
 public class bMainfrag extends Fragment implements OnBackPressedListener{
     private static final String TAG="Mainfrag";
     RecyclerView recyclerView;
@@ -40,6 +43,7 @@ public class bMainfrag extends Fragment implements OnBackPressedListener{
     OnTabItemSelectedListener listener;
     aMain activity;
     ImageButton playerbutton;
+    SeekBar seekbartemp;
     private MediaPlayer mediaPlayer = null;
     private Boolean isPlaying = false;
 
@@ -159,9 +163,10 @@ public class bMainfrag extends Fragment implements OnBackPressedListener{
         recyclerView.setLayoutManager(layoutManager);
         adapter = new DiaryAdapter();
         recyclerView.setAdapter(adapter);
+
         adapter.setOnButtonClickListener(new OnDiaryButtonClickListener() {
             @Override
-            public void onButtonClick(DiaryAdapter.ViewHolder holder, View view, int position) {
+            public void onButtonClick(DiaryAdapter.ViewHolder holder, SeekBar seekBar, View view, int position) {
                 Diary item = adapter.getItem(position);
                 if(!item.getVoice().isEmpty()) {
                     File file = new File(item.getVoice());
@@ -173,14 +178,18 @@ public class bMainfrag extends Fragment implements OnBackPressedListener{
                         } else {
                             // 다른 음성 파일을 클릭했을 경우
                             // 기존의 재생중인 파일 중지
+
                             stopAudio(1);
+                            sleep(600); //쓰레드의 지연시간을 적용시키기 위해서 필요.
                             // 새로 파일 재생하기
                             playerbutton = (ImageButton) view;
-                            playAudio(file);
+                            seekbartemp=seekBar;
+                            playAudio(file, seekBar);
                         }
                     } else {
                         playerbutton = (ImageButton) view;
-                        playAudio(file);
+                        seekbartemp=seekBar;
+                        playAudio(file, seekBar);
                     }
                 }
                 else{
@@ -259,6 +268,26 @@ public class bMainfrag extends Fragment implements OnBackPressedListener{
         });
 
     }
+    public void Thread(SeekBar seekbar){
+        Runnable task = new Runnable(){
+            public void run(){
+                while(isPlaying){
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    seekbar.setProgress(mediaPlayer.getCurrentPosition());
+                }
+                seekbar.setProgress(0);
+                Thread.interrupted();
+                zAppConstants.println("정상적으로 종료됨");
+            }
+        };
+        Thread thread = new Thread(task);
+        thread.start();
+    }
+
     private void buttonUI(ViewGroup rootView){
         Button sort=rootView.findViewById(R.id.sort);
         sort.setOnClickListener(new View.OnClickListener(){
@@ -383,13 +412,32 @@ public class bMainfrag extends Fragment implements OnBackPressedListener{
         return getDate;
     }
 
-    private void playAudio(File file) {
+    private void playAudio(File file, SeekBar seekbar) {
         mediaPlayer = new MediaPlayer();
-
         try {
             mediaPlayer.setDataSource(file.getAbsolutePath());
             mediaPlayer.prepare();
+            seekbar.setMax(mediaPlayer.getDuration());
+            seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                @Override
+                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                    if(fromUser){
+                        mediaPlayer.seekTo(progress);
+                    }
+                }
+
+                @Override
+                public void onStartTrackingTouch(SeekBar seekBar) {
+
+                }
+
+                @Override
+                public void onStopTrackingTouch(SeekBar seekBar) {
+
+                }
+            });
             mediaPlayer.start();
+            Thread(seekbar);
         } catch (IOException e) {
             e.printStackTrace();
         }

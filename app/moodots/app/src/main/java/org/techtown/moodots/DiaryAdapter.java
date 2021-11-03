@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -17,18 +18,19 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class DiaryAdapter extends RecyclerView.Adapter<DiaryAdapter.ViewHolder> implements OnDiaryItemClickListener, OnItemLongClickListener, OnDiaryButtonClickListener{
+public class DiaryAdapter extends RecyclerView.Adapter<DiaryAdapter.ViewHolder> implements OnDiaryItemClickListener, OnItemLongClickListener, OnDiaryButtonClickListener, OnDiarySeekBarChangeListener{
     ArrayList<Diary> items = new ArrayList<Diary>();
     OnDiaryItemClickListener listener;
     OnItemLongClickListener longlistener;
     OnDiaryButtonClickListener buttonlistener;
+    OnDiarySeekBarChangeListener seekbarlistener;
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View itemView= inflater.inflate(R.layout.diary_item, parent, false);
-        return new ViewHolder(itemView, listener, longlistener, buttonlistener);
+        return new ViewHolder(itemView, listener, longlistener, buttonlistener, (SeekBar.OnSeekBarChangeListener) seekbarlistener);
     }
 
     @Override
@@ -72,9 +74,18 @@ public class DiaryAdapter extends RecyclerView.Adapter<DiaryAdapter.ViewHolder> 
         this.buttonlistener= listener;
     }
     @Override
-    public void onButtonClick(ViewHolder viewHolder, View view, int position) {
+    public void onButtonClick(ViewHolder viewHolder,SeekBar seekBar, View view, int position) {
         if(buttonlistener!=null){
-            buttonlistener.onButtonClick(viewHolder, view, position);
+            buttonlistener.onButtonClick(viewHolder, seekBar, view, position);
+        }
+    }
+    public void setOnSeekBarChangeListener(OnDiarySeekBarChangeListener listener){
+        this.seekbarlistener= listener;
+    }
+    @Override
+    public void onSeekBarChange(ViewHolder viewHolder, SeekBar seekBar, int position) {
+        if(seekbarlistener!=null){
+            seekbarlistener.onSeekBarChange(viewHolder, seekBar, position);
         }
     }
 
@@ -82,23 +93,24 @@ public class DiaryAdapter extends RecyclerView.Adapter<DiaryAdapter.ViewHolder> 
         String voice;
         ImageView moodImageView;
         ImageButton playerbutton;
-        TextView playtime;
+        SeekBar seekBar;
         int mood;
+        MediaPlayer mediaPlayer;
         //녹음 관련 변수
 
 
 
-        public ViewHolder(View itemView, final OnDiaryItemClickListener listener, final OnItemLongClickListener longlistener, OnDiaryButtonClickListener buttonlistener){
+        public ViewHolder(View itemView, final OnDiaryItemClickListener listener, final OnItemLongClickListener longlistener, OnDiaryButtonClickListener buttonlistener, SeekBar.OnSeekBarChangeListener seekbarlistener){
             super(itemView);
             moodImageView = itemView.findViewById(R.id.moodImageView);
-            playtime=itemView.findViewById(R.id.player);
+            seekBar=itemView.findViewById(R.id.seekBar);
             playerbutton=itemView.findViewById(R.id.playerbutton);
             getPlayerbutton().setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     int position = getAdapterPosition();
                     if(buttonlistener != null){
-                        buttonlistener.onButtonClick(ViewHolder.this, v, position);
+                        buttonlistener.onButtonClick(ViewHolder.this, seekBar, v, position);
                     }
                 }
             });
@@ -125,6 +137,11 @@ public class DiaryAdapter extends RecyclerView.Adapter<DiaryAdapter.ViewHolder> 
         public ImageButton getPlayerbutton(){
             return playerbutton;
         }
+
+        public SeekBar getSeekBar() {
+            return seekBar;
+        }
+
         public void setItem(Diary item){
             mood = item.getMood();
             int moodIndex = mood;
