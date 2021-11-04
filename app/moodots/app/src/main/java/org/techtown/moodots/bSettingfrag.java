@@ -238,7 +238,7 @@ public class bSettingfrag extends Fragment implements OnBackPressedListener{
         String recordPath =getContext().getExternalFilesDir("/").getAbsolutePath();
         // 파일 이름 변수를 현재 날짜가 들어가도록 초기화. 그 이유는 중복된 이름으로 기존에 있던 파일이 덮어 쓰여지는 것을 방지하고자 함.
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        audioFileName = recordPath + "/" + timeStamp + "_"+"audio.mp4";
+        audioFileName = recordPath + "/" + timeStamp + "_"+"audio.wav";
 
         //Media Recorder 생성 및 설정
         mediaRecorder = new MediaRecorder();
@@ -301,7 +301,7 @@ public class bSettingfrag extends Fragment implements OnBackPressedListener{
     }*/
     private void saveDiary(String path) {
         String scontents = "";
-        String hcontents = " ";
+        String hcontents = "";
         String sdate = getDate();
         String stime = getTime();
         String voice = path;

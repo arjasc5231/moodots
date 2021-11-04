@@ -104,7 +104,7 @@ public class cdayfragment extends Fragment {
     public ArrayList<Integer> bringdata(){
         ArrayList<Integer> percent=new ArrayList<Integer>();
         String curdate= (String) date.getText();
-        String sql = "SELECT _id, MOOD, CONTENTS, HASHCONTENTS, CHECKMOD, DATE, TIME, VOICE FROM " +DiaryDatabase.TABLE_DIARY +" ORDER BY DATE DESC;";
+        String sql = "SELECT _id, MOOD, CONTENTS, HASHCONTENTS, CHECKMOD, DATE, TIME, VOICE FROM " +DiaryDatabase.TABLE_DIARY +" ORDER BY _id DESC;";
         int recordCount= -1;
         DiaryDatabase database = DiaryDatabase.getInstance(context);
         if (database != null) {
@@ -287,7 +287,7 @@ public class cdayfragment extends Fragment {
             public void onItemClick(DiaryAdapter.ViewHolder holder, View view, int position) {
                 // 새로 추가할 imageView 생성
                 Diary item = adapter.getItem(position);
-                Toast temp =Toast.makeText(getContext(), "누르는거 확인", Toast.LENGTH_SHORT);
+                Toast temp =Toast.makeText(getContext(), "item click", Toast.LENGTH_SHORT);
                 temp.show();
             }
         });

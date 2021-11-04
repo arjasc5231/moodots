@@ -98,12 +98,18 @@ public class DiaryAdapter extends RecyclerView.Adapter<DiaryAdapter.ViewHolder> 
         MediaPlayer mediaPlayer;
         //녹음 관련 변수
 
-
+        public void setItem(Diary item){
+            mood = item.getMood();
+            int moodIndex = mood;
+            setMoodImage(moodIndex);
+            voice= item.getVoice();
+        }
 
         public ViewHolder(View itemView, final OnDiaryItemClickListener listener, final OnItemLongClickListener longlistener, OnDiaryButtonClickListener buttonlistener, SeekBar.OnSeekBarChangeListener seekbarlistener){
             super(itemView);
             moodImageView = itemView.findViewById(R.id.moodImageView);
             seekBar=itemView.findViewById(R.id.seekBar);
+            seekBar.setEnabled(false);
             playerbutton=itemView.findViewById(R.id.playerbutton);
             getPlayerbutton().setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -142,12 +148,7 @@ public class DiaryAdapter extends RecyclerView.Adapter<DiaryAdapter.ViewHolder> 
             return seekBar;
         }
 
-        public void setItem(Diary item){
-            mood = item.getMood();
-            int moodIndex = mood;
-            setMoodImage(moodIndex);
-            voice= item.getVoice();
-        }
+
 
         public void setMoodImage(int moodIndex) {
             playerbutton.setImageResource(R.drawable.ic_audio_play);

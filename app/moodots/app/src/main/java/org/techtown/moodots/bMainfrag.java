@@ -280,6 +280,7 @@ public class bMainfrag extends Fragment implements OnBackPressedListener{
                     seekbar.setProgress(mediaPlayer.getCurrentPosition());
                 }
                 seekbar.setProgress(0);
+                seekbar.setEnabled(false);
                 Thread.interrupted();
                 zAppConstants.println("정상적으로 종료됨");
             }
@@ -417,7 +418,9 @@ public class bMainfrag extends Fragment implements OnBackPressedListener{
         try {
             mediaPlayer.setDataSource(file.getAbsolutePath());
             mediaPlayer.prepare();
+            seekbar.setEnabled(true);
             seekbar.setMax(mediaPlayer.getDuration());
+            zAppConstants.println("debug duration "+mediaPlayer.getDuration());
             seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                 @Override
                 public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {

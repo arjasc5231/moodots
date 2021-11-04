@@ -374,6 +374,8 @@ public class bBlankFragment extends Fragment implements OnBackPressedListener{
             date.setText(datecall);
             time.setText(timecall);
             contents.setText(contentsmod);
+
+
             hashcontents.setText(hashcontentsmod);
             moodIndex= moodmod;
             setMoodImage(moodIndex);
