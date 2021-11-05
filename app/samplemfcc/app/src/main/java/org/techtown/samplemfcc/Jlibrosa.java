@@ -165,7 +165,7 @@ public class Jlibrosa {
         if(!path.endsWith(".wav")) {
             throw new FileFormatNotSupportedException("File format not supported. jLibrosa currently supports audio processing of only .wav files");
         }
-
+        
         File sourceFile = new File(path);
         WavFile wavFile = null;
 
@@ -517,7 +517,6 @@ public class Jlibrosa {
 
     public float[] loadAndReadWithOffset(String path, int sampleRate, int readDurationInSeconds, int offsetDuration)
             throws IOException, WavFileException, FileFormatNotSupportedException {
-        MainActivity.println("여기까지는 됨.");
         float[][] magValueArray = readMagnitudeValuesFromFile(path, sampleRate, readDurationInSeconds, offsetDuration);
 
         DecimalFormat df = new DecimalFormat("#.#####");

@@ -34,20 +34,22 @@ import be.tarsos.dsp.pitch.PitchProcessor;
 import be.tarsos.dsp.writer.WriterProcessor;
 
 public class MainActivity extends AppCompatActivity {
-    Jlibrosa jl;
+    JLibrosa jl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        jl= new Jlibrosa();
+        jl= new JLibrosa();
+        //String path="/Android/data/org.techtown.moodots/files/5e3693df7995ef170fc0eaca.wav";
         String path="/audioFiles/5e3693df7995ef170fc0eaca.wav";
-        //String path="/audioFiles/5e3693df7995ef170fc0eaca.wav";
         int sr= 16000;
         int n_fft = (int) (((double) sr)*0.025);
         int hop_length = (int) (((double) sr)*0.01);
+        float[] temp= new float[300000];
         try {
-            float[] temp = jl.loadAndRead(path, 16000,-1);
+            temp = jl.loadAndRead(path, 16000,-1);
+            println("debug");
         } catch (IOException e) {
             e.printStackTrace();
         } catch (WavFileException e) {

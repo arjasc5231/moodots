@@ -28,8 +28,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // 4차원 배열을 데이터로
-                float[][][][] input = new float[][][][]{}; /// 여기에 input 데이터를 넣어주어야 함!!!
-                float[] output = new float[]{0};
+                float[][][][] input = new float[1][128][128][3]; /// 여기에 input 데이터를 넣어주어야 함!!!
+                float[][] output = new float[1][7];
 
                 //인터프리터 생성
                 Interpreter tflite = getTfliteInterpreter("EmoDB_87.tflite");
@@ -38,8 +38,8 @@ public class MainActivity extends AppCompatActivity {
                 tflite.run(input, output);
 
                 //출력을 저장
-                text.setText(String.valueOf(output[0]));
-            }
+                text.setText(String.valueOf(output[0][2]));
+        }
         });
     }
 
