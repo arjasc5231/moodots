@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/make_spectrogram.iml" filepath="$PROJECT_DIR$/.idea/modules/make_spectrogram.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/make_spectrogram.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/make_spectrogram.app.iml" />
     </modules>
   </component>
 </project>
