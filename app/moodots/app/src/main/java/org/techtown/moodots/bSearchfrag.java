@@ -6,10 +6,14 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.text.Html;
 import android.util.Log;
@@ -18,6 +22,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,6 +41,8 @@ import com.github.mikephil.charting.data.ScatterData;
 import com.github.mikephil.charting.data.ScatterDataSet;
 import com.github.mikephil.charting.interfaces.datasets.IScatterDataSet;
 
+import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -41,15 +50,22 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 
+import static android.os.SystemClock.sleep;
+
 
 public class bSearchfrag extends Fragment implements OnBackPressedListener{
     aMain activity;
     Context context;
     OnTabItemSelectedListener listener;
     PieChart pieChart;
-    ScatterChart scatterChart;
+    DiaryAdapter adapter;
+    RecyclerView recyclerView;
+    ImageButton playerbutton;
     Button btnkeywordPicker;
     String temp;
+    SeekBar seekbartemp;
+    private MediaPlayer mediaPlayer = null;
+    private Boolean isPlaying = false;
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -75,8 +91,11 @@ public class bSearchfrag extends Fragment implements OnBackPressedListener{
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_search,container,false);
-        ArrayList<Diary> first=loadfirstdata();
+
         HashSet<String> hash=new HashSet<>();
+
+        initUI(rootView, hash);
+        ArrayList<Diary> first=loadfirstdata();
         for(int i=0;i<first.size();i++){
             String hashtotal=first.get(i).getHashcontents();
             String[] hashlist=hashtotal.split("#");
@@ -99,6 +118,7 @@ public class bSearchfrag extends Fragment implements OnBackPressedListener{
                 if (listener != null) {
                     Toast.makeText(getContext(), "no ", Toast.LENGTH_SHORT).show();
                 }
+                stopAudio(0);
                 activity.replaceFragment(2);
             }
         });
@@ -109,6 +129,7 @@ public class bSearchfrag extends Fragment implements OnBackPressedListener{
                 if (listener != null) {
                     Toast.makeText(getContext(), "no ", Toast.LENGTH_SHORT).show();
                 }
+                stopAudio(0);
                 activity.replaceFragment(1);
             }
         });
@@ -119,6 +140,7 @@ public class bSearchfrag extends Fragment implements OnBackPressedListener{
                 if (listener != null) {
                     Toast.makeText(getContext(), "no ", Toast.LENGTH_SHORT).show();
                 }
+                stopAudio(0);
                 activity.replaceFragment(4);
             }
         });
@@ -132,6 +154,7 @@ public class bSearchfrag extends Fragment implements OnBackPressedListener{
                 Bundle result = new Bundle();
                 result.putInt("bundleKey", 1);
                 getParentFragmentManager().setFragmentResult("requestKey", result);
+                stopAudio(0);
                 activity.replaceFragment(0);
             }
         });
@@ -166,13 +189,130 @@ public class bSearchfrag extends Fragment implements OnBackPressedListener{
         activity.setOnBackPressedListener(this);
     }
     public void initUI(ViewGroup rootView, HashSet hashSet){
+        TextView moodtime=rootView.findViewById(R.id.moodtime);
+        TextView moodtext=rootView.findViewById(R.id.moodtext);
+        TextView textView=rootView.findViewById(R.id.datesort);
+        textView.setText(bSortfrag.getDate());
+        PieChart piechart= rootView.findViewById(R.id.piechart);
+        piechart.bringToFront();
+        ImageButton iv = rootView.findViewById(R.id.moodindicate);
+        iv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                piechart.bringToFront();
+            }
+        });
+        recyclerView = rootView.findViewById(R.id.recyclerView);
+        LinearLayoutManager manager = new LinearLayoutManager(getContext());
+        recyclerView.setLayoutManager(manager);
+        adapter = new DiaryAdapter();
+        recyclerView.setAdapter(adapter);
+        adapter.setOnButtonClickListener(new OnDiaryButtonClickListener() {
+            @Override
+            public void onButtonClick(DiaryAdapter.ViewHolder holder, SeekBar seekBar, View view, int position) {
+                Diary item = adapter.getItem(position);
+                if(!item.getVoice().isEmpty()) {
+                    File file = new File(item.getVoice());
+                    if (isPlaying) {
+                        // 음성 녹화 파일이 여러개를 클릭했을 때 재생중인 파일의 Icon을 비활성화(비 재생중)으로 바꾸기 위함.
+                        if (playerbutton == (ImageButton) view) {
+                            // 같은 파일을 클릭했을 경우
+                            stopAudio(1);
+                        } else {
+                            // 다른 음성 파일을 클릭했을 경우
+                            // 기존의 재생중인 파일 중지
+
+                            stopAudio(1);
+                            sleep(600); //쓰레드의 지연시간을 적용시키기 위해서 필요.
+                            // 새로 파일 재생하기
+                            playerbutton = (ImageButton) view;
+                            seekbartemp=seekBar;
+                            playAudio(file, seekBar);
+                        }
+                    } else {
+                        playerbutton = (ImageButton) view;
+                        seekbartemp=seekBar;
+                        playAudio(file, seekBar);
+                    }
+                }
+                else{
+                    Toast.makeText(getContext(),"녹음 파일이 없습니다.",Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        adapter.setOnItemClickListener(new OnDiaryItemClickListener() {
+            @Override
+            public void onItemClick(DiaryAdapter.ViewHolder holder, View view, int position) {
+                // 새로 추가할 imageView 생성
+                Diary item = adapter.getItem(position);
+                switch(item.mood){
+                    case 1:
+                        iv.setImageResource(R.drawable.angry_main_foreground);
+                        moodtime.setText(item.time);
+                        moodtext.setText("분노");
+                        break;
+                    case 2:
+                        iv.setImageResource(R.drawable.joy_main_foreground);
+                        moodtime.setText(item.time);
+                        moodtext.setText("기쁨");
+                        break;
+                    case 3:
+                        iv.setImageResource(R.drawable.fear_main_foreground);
+                        moodtime.setText(item.time);
+                        moodtext.setText("두려움");
+                        break;
+                    case 4:
+                        iv.setImageResource(R.drawable.sad_main_foreground);
+                        moodtime.setText(item.time);
+                        moodtext.setText("슬픔");
+                        break;
+                    case 5:
+                        iv.setImageResource(R.drawable.disgust_main_foreground);
+                        moodtime.setText(item.time);
+                        moodtext.setText("혐오");
+                        break;
+                    case 6:
+                        iv.setImageResource(R.drawable.surprise_main_foreground);
+                        moodtime.setText(item.time);
+                        moodtext.setText("놀람");
+                        break;
+                    case 7:
+                        iv.setImageResource(R.drawable.neutral_main_foreground);
+                        moodtime.setText(item.time);
+                        moodtext.setText("중립");
+                        break;
+                }
+                iv.bringToFront();
+                moodtime.bringToFront();
+                moodtext.bringToFront();
+            }
+        });
+        adapter.setOnItemLongClickListener(new OnItemLongClickListener() {
+            @Override
+            public void onItemLongClick(DiaryAdapter.ViewHolder holder, View view, int position) {
+                Diary item = adapter.getItem(position);
+                Bundle result = new Bundle();
+                result.putInt("bundleKey0", item._id);
+                result.putInt("bundleKey", 2);
+                result.putInt("bundleKey2", item.mood);
+                result.putString("bundleKey3",item.contents);
+                result.putString("bundleKey4",item.hashcontents);
+                result.putInt("bundleKey5", item.checkmod);
+                result.putString("bundleKey6",item.date);
+                result.putString("bundleKey7", item.time);
+                result.putString("bundleKey8", item.voice);
+                FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+                bBlankFragment blankfragment = new bBlankFragment();//프래그먼트2 선언
+                blankfragment.setArguments(result);//번들을 프래그먼트2로 보낼 준비
+                transaction.replace(R.id.container, blankfragment);
+                transaction.commit();
+            }
+        });
         Iterator<String> iter= hashSet.iterator();
         String hash= new String();
-
         if(iter.hasNext()){
             hash=iter.next();
             ArrayList<Diary> percent= bringdata(hash);
-            scatterchart(rootView, percent);
             piechart(rootView, percent);
         }
         iter=hashSet.iterator();
@@ -197,7 +337,6 @@ public class bSearchfrag extends Fragment implements OnBackPressedListener{
                     public void onClick(DialogInterface dialog, int which) {
                         btnkeywordPicker.setText(temp);
                         ArrayList<Diary> percent= bringdata(temp);
-                        scatterchart(rootView, percent);
                         piechart(rootView, percent);
                     }
                 })
@@ -212,6 +351,26 @@ public class bSearchfrag extends Fragment implements OnBackPressedListener{
             }
         });
     }
+    public void Thread(SeekBar seekbar){
+        Runnable task = new Runnable(){
+            public void run(){
+                while(isPlaying){
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    seekbar.setProgress(mediaPlayer.getCurrentPosition());
+                }
+                seekbar.setProgress(0);
+                seekbar.setEnabled(false);
+                Thread.interrupted();
+                zAppConstants.println("정상적으로 종료됨");
+            }
+        };
+        Thread thread = new Thread(task);
+        thread.start();
+    }
     public ArrayList<Diary> bringdata(String hash){
         ArrayList<Diary> percent=new ArrayList<Diary>();
         String sql = "SELECT _id, MOOD, CONTENTS, HASHCONTENTS, CHECKMOD, DATE, TIME, VOICE FROM " +DiaryDatabase.TABLE_DIARY +" WHERE HASHCONTENTS LIKE '%"+hash+"%' ORDER BY DATE DESC;";
@@ -221,6 +380,7 @@ public class bSearchfrag extends Fragment implements OnBackPressedListener{
             Cursor outCursor = database.rawQuery(sql);
             recordCount = outCursor.getCount();
             zAppConstants.println("record count : " + recordCount + "\n");
+            ArrayList<Diary> items = new ArrayList<Diary>();
             for (int i = 0; i < recordCount; i++) {
                 outCursor.moveToNext();
                 int _id = outCursor.getInt(0);
@@ -255,6 +415,8 @@ public class bSearchfrag extends Fragment implements OnBackPressedListener{
 
             }
             outCursor.close();
+            adapter.setItems(percent);
+            adapter.notifyDataSetChanged();
         }
         return percent;
     }
@@ -267,6 +429,7 @@ public class bSearchfrag extends Fragment implements OnBackPressedListener{
             Cursor outCursor = database.rawQuery(sql);
             recordCount = outCursor.getCount();
             zAppConstants.println("record count : " + recordCount + "\n");
+            ArrayList<Diary> items = new ArrayList<Diary>();
             for (int i = 0; i < recordCount; i++) {
                 outCursor.moveToNext();
                 int _id = outCursor.getInt(0);
@@ -299,9 +462,12 @@ public class bSearchfrag extends Fragment implements OnBackPressedListener{
                     time = "";
                 }
                 percent.add(new Diary(_id, mood, contents, hashcontents, checkmod, date, time, voice));
+                items.add(new Diary(_id, mood, contents, hashcontents, checkmod, date, time, voice));
 
             }
             outCursor.close();
+            adapter.setItems(items);
+            adapter.notifyDataSetChanged();
         }
         return percent;
     }
@@ -377,168 +543,69 @@ public class bSearchfrag extends Fragment implements OnBackPressedListener{
         PieData data = new PieData((dataSet));
         data.setValueTextSize(15f);
         data.setValueTextColor(Color.BLACK);
-        double temp=0;
+        /*double temp=0;
         if((moodlist[0]+moodlist[1]+moodlist[2]+moodlist[3]+moodlist[4]+moodlist[5]+moodlist[6])==0){
             pieChart.setCenterText("작성된 일기가 없습니다.");
         }
         else{
             temp= Math.round(((float) moodlist[0]/(moodlist[0]+moodlist[1]+moodlist[2]+moodlist[3]+moodlist[4]+moodlist[5]+moodlist[6]))*100*100)/100.0;
             pieChart.setCenterText(Html.fromHtml("화남"+"<br />"+(temp)+"%"));
-        }
+        }*/
         pieChart.setData(data);
     }
-    public void scatterchart(ViewGroup rootView, ArrayList<Diary> percent){
-        scatterChart = rootView.findViewById(R.id.scatterchart);
-        scatterChart.getDescription().setEnabled(false);
-        scatterChart.setDrawGridBackground(false);
-        scatterChart.setTouchEnabled(true);
-        scatterChart.setMaxHighlightDistance(0f);
-        scatterChart.setHighlightPerTapEnabled(false);
-        // enable scaling and dragging
-        scatterChart.setDragEnabled(true);
-        scatterChart.setScaleYEnabled(true);
-        scatterChart.setScaleXEnabled(false);
-        scatterChart.setDoubleTapToZoomEnabled(false);
-        scatterChart.setMaxVisibleValueCount(999999999);
-        scatterChart.setPinchZoom(false);
+    private void playAudio(File file, SeekBar seekbar) {
+        mediaPlayer = new MediaPlayer();
+        try {
+            mediaPlayer.setDataSource(file.getAbsolutePath());
+            mediaPlayer.prepare();
+            seekbar.setEnabled(true);
+            seekbar.setMax(mediaPlayer.getDuration());
+            zAppConstants.println("debug duration "+mediaPlayer.getDuration());
+            seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                @Override
+                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                    if(fromUser){
+                        mediaPlayer.seekTo(progress);
+                    }
+                }
 
-        Legend l = scatterChart.getLegend();
-        l.setEnabled(false);
-        /*l.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
-        l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.RIGHT);
-        l.setOrientation(Legend.LegendOrientation.VERTICAL);
-        l.setDrawInside(false);
-        //l.setTypeface(tfLight);
-        l.setXOffset(5f);*/
+                @Override
+                public void onStartTrackingTouch(SeekBar seekBar) {
 
-        YAxis yl = scatterChart.getAxisLeft();
-        //yl.setTypeface(tfLight);
-        yl.setDrawGridLines(false);
-        yl.setAxisMinimum(-2f);// this replaces setStartAtZero(true)
-        yl.setAxisMaximum(26f);
-        yl.setGranularityEnabled(true);
-        yl.setGranularity(1f);
-        yl.setInverted(true);
+                }
 
-        scatterChart.getAxisRight().setEnabled(false);
-        XAxis xl = scatterChart.getXAxis();
-        xl.setAxisMinimum(-1f);
-        xl.setAxisMaximum(32f);
-        //xl.setTypeface(tfLight);
-        xl.setDrawGridLines(false);
+                @Override
+                public void onStopTrackingTouch(SeekBar seekBar) {
 
-
-        ArrayList<Entry> angry = new ArrayList<>();
-        ArrayList<Entry> joy = new ArrayList<>();
-        ArrayList<Entry> fear = new ArrayList<>();
-        ArrayList<Entry> sad = new ArrayList<>();
-        ArrayList<Entry> disgust = new ArrayList<>();
-        ArrayList<Entry> surprise = new ArrayList<>();
-        ArrayList<Entry> neutral = new ArrayList<>();
-        for(int i=0;i<percent.size();i++){
-            int p=percent.get(i).getMood();
-            String[] date=percent.get(i).getDate().split("-");
-            String[] time=percent.get(i).getTime().split(":");
-            int dateint=0;
-            int timeint1=0;
-            int timeint2=0;
-            try {
-                dateint=Integer.parseInt(date[2],10);
-            }catch(Exception e){
-                e.printStackTrace();
-            }
-            try {
-                timeint1=Integer.parseInt(time[0],10);
-            }catch(Exception e){
-                e.printStackTrace();
-            }
-            try {
-                timeint2=Integer.parseInt(time[1],10);
-            }catch(Exception e){
-                e.printStackTrace();
-            }
-            switch (p){
-                case 1:
-                    angry.add(new Entry(dateint,(float)(timeint1+timeint2/60.0)));
-                    break;
-                case 2:
-                    joy.add(new Entry(dateint,(float)(timeint1+timeint2/60.0)));
-                    break;
-                case 3:
-                    fear.add(new Entry(dateint,(float)(timeint1+timeint2/60.0)));
-                    break;
-                case 4:
-                    sad.add(new Entry(dateint,(float)(timeint1+timeint2/60.0)));
-                    break;
-                case 5:
-                    disgust.add(new Entry(dateint,(float)(timeint1+timeint2/60.0)));
-                    break;
-                case 6:
-                    surprise.add(new Entry(dateint,(float)(timeint1+timeint2/60.0)));
-                    break;
-                case 7:
-                    neutral.add(new Entry(dateint,(float)(timeint1+timeint2/60.0)));
-                    break;
-            }
+                }
+            });
+            mediaPlayer.start();
+            Thread(seekbar);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        ScatterDataSet dataSet1 = new ScatterDataSet(angry,"angry");
-        dataSet1.setScatterShape(ScatterChart.ScatterShape.CIRCLE);
-        dataSet1.setColor(Color.parseColor("#EF534E"));
-        dataSet1.setScatterShapeSize(50);
-        dataSet1.setDrawValues(false);
 
-        ScatterDataSet dataSet2 = new ScatterDataSet(joy,"joy");
-        dataSet2.setScatterShape(ScatterChart.ScatterShape.CIRCLE);
-        dataSet2.setColor(Color.parseColor("#FFEE58"));
-        dataSet2.setScatterShapeSize(50);
-        dataSet2.setDrawValues(false);
+        isPlaying = true;
+        playerbutton.setImageResource(R.drawable.ic_audio_pause);
+        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                stopAudio(1);
+            }
+        });
 
-        ScatterDataSet dataSet3 = new ScatterDataSet(fear,"fear");
-        dataSet3.setScatterShape(ScatterChart.ScatterShape.CIRCLE);
-        dataSet3.setColor(Color.parseColor("#66BB6A"));
-        dataSet3.setScatterShapeSize(50);
-        dataSet3.setDrawValues(false);
-
-        ScatterDataSet dataSet4 = new ScatterDataSet(sad,"sad");
-        dataSet4.setScatterShape(ScatterChart.ScatterShape.CIRCLE);
-        dataSet4.setColor(Color.parseColor("#2196F3"));
-        dataSet4.setScatterShapeSize(50);
-        dataSet4.setDrawValues(false);
-
-        ScatterDataSet dataSet5 = new ScatterDataSet(disgust,"disgust");
-        dataSet5.setScatterShape(ScatterChart.ScatterShape.CIRCLE);
-        dataSet5.setColor(Color.parseColor("#9C27B0"));
-        dataSet5.setScatterShapeSize(50);
-        dataSet5.setDrawValues(false);
-
-        ScatterDataSet dataSet6 = new ScatterDataSet(surprise,"surprise");
-
-        dataSet6.setScatterShape(ScatterChart.ScatterShape.CIRCLE);
-        dataSet6.setColor(Color.parseColor("#FFA726"));
-        dataSet6.setScatterShapeSize(50);
-        dataSet6.setDrawValues(false);
-
-        ScatterDataSet dataSet7 = new ScatterDataSet(neutral,"neutral");
-        dataSet7.setScatterShape(ScatterChart.ScatterShape.CIRCLE);
-        dataSet7.setColor(Color.parseColor("#A1A3A1"));
-        dataSet7.setScatterShapeSize(50);
-        dataSet7.setDrawValues(false); //entry위쪽 부분에 보이는 entry값 제거 코드
-
-        ArrayList<IScatterDataSet> dataSets = new ArrayList<>();
-        dataSets.add(dataSet1); // add the data sets
-        dataSets.add(dataSet2);
-        dataSets.add(dataSet3);
-        dataSets.add(dataSet4);
-        dataSets.add(dataSet5);
-        dataSets.add(dataSet6);
-        dataSets.add(dataSet7);
-        //dataSet.setColors(ColorTemplate.JOYFUL_COLORS);
-        ScatterData data = new ScatterData(dataSets);
-
-        //data.setValueTextSize(10f);
-        //data.setValueTextColor(Color.BLACK);
-        scatterChart.animateY(1500); //y축으로 내려오는 애니메이션
-        scatterChart.setData(data);
-        scatterChart.invalidate();
     }
+
+    // 녹음 파일 중지
+    private void stopAudio(int mode) {
+        if(mode ==1){
+            playerbutton.setImageResource(R.drawable.ic_audio_play);
+        }
+        //playerbutton.setImageResource(R.drawable.ic_audio_play);
+        if(isPlaying==true){
+            isPlaying = false;
+            mediaPlayer.stop();
+        }
+    }
+
 }

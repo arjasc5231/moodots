@@ -203,6 +203,7 @@ public class bBlankFragment extends Fragment implements OnBackPressedListener{
                 result.putInt("bundleKey5", item.checkmod);
                 result.putString("bundleKey6",item.date);
                 result.putString("bundleKey7", item.time);
+                result.putString("bundleKey8", item.voice);
                 FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
                 bBlankFragment blankfragment = new bBlankFragment();//프래그먼트2 선언
                 blankfragment.setArguments(result);//번들을 프래그먼트2로 보낼 준비
@@ -220,6 +221,7 @@ public class bBlankFragment extends Fragment implements OnBackPressedListener{
             checkmod = getArguments().getInt("bundleKey5");
             datecall = getArguments().getString("bundleKey6");
             timecall = getArguments().getString("bundleKey7");
+            voice = getArguments().getString("bundleKey8");
             Log.d(TAG, "id"+_id);
         }
         if(mMode==1) {
@@ -456,6 +458,15 @@ public class bBlankFragment extends Fragment implements OnBackPressedListener{
             delete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    try{
+                        File file=new File(voice);
+                        if(file.exists()){
+                            file.delete();
+                        }
+                    }
+                    catch (Exception e){
+                        e.printStackTrace();
+                    }
                     deleteDiary();
                     stopAudio();
                     activity.replaceFragment(1);
@@ -614,7 +625,6 @@ public class bBlankFragment extends Fragment implements OnBackPressedListener{
      */
     private void deleteDiary() {
         zAppConstants.println("deleteNote called.");
-
         // delete note
         String sql = "DELETE FROM " + DiaryDatabase.TABLE_DIARY +
                 " WHERE " +
