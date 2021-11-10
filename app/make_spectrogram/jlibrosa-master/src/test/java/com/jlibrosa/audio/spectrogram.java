@@ -19,56 +19,76 @@ import org.apache.commons.math3.complex.Complex;
 import com.jlibrosa.audio.exception.FileFormatNotSupportedException;
 import com.jlibrosa.audio.wavFile.WavFileException;
 
-import jpublic class spectrogram {
-    public static void main(String[] args) {
-        public float [][] make_spectrogram(String fileroot, String filename, int timeUnit){
 
-            // parameters
-            private int sample_rate = 16000;
-            private int n_fft = int(sample_rate * 0.025);
-            private int hop_length = int(sample_rate * 0.01);
-            private int n_mel = int(128);
-            ArrayList mel_list = new ArrayList();
+"""
+@para String fileroot 파일이 저장된 위치
+@para String filename 파일 위치
+@para int timeunit 자르는 시간 (디폴트 128)
 
-            // Jlibrosa
-            JLibrosa jLibrosa = new JLibrosa();
+@return mel - spectrogram 4차원 array 타입
+"""
 
-            // wav 읽기
-            float audioFeatureValues[] = jLibrosa.loadAndReadWithOffset(fileroot + filename, sample_rate, -1, 0);
+public class spectrogram {
+    public static ArrayList make_spectrogram(String fileroot, String filename, int timeUnit) {
 
-            // 정규화
-            float ymin, float ymax =  Math.max(audioFeatureValues), Math.min(audioFeatureValues);
-            for(int i=0; i < audioFeatureValues.length(); i++) {
-                audioFeatureValues[i] = (audioFeatureValues[i]) * 2/ (ymax-ymin) -1 ;
-            }
+        // parameters
+        private int sample_rate = 16000;
+        private int n_fft = sample_rate * 0.025;
+        private int hop_length = sample_rate * 0.01;
+        private int n_mel = 128;
 
-            // 스펙트로 그램 저장
-            float[][] melSpectrogram = jLibrosa.generateMelSpectroGram(audioFeatureValues, sample_rate, n_fft, n_mel, hop_length);
+        // Jlibrosa
+        JLibrosa jLibrosa = new JLibrosa();
 
-            // power_to_db ( 10 * log10( S / ref) ref = abs(S)
+        // wav 읽기
+        float audioFeatureValues[] = jLibrosa.loadAndReadWithOffset(fileroot + filename, sample_rate, -1, 0);
 
-            // 시간 별로 세기 값들에 접근해서, 절대값으로 나눠주고 바꾼 값 다시 넣음음
-            for(int i=0; i < melSpectrogram[i][0].length(); i++){
-                for(int j=0; j < melSpectrogramp[i][j].length(); j++) {
-                    melSpectrogram[i][j] = 10 * Math.log10(melSpectrogram[i][j] / Math.abs(melSpectrogram[i, :]))
-                }
-            }
+        // 정규화
+        float ymin, float ymax = Math.max(audioFeatureValues), Math.min(audioFeatureValues);
+        for (int i = 0; i < audioFeatureValues.length(); i++) {
+            audioFeatureValues[i] = (audioFeatureValues[i]) * 2 / (ymax - ymin) - 1;
+        }
 
-            // 차분과 차차분 구하고, stack 맞추기
+        // 스펙트로 그램 저장
+        float[][] melSpectrogram = jLibrosa.generateMelSpectroGram(audioFeatureValues, sample_rate, n_fft, n_mel, hop_length);
 
-            """delta1 = librosa.feature.delta(data=mel, width=5)
+        // power_to_db => ( 10 * log10( S / ref) ref = abs(S)
+        melSpectrogram = jLibrosa.powerToDb(melSpectrogram);
+
+        // 프레임수 frame -> 행, key -> 렬
+        int n_frame = melSpectrogram[1].length;
+        int n_key = melSpectrogram[:,1].length;
+
+        // 차분과 차차분 구하고, stack 맞추기 (일단 0으로 맞춤)
+        float[] delta1 = new float[n_frame];
+        float[] delta2 = new float[n_frame];
+
+
+        """delta1 = librosa.feature.delta(data=mel, width=5)
             delta2 = librosa.feature.delta(data=delta1, width=5)
             stack = np.dstack((mel,delta1,delta2))"""
 
+        // 4차원 array list 생성해서 각각 담기
+        ArrayList<ArrayList<ArrayList<ArrayList<float>>>> mel_list = new ArrayList<ArrayList<ArrayList<ArrayList<float>>>>;
 
-            // timetimeUnit에 맞춰서 분배하기
-
-            for(int i=0; i < audioFeatureValues.length() - timeUnit + 1; i += timeUnit;) {
-                mel_list.add(audioFeatureValues[:, i:i+timeUnit])
+        for (int i = 0; i < n_frame - timeUnit + 1; i += timeUnit) {
+            ArrayList<ArrayList<ArrayList<float>>> three_list = new ArrayList<ArrayList<ArrayList<float>>>;
+            for (int j = 0; j < n_key; j++) {
+                ArrayList<ArrayList<float>> two_list = new ArrayList<ArrayList<float>>;
+                for (k = 0; k < n_frame; k++) {
+                    ArrayList<float> one_list = {melSpectrogram[j][k], delta1[k], delta2[k]};
+                    two_list.add(one_list);
+                }
+                three_list.add(two_list);
             }
-
-            return mel_list;
+            mel_list.add(three_list[:,i:i + timeUnit]);
         }
+
+        return mel_list;
     }
-    float [][] hello = make_spectrogram("C:\Users\dbghk\Desktop\runner\moodots\moodots\app\make_spectrogram\jlibrosa-master\audioFiles\", "001_children_playing.wav", 128)
+
+    public stactic void main(String[] args)  {
+        ArrayList hello = make_spectrogram("C:\\Users\\dbghk\\Desktop\\runner\\moodots\\moodots\\app\\make_spectrogram\\jlibrosa-master\\audioFiles", '001_children_playing.wav', 128);
+        System.out.println(hello);
+    }
 }

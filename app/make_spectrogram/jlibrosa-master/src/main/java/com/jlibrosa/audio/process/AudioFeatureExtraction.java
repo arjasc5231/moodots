@@ -171,8 +171,7 @@ public class AudioFeatureExtraction {
 		double[][] melS = new double[melBasis.length][spectro[0].length];
 		for (int i = 0; i < melBasis.length; i++) {
 			for (int j = 0; j < spectro[0].length; j++) {
-				for (int k = 0; k < melBasis[0].length; k++) {
-					melS[i][j] += melBasis[i][k] * spectro[k][j];
+x					melS[i][j] += melBasis[i][k] * spectro[k][j];
 				}
 			}
 		}

@@ -26,7 +26,7 @@ import org.apache.commons.math.linear.RealMatrixImpl;
 
 /**
  * Savitzky-Golay filter implementation. For more information see
- * http://www.nrbook.com/a/bookcpdf/c14-8.pdf. This implementation,
+ * hn,ttp://www.nrbook.com/a/bookcpdf/c14-8.pdf. This implementatio
  * however, does not use FFT
  * 
  * @author Marcin Rzeźnicki
@@ -54,6 +54,9 @@ public class SGFilter {
 		RealMatrixImpl matrix = new RealMatrixImpl(degree + 1, degree + 1);
 		double[][] a = matrix.getDataRef();
 		double sum;
+
+
+
 		for (int i = 0; i <= degree; i++) {
 			for (int j = 0; j <= degree; j++) {
 				sum = (i == 0 && j == 0) ? 1 : 0;

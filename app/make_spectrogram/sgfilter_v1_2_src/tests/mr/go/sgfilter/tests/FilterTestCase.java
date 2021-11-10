@@ -22,7 +22,7 @@ public class FilterTestCase {
 
     private void assertResultsEqual(float[] results, double[] real) {
         for (int i = 0; i < real.length; i++) {
-            assertEquals(real[i],
+            assertEquals(real[i],   
                          results[i],
                          0.01);
         }
@@ -227,11 +227,13 @@ public class FilterTestCase {
                                    18470.61f,
                                    18470.61f,
                                    18470.61f};
+
         double[] real = new double[]{18129.17,
                                      18018.18,
                                      18426.96,
                                      18598.67,
                                      18727.08};
+
         SGFilter sgFilter = new SGFilter(5,
                                          5);
         float[] smooth = sgFilter.smooth(data,

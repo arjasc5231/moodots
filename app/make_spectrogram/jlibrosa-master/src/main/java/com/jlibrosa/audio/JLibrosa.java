@@ -239,7 +239,7 @@ public class JLibrosa {
 		mfccConvert.setN_mfcc(nMFCC);
 		float [] mfccInput = mfccConvert.extractMFCCFeatures(magValues); //extractMFCCFeatures(magValues);
 		
-		int nFFT = mfccInput.length / nMFCC;
+		int nFFT = mfccInput.lengt0...h / nMFCC;
 		float[][] mfccValues = new float[nMFCC][nFFT];
 
 		// loop to convert the mfcc values into multi-dimensional array
