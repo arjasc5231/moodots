@@ -1,7 +1,9 @@
 package org.techtown.moodots;
 
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.media.MediaPlayer;
@@ -13,8 +15,6 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.text.Html;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,40 +26,24 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.PieChart;
-import com.github.mikephil.charting.charts.ScatterChart;
 import com.github.mikephil.charting.components.Legend;
-import com.github.mikephil.charting.components.MarkerView;
-import com.github.mikephil.charting.components.XAxis;
-import com.github.mikephil.charting.components.YAxis;
-import com.github.mikephil.charting.data.CandleEntry;
-import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
-import com.github.mikephil.charting.data.ScatterData;
-import com.github.mikephil.charting.data.ScatterDataSet;
-import com.github.mikephil.charting.highlight.Highlight;
-import com.github.mikephil.charting.interfaces.datasets.IScatterDataSet;
-import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
-import com.github.mikephil.charting.utils.ColorTemplate;
-import com.github.mikephil.charting.utils.MPPointF;
-import com.github.mikephil.charting.utils.Utils;
-
-import org.checkerframework.checker.units.qual.A;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
 import static android.os.SystemClock.sleep;
 
-public class cdayfragment extends Fragment {
+public class cmoodfragment extends Fragment {
     PieChart pieChart;
-    Button date;
+    Button btnkeywordPicker;
     Context context;
+    String temp;
     aMain activity;
     RecyclerView recyclerView;
     DiaryAdapter adapter;
@@ -95,17 +79,16 @@ public class cdayfragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_day,container,false);
+        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_mood,container,false);
         initUI(rootView);
-        ArrayList<Integer> percent= bringdata();
+        ArrayList<Diary> percent= bringdata(1);
         piechart(rootView, percent);
 
         return rootView;
     }
-    public ArrayList<Integer> bringdata(){
-        ArrayList<Integer> percent=new ArrayList<Integer>();
-        String curdate= (String) date.getText();
-        String sql = "SELECT _id, MOOD, CONTENTS, HASHCONTENTS, CHECKMOD, DATE, TIME, VOICE FROM " +DiaryDatabase.TABLE_DIARY +" ORDER BY _id DESC;";
+    public ArrayList<Diary> bringdata(int moodsee){
+        ArrayList<Diary> percent=new ArrayList<Diary>();
+        String sql = "SELECT _id, MOOD, CONTENTS, HASHCONTENTS, CHECKMOD, DATE, TIME, VOICE FROM " +DiaryDatabase.TABLE_DIARY +" ORDER BY DATE DESC, TIME DESC;";
         int recordCount= -1;
         DiaryDatabase database = DiaryDatabase.getInstance(context);
         if (database != null) {
@@ -124,7 +107,7 @@ public class cdayfragment extends Fragment {
                 String date = outCursor.getString(5);
                 String time = outCursor.getString(6);
                 String voice = outCursor.getString(7);
-                if(date.equals(curdate)) {
+                if(mood==moodsee) {
                     if (date != null && date.length() > 6) {
                         try {
                             Date inDate = zAppConstants.dateFormat5.parse(date);
@@ -146,7 +129,7 @@ public class cdayfragment extends Fragment {
                         time = "";
                     }
 
-                    percent.add(mood);
+                    percent.add(new Diary(_id, mood, contents, hashcontents, checkmod, date, time,voice));
                     items.add(new Diary(_id, mood, contents, hashcontents, checkmod, date, time,voice));
                 }
             }
@@ -156,7 +139,7 @@ public class cdayfragment extends Fragment {
         }
         return percent;
     }
-    public void piechart(ViewGroup rootView, ArrayList<Integer> percent){
+    public void piechart(ViewGroup rootView, ArrayList<Diary> percent){
         TextView angry= rootView.findViewById(R.id.angry);
         TextView joy= rootView.findViewById(R.id.joy);
         TextView fear= rootView.findViewById(R.id.fear);
@@ -178,7 +161,7 @@ public class cdayfragment extends Fragment {
         l.setEnabled(false);
         int[] moodlist=new int[7];
         for(int i=0;i<percent.size();i++){
-            int p=percent.get(i)-1;
+            int p=percent.get(i).getMood()-1;
             moodlist[p]+=1;
         }
         angry.setText("화남:"+moodlist[0]+"회");
@@ -241,8 +224,62 @@ public class cdayfragment extends Fragment {
 
     }
     public void initUI(ViewGroup rootView){
-        date= rootView.findViewById(R.id.datepick);
-        date.setText(bSortfrag.getDate());
+        btnkeywordPicker= rootView.findViewById(R.id.moodpick);
+        btnkeywordPicker.setText("화남");
+        String[] moodlist= {"화남", "기쁨", "두려움", "슬픔", "혐오", "놀람", "중립"};
+
+        btnkeywordPicker.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder keydialog = new AlertDialog.Builder(getContext());
+                keydialog.setSingleChoiceItems(moodlist, 0, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        temp=moodlist[which];
+                    }
+                })
+                        .setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                btnkeywordPicker.setText(temp);
+                                int moodsee=0;
+                                switch(temp){
+                                    case "화남":
+                                        moodsee=1;
+                                        break;
+                                    case "기쁨":
+                                        moodsee=2;
+                                        break;
+                                    case "두려움":
+                                        moodsee=3;
+                                        break;
+                                    case "슬픔":
+                                        moodsee=4;
+                                        break;
+                                    case "혐오":
+                                        moodsee=5;
+                                        break;
+                                    case "놀람":
+                                        moodsee=6;
+                                        break;
+                                    case "중립":
+                                        moodsee=7;
+                                        break;
+                                }
+                                ArrayList<Diary> percent= bringdata(moodsee);
+                                piechart(rootView, percent);
+                            }
+                        })
+                        .setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                            }
+                        });
+                keydialog.create();
+                keydialog.show();
+            }
+        });
         recyclerView = rootView.findViewById(R.id.recyclerView);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         //layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
@@ -312,30 +349,7 @@ public class cdayfragment extends Fragment {
                 transaction.commit();
             }
         });
-        date.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final Calendar c = Calendar.getInstance();
-                int mYear = c.get(Calendar.YEAR);
-                int mMonth = c.get(Calendar.MONTH);
-                int mDay = c.get(Calendar.DAY_OF_MONTH);
-                DatePickerDialog datePickerDialog = new DatePickerDialog(context, new DatePickerDialog.OnDateSetListener() {
-                    @Override
-                    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                        try {
-                            Date indate = zAppConstants.dateFormat5.parse(year + "-" + (month + 1) + "-" + dayOfMonth);
-                            String day= zAppConstants.dateFormat5.format(indate);
-                            date.setText(day);
-                            ArrayList<Integer> temp= bringdata();
-                            piechart(rootView, temp);
-                        }catch(Exception e){
-                            e.printStackTrace();
-                        }
-                    }
-                }, mYear, mMonth, mDay);
-                datePickerDialog.show();
-            }
-        });
+
     }
     public void Thread(SeekBar seekbar){
         Runnable task = new Runnable(){

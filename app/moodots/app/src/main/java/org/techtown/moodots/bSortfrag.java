@@ -21,7 +21,7 @@ public class bSortfrag extends Fragment implements OnBackPressedListener{
     Context context;
     TextView textsort;
     OnTabItemSelectedListener listener;
-    cdayfragment dayfragment=new cdayfragment();
+    cmoodfragment moodfragment=new cmoodfragment();
     cweekfragment weekfragment=new cweekfragment();
     cmonthfragment monthfragment=new cmonthfragment();
     cyearfragment yearfragment=new cyearfragment();
@@ -51,13 +51,13 @@ public class bSortfrag extends Fragment implements OnBackPressedListener{
         textsort=(TextView) rootView.findViewById(R.id.sorttext);
         TextView datesort=(TextView) rootView.findViewById(R.id.datesort);
         datesort.setText(getDate());
-        getChildFragmentManager().beginTransaction().add(R.id.containersort, dayfragment).commit();
+        getChildFragmentManager().beginTransaction().add(R.id.containersort, moodfragment).commit();
         Button day= (Button) rootView.findViewById(R.id.day);
         day.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
                 textsort.setText("Day");
-                getChildFragmentManager().beginTransaction().replace(R.id.containersort, dayfragment).commit();
+                getChildFragmentManager().beginTransaction().replace(R.id.containersort, moodfragment).commit();
             }
         });
         Button week= (Button) rootView.findViewById(R.id.week);

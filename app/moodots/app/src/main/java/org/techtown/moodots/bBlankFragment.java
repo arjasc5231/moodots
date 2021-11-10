@@ -592,7 +592,10 @@ public class bBlankFragment extends Fragment implements OnBackPressedListener{
         String scontents = contents.getText().toString();
         String hcontents = hashcontents.getText().toString();
         int firsthash=hcontents.indexOf("#");
-        String hashstring=hcontents.substring(firsthash);
+        String hashstring=new String();
+        if(firsthash>=0) {
+             hashstring= hcontents.substring(firsthash);
+        }
         String sdate = date.getText().toString();
         String stime = time.getText().toString();
         /*try {
