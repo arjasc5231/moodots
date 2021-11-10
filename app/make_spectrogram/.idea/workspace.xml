@@ -12,7 +12,11 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="427c5c95-731d-4d4a-b416-e4a91eddd8e3" name="Default Changelist" comment="" />
+    <list default="true" id="427c5c95-731d-4d4a-b416-e4a91eddd8e3" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/jlibrosa-master/src/test/java/com/jlibrosa/audio/JLibrosaTest_1.java" beforeDir="false" afterPath="$PROJECT_DIR$/jlibrosa-master/src/test/java/com/jlibrosa/audio/JLibrosaTest_1.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/jlibrosa-master/src/test/java/com/jlibrosa/audio/spectrogram.java" beforeDir="false" afterPath="$PROJECT_DIR$/jlibrosa-master/src/test/java/com/jlibrosa/audio/spectrogram.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />

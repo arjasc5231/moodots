@@ -192,7 +192,7 @@ public class JLibrosaTest_1 {
 		        
 		        encodePcmToMp3(consByteArray);
 	        
-	} 
+	}
 	
 
 }

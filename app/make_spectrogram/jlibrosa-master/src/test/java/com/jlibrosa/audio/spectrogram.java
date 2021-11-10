@@ -11,13 +11,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.FileWriter;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-
 import org.apache.commons.math3.complex.Complex;
 
 import com.jlibrosa.audio.exception.FileFormatNotSupportedException;
+import com.jlibrosa.audio.process.AudioFeatureExtraction;
+import com.jlibrosa.audio.wavFile.WavFile;
 import com.jlibrosa.audio.wavFile.WavFileException;
+
 
 
 """
@@ -29,7 +29,7 @@ import com.jlibrosa.audio.wavFile.WavFileException;
 """
 
 public class spectrogram {
-    public static ArrayList make_spectrogram(String fileroot, String filename, int timeUnit) {
+    public static ArrayList<ArrayList<ArrayList<ArrayList<float>>>> make_spectrogram(String fileroot, String filename, int timeUnit) {
 
         // parameters
         private int sample_rate = 16000;
