@@ -1,9 +1,11 @@
 package org.techtown.moodots;
 
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 
@@ -21,6 +23,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AnalogClock;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
@@ -28,15 +31,24 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.Toolbar;
 
+import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.data.PieData;
+import com.github.mikephil.charting.data.PieDataSet;
+import com.github.mikephil.charting.data.PieEntry;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 
 import static android.os.SystemClock.sleep;
 
 public class bMainfrag extends Fragment implements OnBackPressedListener{
     private static final String TAG="Mainfrag";
+    PieChart pieChart;
+    Button date;
     RecyclerView recyclerView;
     DiaryAdapter adapter;
     Context context;
@@ -46,7 +58,10 @@ public class bMainfrag extends Fragment implements OnBackPressedListener{
     SeekBar seekbartemp;
     private MediaPlayer mediaPlayer = null;
     private Boolean isPlaying = false;
-
+    final Calendar c = Calendar.getInstance();
+    int mYear = c.get(Calendar.YEAR);
+    int mMonth = c.get(Calendar.MONTH);
+    int mDay = c.get(Calendar.DAY_OF_MONTH);
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -73,39 +88,8 @@ public class bMainfrag extends Fragment implements OnBackPressedListener{
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_main,container,false);
         buttonUI(rootView);
         initUI(rootView);
-        loadDiaryListData();
-        /*Button button= (Button) rootView.findViewById(R.id.button11);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //startRecording();
-            }
-        });
-        Button button12 = (Button) rootView.findViewById(R.id.button12);
-        button12.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //stopRecording();
-            }
-        });
-
-        // 세번째 버튼 클릭 시
-        Button button13 = (Button) rootView.findViewById(R.id.button13);
-        button13.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //playAudio();
-            }
-        });
-
-        // 네번째 버튼 클릭 시
-        Button button14 = (Button) rootView.findViewById(R.id.button14);
-        button14.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //stopAudio();
-            }
-        });*/
+        ArrayList<Integer> percent= bringdata();
+        piechart(rootView, percent);
 
         return rootView;
     }
@@ -146,14 +130,15 @@ public class bMainfrag extends Fragment implements OnBackPressedListener{
         TextView moodtext=rootView.findViewById(R.id.moodtext);
         TextView textView=rootView.findViewById(R.id.datemain);
         textView.setText(getDate());
-
-        AnalogClock clock= rootView.findViewById(R.id.clock);
-        clock.bringToFront();
+        date= rootView.findViewById(R.id.datepick);
+        date.setText(getDate());
+        PieChart piechart= rootView.findViewById(R.id.piechart);
+        piechart.bringToFront();
         ImageButton iv = rootView.findViewById(R.id.moodindicate);
         iv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                clock.bringToFront();
+                piechart.bringToFront();
             }
         });
         recyclerView = rootView.findViewById(R.id.recyclerView);
@@ -259,6 +244,7 @@ public class bMainfrag extends Fragment implements OnBackPressedListener{
                 result.putString("bundleKey6",item.date);
                 println("active here"+item.date);
                 result.putString("bundleKey7", item.time);
+                result.putString("bundleKey8", item.voice);
                 FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
                 bBlankFragment blankfragment = new bBlankFragment();//프래그먼트2 선언
                 blankfragment.setArguments(result);//번들을 프래그먼트2로 보낼 준비
@@ -266,7 +252,29 @@ public class bMainfrag extends Fragment implements OnBackPressedListener{
                 transaction.commit();
             }
         });
-
+        date.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DatePickerDialog datePickerDialog = new DatePickerDialog(context, new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                        try {
+                            mYear=year;
+                            mMonth=month;
+                            mDay=dayOfMonth;
+                            Date indate = zAppConstants.dateFormat5.parse(year + "-" + (month + 1) + "-" + dayOfMonth);
+                            String day= zAppConstants.dateFormat5.format(indate);
+                            date.setText(day);
+                            ArrayList<Integer> temp= bringdata();
+                            piechart(rootView, temp);
+                        }catch(Exception e){
+                            e.printStackTrace();
+                        }
+                    }
+                }, mYear, mMonth, mDay);
+                datePickerDialog.show();
+            }
+        });
     }
     public void Thread(SeekBar seekbar){
         Runnable task = new Runnable(){
@@ -338,6 +346,60 @@ public class bMainfrag extends Fragment implements OnBackPressedListener{
             }
         });
     }
+    public ArrayList<Integer> bringdata(){
+        ArrayList<Integer> percent=new ArrayList<Integer>();
+        String curdate= (String) date.getText();
+        String sql = "SELECT _id, MOOD, CONTENTS, HASHCONTENTS, CHECKMOD, DATE, TIME, VOICE FROM " +DiaryDatabase.TABLE_DIARY +" ORDER BY _id DESC;";
+        int recordCount= -1;
+        DiaryDatabase database = DiaryDatabase.getInstance(context);
+        if (database != null) {
+            Cursor outCursor = database.rawQuery(sql);
+            recordCount = outCursor.getCount();
+            zAppConstants.println("record count : " + recordCount + "\n");
+            ArrayList<Diary> items = new ArrayList<Diary>();
+            for (int i = 0; i < recordCount; i++) {
+                outCursor.moveToNext();
+                int _id = outCursor.getInt(0);
+                int mood = outCursor.getInt(1);
+                String contents = outCursor.getString(2);
+                String hashcontents = outCursor.getString(3);
+                int checkmod= outCursor.getInt(4);
+                String date = outCursor.getString(5);
+                String time = outCursor.getString(6);
+                String voice = outCursor.getString(7);
+                if(date.equals(curdate)) {
+                    if (date != null && date.length() > 6) {
+                        try {
+                            Date inDate = zAppConstants.dateFormat5.parse(date);
+                            date = zAppConstants.dateFormat5.format(inDate);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        date = "";
+                    }
+                    if (time != null && time.length() > 2) {
+                        try {
+                            Date inTime = zAppConstants.dateFormat6.parse(time);
+                            time = zAppConstants.dateFormat6.format(inTime);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        time = "";
+                    }
+
+                    percent.add(mood);
+                    items.add(new Diary(_id, mood, contents, hashcontents, checkmod, date, time,voice));
+                }
+            }
+            outCursor.close();
+            adapter.setItems(items);
+            adapter.notifyDataSetChanged();
+        }
+        return percent;
+    }
+    /*
     public int loadDiaryListData(){
         println("loadNoteLIstData called.");
         String curdate=getDate();
@@ -402,7 +464,7 @@ public class bMainfrag extends Fragment implements OnBackPressedListener{
         }
 
         return recordCount;
-    }
+    }*/
     private void println(String data) {
         Log.d(TAG, data);
     }
@@ -466,6 +528,76 @@ public class bMainfrag extends Fragment implements OnBackPressedListener{
             isPlaying = false;
             mediaPlayer.stop();
         }
+    }
+    public void piechart(ViewGroup rootView, ArrayList<Integer> percent){
+        pieChart=rootView.findViewById(R.id.piechart);
+        pieChart.setUsePercentValues(true);
+        pieChart.getDescription().setEnabled(false);
+        pieChart.setExtraOffsets(5,10,5,5);
+        pieChart.setDragDecelerationFrictionCoef(0f);
+        pieChart.setDrawHoleEnabled(true); //차트 가운데 구멍을 넣을것인지
+        pieChart.setHoleColor(Color.WHITE); //그 가운데 구멍의 색 결정
+        pieChart.setTransparentCircleRadius(0f);
+        pieChart.setRotationEnabled(false);
+        pieChart.animateY(2000);
+        Legend l = pieChart.getLegend();
+        l.setEnabled(false);
+        int[] moodlist=new int[7];
+        for(int i=0;i<percent.size();i++){
+            int p=percent.get(i)-1;
+            moodlist[p]+=1;
+        }
+
+        ArrayList<Integer> colorset=new ArrayList<Integer>();
+        ArrayList<PieEntry> yValues = new ArrayList<PieEntry>();
+
+        if(moodlist[0]!=0) {
+            yValues.add(new PieEntry(moodlist[0], "Angry"));
+            colorset.add(Color.parseColor("#EF534E"));
+        }
+        if(moodlist[1]!=0) {
+            yValues.add(new PieEntry(moodlist[1], "Joy"));
+            colorset.add(Color.parseColor("#FFEE58"));
+        }
+        if(moodlist[2]!=0) {
+            yValues.add(new PieEntry(moodlist[2], "Fear"));
+            colorset.add(Color.parseColor("#66BB6A"));
+        }
+        if(moodlist[3]!=0) {
+            yValues.add(new PieEntry(moodlist[3], "Sad"));
+            colorset.add(Color.parseColor("#2196F3"));
+        }
+        if(moodlist[4]!=0) {
+            yValues.add(new PieEntry(moodlist[4], "Disgust"));
+            colorset.add(Color.parseColor("#9C27B0"));
+        }
+        if(moodlist[5]!=0) {
+            yValues.add(new PieEntry(moodlist[5], "Surprise"));
+            colorset.add(Color.parseColor("#FFA726"));
+        }
+        if(moodlist[6]!=0) {
+            yValues.add(new PieEntry(moodlist[6], "Neutral"));
+            colorset.add(Color.parseColor("#A1A3A1"));
+        }
+        PieDataSet dataSet = new PieDataSet(yValues,"");
+        dataSet.setSliceSpace(0f);
+        dataSet.setSelectionShift(0f);
+        dataSet.setColors(colorset);
+        pieChart.setEntryLabelColor(Color.BLACK);
+        PieData data = new PieData((dataSet));
+        data.setValueTextSize(15f);
+        data.setValueTextColor(Color.BLACK);
+        /*double temp=0;
+        if((moodlist[0]+moodlist[1]+moodlist[2]+moodlist[3]+moodlist[4]+moodlist[5]+moodlist[6])==0){
+            pieChart.setCenterText("작성된 일기가 없습니다.");
+        }
+        else{
+            temp= Math.round(((float) moodlist[0]/(moodlist[0]+moodlist[1]+moodlist[2]+moodlist[3]+moodlist[4]+moodlist[5]+moodlist[6]))*100*100)/100.0;
+            pieChart.setCenterText(Html.fromHtml("화남"+"<br />"+(temp)+"%"));
+        }*/
+        pieChart.setData(data);
+
+
     }
 
 }

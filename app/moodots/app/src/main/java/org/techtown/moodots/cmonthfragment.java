@@ -21,15 +21,22 @@ import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.charts.ScatterChart;
+import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.data.ScatterData;
 import com.github.mikephil.charting.data.ScatterDataSet;
+import com.github.mikephil.charting.formatter.DefaultAxisValueFormatter;
+import com.github.mikephil.charting.formatter.IAxisValueFormatter;
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
+import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.github.mikephil.charting.interfaces.datasets.IScatterDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
@@ -49,6 +56,17 @@ public class cmonthfragment extends Fragment {
     int chooseyear=c.get(Calendar.YEAR);
     int choosemonth=c.get(Calendar.MONTH)+1;
 
+    public class AxisValueFormat extends ValueFormatter implements IAxisValueFormatter{
+        private String[] day;
+
+        AxisValueFormat(String[] values){
+            this.day=values;
+        }
+        @Override
+        public String getFormattedValue(float value, AxisBase axis) {
+            return day[(int) value];
+        }
+    }
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -65,7 +83,6 @@ public class cmonthfragment extends Fragment {
             context= null;
         }
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -108,7 +125,7 @@ public class cmonthfragment extends Fragment {
     public ArrayList<Diary> bringdata( int year, int month){
         ArrayList<Diary> percent=new ArrayList<Diary>();
         String[] cutdate={Integer.toString(year),Integer.toString(month)};
-        String sql = "SELECT _id, MOOD, CONTENTS, HASHCONTENTS, CHECKMOD, DATE, TIME, VOICE FROM " +DiaryDatabase.TABLE_DIARY +" ORDER BY DATE DESC;";
+        String sql = "SELECT _id, MOOD, CONTENTS, HASHCONTENTS, CHECKMOD, DATE, TIME, VOICE FROM " +DiaryDatabase.TABLE_DIARY +" ORDER BY _id;";
         int recordCount= -1;
         DiaryDatabase database = DiaryDatabase.getInstance(context);
         if (database != null) {
@@ -246,11 +263,11 @@ public class cmonthfragment extends Fragment {
         // enable scaling and dragging
         scatterChart.setDragEnabled(true);
         scatterChart.setScaleYEnabled(true);
-        scatterChart.setScaleXEnabled(false);
+        scatterChart.setScaleXEnabled(true);
         scatterChart.setDoubleTapToZoomEnabled(false);
         scatterChart.setMaxVisibleValueCount(999999999);
         scatterChart.setPinchZoom(false);
-
+        scatterChart.setVisibleXRangeMinimum(-1f);
         Legend l = scatterChart.getLegend();
         l.setEnabled(false);
         /*l.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
@@ -259,24 +276,30 @@ public class cmonthfragment extends Fragment {
         l.setDrawInside(false);
         //l.setTypeface(tfLight);
         l.setXOffset(5f);*/
-
         YAxis yl = scatterChart.getAxisLeft();
         //yl.setTypeface(tfLight);
+        String[] day=new String[31];
+        for(int t=1;t<32;t++){
+            day[t-1]=Integer.toString(t);
+        }
+        yl.setLabelCount(25,true);
+        yl.setValueFormatter(new AxisValueFormat(day));
         yl.setDrawGridLines(false);
-        yl.setAxisMinimum(-2f);// this replaces setStartAtZero(true)
-        yl.setAxisMaximum(26f);
+        yl.setAxisMinimum(0f);// this replaces setStartAtZero(true)
+        yl.setAxisMaximum(24f);
         yl.setGranularityEnabled(true);
-        yl.setGranularity(1f);
+        yl.setGranularity(0.5f);
         yl.setInverted(true);
 
         scatterChart.getAxisRight().setEnabled(false);
         XAxis xl = scatterChart.getXAxis();
-        xl.setAxisMinimum(-1f);
-        xl.setAxisMaximum(32f);
+        xl.setLabelCount(31,true);
+        xl.setAxisMinimum(1f);
+        xl.setAxisMaximum(31f);
         //xl.setTypeface(tfLight);
         xl.setDrawGridLines(false);
-
-
+        //xl.setGranularityEnabled(true);
+        //xl.setGranularity(1f);
         ArrayList<Entry> angry = new ArrayList<>();
         ArrayList<Entry> joy = new ArrayList<>();
         ArrayList<Entry> fear = new ArrayList<>();
@@ -284,6 +307,7 @@ public class cmonthfragment extends Fragment {
         ArrayList<Entry> disgust = new ArrayList<>();
         ArrayList<Entry> surprise = new ArrayList<>();
         ArrayList<Entry> neutral = new ArrayList<>();
+        ArrayList<IScatterDataSet> dataSets = new ArrayList<>();
         for(int i=0;i<percent.size();i++){
             int p=percent.get(i).getMood();
             String[] date=percent.get(i).getDate().split("-");
@@ -309,85 +333,76 @@ public class cmonthfragment extends Fragment {
             switch (p){
                 case 1:
                     angry.add(new Entry(dateint,(float)(timeint1+timeint2/60.0)));
+                    ScatterDataSet dataSet1 = new ScatterDataSet(angry,"angry");
+                    dataSet1.setScatterShape(ScatterChart.ScatterShape.CIRCLE);
+                    dataSet1.setColor(Color.parseColor("#EF534E"));
+                    dataSet1.setScatterShapeSize(50);
+                    dataSet1.setDrawValues(false);
+                    dataSets.add(dataSet1);
                     break;
                 case 2:
                     joy.add(new Entry(dateint,(float)(timeint1+timeint2/60.0)));
+                    ScatterDataSet dataSet2 = new ScatterDataSet(joy,"joy");
+                    dataSet2.setScatterShape(ScatterChart.ScatterShape.CIRCLE);
+                    dataSet2.setColor(Color.parseColor("#FFEE58"));
+                    dataSet2.setScatterShapeSize(50);
+                    dataSet2.setDrawValues(false);
+                    dataSets.add(dataSet2);
                     break;
                 case 3:
                     fear.add(new Entry(dateint,(float)(timeint1+timeint2/60.0)));
+                    ScatterDataSet dataSet3 = new ScatterDataSet(fear,"fear");
+                    dataSet3.setScatterShape(ScatterChart.ScatterShape.CIRCLE);
+                    dataSet3.setColor(Color.parseColor("#66BB6A"));
+                    dataSet3.setScatterShapeSize(50);
+                    dataSet3.setDrawValues(false);
+                    dataSets.add(dataSet3);
                     break;
                 case 4:
                     sad.add(new Entry(dateint,(float)(timeint1+timeint2/60.0)));
+                    ScatterDataSet dataSet4 = new ScatterDataSet(sad,"sad");
+                    dataSet4.setScatterShape(ScatterChart.ScatterShape.CIRCLE);
+                    dataSet4.setColor(Color.parseColor("#2196F3"));
+                    dataSet4.setScatterShapeSize(50);
+                    dataSet4.setDrawValues(false);
+                    dataSets.add(dataSet4);
                     break;
                 case 5:
                     disgust.add(new Entry(dateint,(float)(timeint1+timeint2/60.0)));
+                    ScatterDataSet dataSet5 = new ScatterDataSet(disgust,"disgust");
+                    dataSet5.setScatterShape(ScatterChart.ScatterShape.CIRCLE);
+                    dataSet5.setColor(Color.parseColor("#9C27B0"));
+                    dataSet5.setScatterShapeSize(50);
+                    dataSet5.setDrawValues(false);
+                    dataSets.add(dataSet5);
                     break;
                 case 6:
                     surprise.add(new Entry(dateint,(float)(timeint1+timeint2/60.0)));
+                    ScatterDataSet dataSet6 = new ScatterDataSet(surprise,"surprise");
+                    dataSet6.setScatterShape(ScatterChart.ScatterShape.CIRCLE);
+                    dataSet6.setColor(Color.parseColor("#FFA726"));
+                    dataSet6.setScatterShapeSize(50);
+                    dataSet6.setDrawValues(false);
+                    dataSets.add(dataSet6);
                     break;
                 case 7:
                     neutral.add(new Entry(dateint,(float)(timeint1+timeint2/60.0)));
+                    ScatterDataSet dataSet7 = new ScatterDataSet(neutral,"neutral");
+                    dataSet7.setScatterShape(ScatterChart.ScatterShape.CIRCLE);
+                    dataSet7.setColor(Color.parseColor("#A1A3A1"));
+                    dataSet7.setScatterShapeSize(50);
+                    dataSet7.setDrawValues(false); //entry위쪽 부분에 보이는 entry값 제거 코드
+                    dataSets.add(dataSet7);
+
                     break;
             }
         }
-        ScatterDataSet dataSet1 = new ScatterDataSet(angry,"angry");
-        dataSet1.setScatterShape(ScatterChart.ScatterShape.CIRCLE);
-        dataSet1.setColor(Color.parseColor("#EF534E"));
-        dataSet1.setScatterShapeSize(50);
-        dataSet1.setDrawValues(false);
-
-        ScatterDataSet dataSet2 = new ScatterDataSet(joy,"joy");
-        dataSet2.setScatterShape(ScatterChart.ScatterShape.CIRCLE);
-        dataSet2.setColor(Color.parseColor("#FFEE58"));
-        dataSet2.setScatterShapeSize(50);
-        dataSet2.setDrawValues(false);
-
-        ScatterDataSet dataSet3 = new ScatterDataSet(fear,"fear");
-        dataSet3.setScatterShape(ScatterChart.ScatterShape.CIRCLE);
-        dataSet3.setColor(Color.parseColor("#66BB6A"));
-        dataSet3.setScatterShapeSize(50);
-        dataSet3.setDrawValues(false);
-
-        ScatterDataSet dataSet4 = new ScatterDataSet(sad,"sad");
-        dataSet4.setScatterShape(ScatterChart.ScatterShape.CIRCLE);
-        dataSet4.setColor(Color.parseColor("#2196F3"));
-        dataSet4.setScatterShapeSize(50);
-        dataSet4.setDrawValues(false);
-
-        ScatterDataSet dataSet5 = new ScatterDataSet(disgust,"disgust");
-        dataSet5.setScatterShape(ScatterChart.ScatterShape.CIRCLE);
-        dataSet5.setColor(Color.parseColor("#9C27B0"));
-        dataSet5.setScatterShapeSize(50);
-        dataSet5.setDrawValues(false);
-
-        ScatterDataSet dataSet6 = new ScatterDataSet(surprise,"surprise");
-
-        dataSet6.setScatterShape(ScatterChart.ScatterShape.CIRCLE);
-        dataSet6.setColor(Color.parseColor("#FFA726"));
-        dataSet6.setScatterShapeSize(50);
-        dataSet6.setDrawValues(false);
-
-        ScatterDataSet dataSet7 = new ScatterDataSet(neutral,"neutral");
-        dataSet7.setScatterShape(ScatterChart.ScatterShape.CIRCLE);
-        dataSet7.setColor(Color.parseColor("#A1A3A1"));
-        dataSet7.setScatterShapeSize(50);
-        dataSet7.setDrawValues(false); //entry위쪽 부분에 보이는 entry값 제거 코드
-
-        ArrayList<IScatterDataSet> dataSets = new ArrayList<>();
-        dataSets.add(dataSet1); // add the data sets
-        dataSets.add(dataSet2);
-        dataSets.add(dataSet3);
-        dataSets.add(dataSet4);
-        dataSets.add(dataSet5);
-        dataSets.add(dataSet6);
-        dataSets.add(dataSet7);
-        //dataSet.setColors(ColorTemplate.JOYFUL_COLORS);
         ScatterData data = new ScatterData(dataSets);
-
         //data.setValueTextSize(10f);
         //data.setValueTextColor(Color.BLACK);
         scatterChart.animateY(1500); //y축으로 내려오는 애니메이션
         scatterChart.setData(data);
         scatterChart.invalidate();
     }
+
 }

@@ -58,12 +58,13 @@ import static android.os.SystemClock.sleep;
 
 public class cdayfragment extends Fragment {
     PieChart pieChart;
+    Button date;
     Context context;
     aMain activity;
     RecyclerView recyclerView;
     DiaryAdapter adapter;
     OnTabItemSelectedListener listener;
-    Button date;
+
     ImageButton playerbutton;
     SeekBar seekbartemp;
     private MediaPlayer mediaPlayer = null;

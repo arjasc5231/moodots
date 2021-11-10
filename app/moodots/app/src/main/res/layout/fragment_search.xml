@@ -51,39 +51,37 @@
             android:backgroundTint="@color/white"
             android:text="TextView"
             android:textSize="20sp"
-            app:layout_constraintBottom_toTopOf="@id/scatterlayout"
+            app:layout_constraintBottom_toTopOf="@id/recyclerlayout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/textlayout" />
 
         <LinearLayout
-            android:id="@+id/scatterlayout"
+            android:id="@+id/recyclerlayout"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="20"
+
             android:orientation="horizontal"
             app:layout_constraintBottom_toTopOf="@id/piechartlayout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/keywordpick">
-
-            <com.github.mikephil.charting.charts.ScatterChart
-                android:id="@+id/scatterchart"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerView"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-            </com.github.mikephil.charting.charts.ScatterChart>
+                android:layout_height="match_parent"
+                />
         </LinearLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/piechartlayout"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="210dp"
             android:orientation="horizontal"
             app:layout_constraintBottom_toTopOf="@+id/buttonlayout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/scatterlayout">
+            app:layout_constraintTop_toBottomOf="@id/recyclerlayout">
 
             <LinearLayout
                 android:id="@+id/moodsummary"
@@ -92,7 +90,7 @@
                 android:layout_marginStart="10dp"
                 android:orientation="vertical"
                 app:layout_constraintBottom_toBottomOf="@id/piechartlayout"
-                app:layout_constraintEnd_toStartOf="@id/piechart"
+                app:layout_constraintEnd_toStartOf="@id/clocklayout"
                 app:layout_constraintStart_toStartOf="@id/piechartlayout"
                 app:layout_constraintTop_toTopOf="@id/piechartlayout">
 
@@ -145,15 +143,60 @@
                     android:text="TextView"
                     android:textSize="20sp" />
             </LinearLayout>
-
-            <com.github.mikephil.charting.charts.PieChart
-                android:id="@+id/piechart"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="210dp"
+                android:layout_height="210dp"
+                android:id="@+id/clocklayout"
                 app:layout_constraintBottom_toBottomOf="@id/piechartlayout"
                 app:layout_constraintEnd_toEndOf="@id/piechartlayout"
                 app:layout_constraintStart_toEndOf="@+id/moodsummary"
-                app:layout_constraintTop_toTopOf="@id/piechartlayout" />
+                app:layout_constraintTop_toTopOf="@id/piechartlayout">
+
+                <com.github.mikephil.charting.charts.PieChart
+                    android:id="@+id/piechart"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/white"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"/>
+                <ImageButton
+                    android:id="@+id/moodindicate"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:backgroundTint="@color/white"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:src="@drawable/angry_main_foreground"
+                    />
+
+                <TextView
+                    android:id="@+id/moodtime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="PM 00:00"
+                    android:textSize="25sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/moodtext"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="분노"
+                    android:textSize="15sp"
+                    android:layout_marginTop="60dp"
+                    app:layout_constraintBottom_toTopOf="@+id/moodtime"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/piechart"
+                    />
+            </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <LinearLayout
