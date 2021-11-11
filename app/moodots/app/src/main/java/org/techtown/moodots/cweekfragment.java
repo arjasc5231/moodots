@@ -41,10 +41,12 @@ public class cweekfragment extends Fragment {
     ScatterChart scatterChart;
     Context context;
     aMain activity;
-    Button btnYearMonthPicker;
+    Button date;
     final Calendar c = Calendar.getInstance();
     int chooseyear=c.get(Calendar.YEAR);
     int choosemonth=c.get(Calendar.MONTH)+1;
+    int chooseday=c.get(Calendar.DAY_OF_MONTH);
+
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -71,22 +73,22 @@ public class cweekfragment extends Fragment {
         return rootView;
     }
     public void initUI(ViewGroup rootView){
-        ArrayList<Diary> percent= bringdata(chooseyear, choosemonth);
+        ArrayList<Diary> percent= bringdata(chooseyear, choosemonth,chooseday );
         scatterchart(rootView, percent);
         piechart(rootView, percent);
-        btnYearMonthPicker = rootView.findViewById(R.id.datepick);
-        btnYearMonthPicker.setText(chooseyear+"-"+choosemonth);
-        btnYearMonthPicker.setOnClickListener(new View.OnClickListener(){
+        date= rootView.findViewById(R.id.datepick);
+        date.setText(chooseyear+"-"+choosemonth);
+        date.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
-                YearMonthPickerDialog pd = new YearMonthPickerDialog();
+                YearMonthWeekPickerDialog pd = new YearMonthWeekPickerDialog();
                 DatePickerDialog.OnDateSetListener d = new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth){
                         chooseyear=year;
                         choosemonth=monthOfYear;
-                        btnYearMonthPicker.setText(chooseyear+"-"+choosemonth);
-                        ArrayList<Diary> temp= bringdata(year, monthOfYear);
+                        date.setText(chooseyear+"-"+choosemonth);
+                        ArrayList<Diary> temp= bringdata(year, monthOfYear, dayOfMonth);
                         piechart(rootView, temp);
                         scatterchart(rootView, temp);
                         Log.d("YearMonthPickerTest", "year = " + year + ", month = " + monthOfYear + ", day = " + dayOfMonth);
@@ -98,8 +100,11 @@ public class cweekfragment extends Fragment {
                 temp.show();
             }
         });
+
+
+
     }
-    public ArrayList<Diary> bringdata( int year, int month){
+    public ArrayList<Diary> bringdata( int year, int month, int day){
         ArrayList<Diary> percent=new ArrayList<Diary>();
         String[] cutdate={Integer.toString(year),Integer.toString(month)};
         String sql = "SELECT _id, MOOD, CONTENTS, HASHCONTENTS, CHECKMOD, DATE, TIME, VOICE FROM " +DiaryDatabase.TABLE_DIARY +" ORDER BY DATE DESC;";
@@ -295,6 +300,9 @@ public class cweekfragment extends Fragment {
             }catch(Exception e){
                 e.printStackTrace();
             }
+            //temp.set(2021, 1, 31);
+            //int test= temp.getActualMaximum(Calendar.WEEK_OF_MONTH);
+            //zAppConstants.println("debug temp"+test);
             try {
                 timeint2=Integer.parseInt(time[1],10);
             }catch(Exception e){

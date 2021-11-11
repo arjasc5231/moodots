@@ -191,7 +191,7 @@ public class bSearchfrag extends Fragment implements OnBackPressedListener{
     public void initUI(ViewGroup rootView, HashSet hashSet){
         TextView moodtime=rootView.findViewById(R.id.moodtime);
         TextView moodtext=rootView.findViewById(R.id.moodtext);
-        TextView textView=rootView.findViewById(R.id.datesort);
+        TextView textView=rootView.findViewById(R.id.datesearch);
         textView.setText(bSortfrag.getDate());
         PieChart piechart= rootView.findViewById(R.id.piechart);
         piechart.bringToFront();

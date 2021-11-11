@@ -1,4 +1,4 @@
-package org.techtown.moodots;
+  package org.techtown.moodots;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
@@ -82,7 +82,7 @@ public class cmoodfragment extends Fragment {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_mood,container,false);
         initUI(rootView);
         ArrayList<Diary> percent= bringdata(1);
-        piechart(rootView, percent);
+        //piechart(rootView, percent);
 
         return rootView;
     }
@@ -140,13 +140,6 @@ public class cmoodfragment extends Fragment {
         return percent;
     }
     public void piechart(ViewGroup rootView, ArrayList<Diary> percent){
-        TextView angry= rootView.findViewById(R.id.angry);
-        TextView joy= rootView.findViewById(R.id.joy);
-        TextView fear= rootView.findViewById(R.id.fear);
-        TextView sad= rootView.findViewById(R.id.sad);
-        TextView disgust= rootView.findViewById(R.id.disgust);
-        TextView surprise= rootView.findViewById(R.id.surprise);
-        TextView neutral= rootView.findViewById(R.id.neutral);
         pieChart=rootView.findViewById(R.id.piechart);
         pieChart.setUsePercentValues(true);
         pieChart.getDescription().setEnabled(false);
@@ -164,14 +157,6 @@ public class cmoodfragment extends Fragment {
             int p=percent.get(i).getMood()-1;
             moodlist[p]+=1;
         }
-        angry.setText("화남:"+moodlist[0]+"회");
-        joy.setText("기쁨:"+moodlist[1]+"회");
-        fear.setText("두려움:"+moodlist[2]+"회");
-        sad.setText("슬픔:"+moodlist[3]+"회");
-        disgust.setText("혐오:"+moodlist[4]+"회");
-        surprise.setText("놀람:"+moodlist[5]+"회");
-        neutral.setText("중립:"+moodlist[6]+"회");
-
         ArrayList<Integer> colorset=new ArrayList<Integer>();
         ArrayList<PieEntry> yValues = new ArrayList<PieEntry>();
 
@@ -267,7 +252,7 @@ public class cmoodfragment extends Fragment {
                                         break;
                                 }
                                 ArrayList<Diary> percent= bringdata(moodsee);
-                                piechart(rootView, percent);
+                                //piechart(rootView, percent);
                             }
                         })
                         .setNegativeButton("취소", new DialogInterface.OnClickListener() {

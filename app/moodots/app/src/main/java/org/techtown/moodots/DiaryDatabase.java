@@ -30,7 +30,7 @@ public class DiaryDatabase{
         dbHelper = new DatabaseHelper(context);
         db = dbHelper.getWritableDatabase();
 
-        /*
+/*
         String DROP_SQL = "drop table if exists " + TABLE_DIARY;
         try {
             db.execSQL(DROP_SQL);

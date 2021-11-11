@@ -56,7 +56,7 @@ public class bSortfrag extends Fragment implements OnBackPressedListener{
         day.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                textsort.setText("Day");
+                textsort.setText("Mood");
                 getChildFragmentManager().beginTransaction().replace(R.id.containersort, moodfragment).commit();
             }
         });

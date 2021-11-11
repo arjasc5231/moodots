@@ -118,7 +118,7 @@ public class cmonthfragment extends Fragment {
     public ArrayList<Diary> bringdata( int year, int month){
         ArrayList<Diary> percent=new ArrayList<Diary>();
         String[] cutdate={Integer.toString(year),Integer.toString(month)};
-        String sql = "SELECT _id, MOOD, CONTENTS, HASHCONTENTS, CHECKMOD, DATE, TIME, VOICE FROM " +DiaryDatabase.TABLE_DIARY +" ORDER BY _id;";
+        String sql = "SELECT _id, MOOD, CONTENTS, HASHCONTENTS, CHECKMOD, DATE, TIME, VOICE FROM " +DiaryDatabase.TABLE_DIARY +" ORDER BY DATE DESC, TIME DESC;";
         int recordCount= -1;
         DiaryDatabase database = DiaryDatabase.getInstance(context);
         if (database != null) {
@@ -258,9 +258,9 @@ public class cmonthfragment extends Fragment {
         scatterChart.setScaleYEnabled(true);
         scatterChart.setScaleXEnabled(true);
         scatterChart.setDoubleTapToZoomEnabled(false);
+        scatterChart.setHorizontalScrollBarEnabled(true);
         scatterChart.setMaxVisibleValueCount(999999999);
         scatterChart.setPinchZoom(false);
-        scatterChart.setVisibleXRangeMinimum(-1f);
         Legend l = scatterChart.getLegend();
         l.setEnabled(false);
         /*l.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
@@ -275,36 +275,32 @@ public class cmonthfragment extends Fragment {
         for(int t=1;t<32;t++){
             day[t-1]=Integer.toString(t);
         }
-        yl.setLabelCount(25,true);
+        yl.setLabelCount(25,false);
         yl.setValueFormatter(new AxisValueFormat(day));
-        yl.setDrawGridLines(false);
+        yl.setDrawGridLines(true);
         yl.setAxisMinimum(0f);// this replaces setStartAtZero(true)
         yl.setAxisMaximum(24f);
         yl.setGranularityEnabled(true);
-        yl.setGranularity(0.5f);
+        yl.setGranularity(1f);
         yl.setInverted(true);
 
         scatterChart.getAxisRight().setEnabled(false);
         XAxis xl = scatterChart.getXAxis();
-        xl.setLabelCount(31,true);
+        xl.setLabelCount(31,false);
         xl.setAxisMinimum(1f);
         xl.setAxisMaximum(31f);
         //xl.setTypeface(tfLight);
-        xl.setDrawGridLines(false);
-        //xl.setGranularityEnabled(true);
-        //xl.setGranularity(1f);
-        ArrayList<Entry> angry = new ArrayList<>();
-        ArrayList<Entry> joy = new ArrayList<>();
-        ArrayList<Entry> fear = new ArrayList<>();
-        ArrayList<Entry> sad = new ArrayList<>();
-        ArrayList<Entry> disgust = new ArrayList<>();
-        ArrayList<Entry> surprise = new ArrayList<>();
-        ArrayList<Entry> neutral = new ArrayList<>();
+        xl.setDrawGridLines(true);
+        xl.setGranularityEnabled(true);
+        xl.setGranularity(1f);
+
         ArrayList<IScatterDataSet> dataSets = new ArrayList<>();
         for(int i=0;i<percent.size();i++){
             int p=percent.get(i).getMood();
             String[] date=percent.get(i).getDate().split("-");
             String[] time=percent.get(i).getTime().split(":");
+            zAppConstants.println("date"+percent.get(i).getDate());
+            zAppConstants.println("time"+percent.get(i).getTime());
             int dateint=0;
             int timeint1=0;
             int timeint2=0;
@@ -325,6 +321,7 @@ public class cmonthfragment extends Fragment {
             }
             switch (p){
                 case 1:
+                    ArrayList<Entry> angry = new ArrayList<>();
                     angry.add(new Entry(dateint,(float)(timeint1+timeint2/60.0)));
                     ScatterDataSet dataSet1 = new ScatterDataSet(angry,"angry");
                     dataSet1.setScatterShape(ScatterChart.ScatterShape.CIRCLE);
@@ -334,6 +331,7 @@ public class cmonthfragment extends Fragment {
                     dataSets.add(dataSet1);
                     break;
                 case 2:
+                    ArrayList<Entry> joy = new ArrayList<>();
                     joy.add(new Entry(dateint,(float)(timeint1+timeint2/60.0)));
                     ScatterDataSet dataSet2 = new ScatterDataSet(joy,"joy");
                     dataSet2.setScatterShape(ScatterChart.ScatterShape.CIRCLE);
@@ -343,6 +341,7 @@ public class cmonthfragment extends Fragment {
                     dataSets.add(dataSet2);
                     break;
                 case 3:
+                    ArrayList<Entry> fear = new ArrayList<>();
                     fear.add(new Entry(dateint,(float)(timeint1+timeint2/60.0)));
                     ScatterDataSet dataSet3 = new ScatterDataSet(fear,"fear");
                     dataSet3.setScatterShape(ScatterChart.ScatterShape.CIRCLE);
@@ -352,6 +351,7 @@ public class cmonthfragment extends Fragment {
                     dataSets.add(dataSet3);
                     break;
                 case 4:
+                    ArrayList<Entry> sad = new ArrayList<>();
                     sad.add(new Entry(dateint,(float)(timeint1+timeint2/60.0)));
                     ScatterDataSet dataSet4 = new ScatterDataSet(sad,"sad");
                     dataSet4.setScatterShape(ScatterChart.ScatterShape.CIRCLE);
@@ -361,6 +361,7 @@ public class cmonthfragment extends Fragment {
                     dataSets.add(dataSet4);
                     break;
                 case 5:
+                    ArrayList<Entry> disgust = new ArrayList<>();
                     disgust.add(new Entry(dateint,(float)(timeint1+timeint2/60.0)));
                     ScatterDataSet dataSet5 = new ScatterDataSet(disgust,"disgust");
                     dataSet5.setScatterShape(ScatterChart.ScatterShape.CIRCLE);
@@ -370,6 +371,7 @@ public class cmonthfragment extends Fragment {
                     dataSets.add(dataSet5);
                     break;
                 case 6:
+                    ArrayList<Entry> surprise = new ArrayList<>();
                     surprise.add(new Entry(dateint,(float)(timeint1+timeint2/60.0)));
                     ScatterDataSet dataSet6 = new ScatterDataSet(surprise,"surprise");
                     dataSet6.setScatterShape(ScatterChart.ScatterShape.CIRCLE);
@@ -379,6 +381,7 @@ public class cmonthfragment extends Fragment {
                     dataSets.add(dataSet6);
                     break;
                 case 7:
+                    ArrayList<Entry> neutral = new ArrayList<>();
                     neutral.add(new Entry(dateint,(float)(timeint1+timeint2/60.0)));
                     ScatterDataSet dataSet7 = new ScatterDataSet(neutral,"neutral");
                     dataSet7.setScatterShape(ScatterChart.ScatterShape.CIRCLE);
@@ -386,7 +389,6 @@ public class cmonthfragment extends Fragment {
                     dataSet7.setScatterShapeSize(50);
                     dataSet7.setDrawValues(false); //entry위쪽 부분에 보이는 entry값 제거 코드
                     dataSets.add(dataSet7);
-
                     break;
             }
         }

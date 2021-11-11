@@ -45,6 +45,7 @@ public class cyearfragment extends Fragment {
     aMain activity;
     Button btnYearPicker;
     final Calendar c = Calendar.getInstance();
+    final Calendar forsort= Calendar.getInstance();
     int chooseyear=c.get(Calendar.YEAR);
 
     public class AxisValueFormat extends ValueFormatter implements IAxisValueFormatter {
@@ -242,20 +243,20 @@ public class cyearfragment extends Fragment {
         pieChart.setData(data);
     }
     public void scatterchart(ViewGroup rootView, ArrayList<Diary> percent){
+
         scatterChart = rootView.findViewById(R.id.scatterchart);
         scatterChart.getDescription().setEnabled(false);
         scatterChart.setDrawGridBackground(false);
         scatterChart.setTouchEnabled(true);
-        scatterChart.setMaxHighlightDistance(0f);
+        //scatterChart.setMaxHighlightDistance(0f);
         scatterChart.setHighlightPerTapEnabled(false);
         // enable scaling and dragging
         scatterChart.setDragEnabled(true);
         scatterChart.setScaleYEnabled(true);
-        scatterChart.setScaleXEnabled(true);
+        scatterChart.setScaleXEnabled(false);
         scatterChart.setDoubleTapToZoomEnabled(false);
         scatterChart.setMaxVisibleValueCount(999999999);
         scatterChart.setPinchZoom(false);
-        scatterChart.setVisibleXRangeMinimum(-1f);
         Legend l = scatterChart.getLegend();
         l.setEnabled(false);
         /*l.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
@@ -270,44 +271,58 @@ public class cyearfragment extends Fragment {
         for(int t=1;t<32;t++){
             day[t-1]=Integer.toString(t);
         }
-        yl.setLabelCount(25,true);
-        yl.setValueFormatter(new AxisValueFormat(day));
-        yl.setDrawGridLines(false);
+        yl.setLabelCount(25,false);
+        //yl.setValueFormatter(new AxisValueFormat(day));
+        yl.setDrawGridLines(true);
         yl.setAxisMinimum(0f);// this replaces setStartAtZero(true)
         yl.setAxisMaximum(24f);
         yl.setGranularityEnabled(true);
-        yl.setGranularity(0.5f);
+        yl.setGranularity(1f);
+        yl.setUseAutoScaleMaxRestriction(true);
         yl.setInverted(true);
 
         scatterChart.getAxisRight().setEnabled(false);
         XAxis xl = scatterChart.getXAxis();
-        xl.setLabelCount(31,true);
-        xl.setAxisMinimum(1f);
-        xl.setAxisMaximum(31f);
+        xl.setLabelCount(12,true);
+        xl.setXOffset(-3f);
+        //xl.setAxisMinimum(1f);
+        xl.setAxisMaximum(12f);
         //xl.setTypeface(tfLight);
-        xl.setDrawGridLines(false);
+        xl.setDrawGridLines(true);
         //xl.setGranularityEnabled(true);
         //xl.setGranularity(1f);
-        ArrayList<Entry> angry = new ArrayList<>();
-        ArrayList<Entry> joy = new ArrayList<>();
-        ArrayList<Entry> fear = new ArrayList<>();
-        ArrayList<Entry> sad = new ArrayList<>();
-        ArrayList<Entry> disgust = new ArrayList<>();
-        ArrayList<Entry> surprise = new ArrayList<>();
-        ArrayList<Entry> neutral = new ArrayList<>();
         ArrayList<IScatterDataSet> dataSets = new ArrayList<>();
         for(int i=0;i<percent.size();i++){
+            int size=20;
             int p=percent.get(i).getMood();
             String[] date=percent.get(i).getDate().split("-");
             String[] time=percent.get(i).getTime().split(":");
+            zAppConstants.println("date"+percent.get(i).getDate());
+            zAppConstants.println("time"+percent.get(i).getTime());
+            int yearint =0;
             int dateint=0;
+            int monthint=0;
             int timeint1=0;
             int timeint2=0;
+            try {
+                yearint=Integer.parseInt(date[0],10);
+
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+            try {
+                monthint=Integer.parseInt(date[1],10);
+
+            }catch(Exception e){
+                e.printStackTrace();
+            }
             try {
                 dateint=Integer.parseInt(date[2],10);
             }catch(Exception e){
                 e.printStackTrace();
             }
+            forsort.set(yearint, monthint-1, dateint);
+            zAppConstants.println("debug last day"+forsort.getActualMaximum(Calendar.DAY_OF_MONTH));
             try {
                 timeint1=Integer.parseInt(time[0],10);
             }catch(Exception e){
@@ -320,68 +335,74 @@ public class cyearfragment extends Fragment {
             }
             switch (p){
                 case 1:
-                    angry.add(new Entry(dateint,(float)(timeint1+timeint2/60.0)));
+                    ArrayList<Entry> angry = new ArrayList<>();
+                    angry.add(new Entry((float)monthint+dateint/forsort.getActualMaximum(Calendar.DAY_OF_MONTH),(float)(timeint1+timeint2/60.0)));
                     ScatterDataSet dataSet1 = new ScatterDataSet(angry,"angry");
                     dataSet1.setScatterShape(ScatterChart.ScatterShape.CIRCLE);
                     dataSet1.setColor(Color.parseColor("#EF534E"));
-                    dataSet1.setScatterShapeSize(50);
+                    dataSet1.setScatterShapeSize(size);
                     dataSet1.setDrawValues(false);
                     dataSets.add(dataSet1);
                     break;
                 case 2:
-                    joy.add(new Entry(dateint,(float)(timeint1+timeint2/60.0)));
+                    ArrayList<Entry> joy = new ArrayList<>();
+                    joy.add(new Entry((float)monthint+dateint/forsort.getActualMaximum(Calendar.DAY_OF_MONTH),(float)(timeint1+timeint2/60.0)));
                     ScatterDataSet dataSet2 = new ScatterDataSet(joy,"joy");
                     dataSet2.setScatterShape(ScatterChart.ScatterShape.CIRCLE);
                     dataSet2.setColor(Color.parseColor("#FFEE58"));
-                    dataSet2.setScatterShapeSize(50);
+                    dataSet2.setScatterShapeSize(size);
                     dataSet2.setDrawValues(false);
                     dataSets.add(dataSet2);
                     break;
                 case 3:
-                    fear.add(new Entry(dateint,(float)(timeint1+timeint2/60.0)));
+                    ArrayList<Entry> fear = new ArrayList<>();
+                    fear.add(new Entry((float)monthint+dateint/forsort.getActualMaximum(Calendar.DAY_OF_MONTH),(float)(timeint1+timeint2/60.0)));
                     ScatterDataSet dataSet3 = new ScatterDataSet(fear,"fear");
                     dataSet3.setScatterShape(ScatterChart.ScatterShape.CIRCLE);
                     dataSet3.setColor(Color.parseColor("#66BB6A"));
-                    dataSet3.setScatterShapeSize(50);
+                    dataSet3.setScatterShapeSize(size);
                     dataSet3.setDrawValues(false);
                     dataSets.add(dataSet3);
                     break;
                 case 4:
-                    sad.add(new Entry(dateint,(float)(timeint1+timeint2/60.0)));
+                    ArrayList<Entry> sad = new ArrayList<>();
+                    sad.add(new Entry((float)monthint+dateint/forsort.getActualMaximum(Calendar.DAY_OF_MONTH),(float)(timeint1+timeint2/60.0)));
                     ScatterDataSet dataSet4 = new ScatterDataSet(sad,"sad");
                     dataSet4.setScatterShape(ScatterChart.ScatterShape.CIRCLE);
                     dataSet4.setColor(Color.parseColor("#2196F3"));
-                    dataSet4.setScatterShapeSize(50);
+                    dataSet4.setScatterShapeSize(size);
                     dataSet4.setDrawValues(false);
                     dataSets.add(dataSet4);
                     break;
                 case 5:
-                    disgust.add(new Entry(dateint,(float)(timeint1+timeint2/60.0)));
+                    ArrayList<Entry> disgust = new ArrayList<>();
+                    disgust.add(new Entry((float)monthint+dateint/forsort.getActualMaximum(Calendar.DAY_OF_MONTH),(float)(timeint1+timeint2/60.0)));
                     ScatterDataSet dataSet5 = new ScatterDataSet(disgust,"disgust");
                     dataSet5.setScatterShape(ScatterChart.ScatterShape.CIRCLE);
                     dataSet5.setColor(Color.parseColor("#9C27B0"));
-                    dataSet5.setScatterShapeSize(50);
+                    dataSet5.setScatterShapeSize(size);
                     dataSet5.setDrawValues(false);
                     dataSets.add(dataSet5);
                     break;
                 case 6:
-                    surprise.add(new Entry(dateint,(float)(timeint1+timeint2/60.0)));
+                    ArrayList<Entry> surprise = new ArrayList<>();
+                    surprise.add(new Entry((float)monthint+dateint/forsort.getActualMaximum(Calendar.DAY_OF_MONTH),(float)(timeint1+timeint2/60.0)));
                     ScatterDataSet dataSet6 = new ScatterDataSet(surprise,"surprise");
                     dataSet6.setScatterShape(ScatterChart.ScatterShape.CIRCLE);
                     dataSet6.setColor(Color.parseColor("#FFA726"));
-                    dataSet6.setScatterShapeSize(50);
+                    dataSet6.setScatterShapeSize(size);
                     dataSet6.setDrawValues(false);
                     dataSets.add(dataSet6);
                     break;
                 case 7:
-                    neutral.add(new Entry(dateint,(float)(timeint1+timeint2/60.0)));
+                    ArrayList<Entry> neutral = new ArrayList<>();
+                    neutral.add(new Entry((float)monthint+dateint/forsort.getActualMaximum(Calendar.DAY_OF_MONTH),(float)(timeint1+timeint2/60.0)));
                     ScatterDataSet dataSet7 = new ScatterDataSet(neutral,"neutral");
                     dataSet7.setScatterShape(ScatterChart.ScatterShape.CIRCLE);
                     dataSet7.setColor(Color.parseColor("#A1A3A1"));
-                    dataSet7.setScatterShapeSize(50);
+                    dataSet7.setScatterShapeSize(size);
                     dataSet7.setDrawValues(false); //entry위쪽 부분에 보이는 entry값 제거 코드
                     dataSets.add(dataSet7);
-
                     break;
             }
         }
