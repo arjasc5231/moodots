@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.content.res.AssetFileDescriptor;
 import android.media.AudioFormat;
+import android.media.AudioRecord;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.net.Uri;
@@ -34,8 +35,11 @@ import com.jlibrosa.audio.wavFile.WavFileException;
 
 import org.tensorflow.lite.Interpreter;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -57,13 +61,23 @@ public class bSettingfrag extends Fragment implements OnBackPressedListener{
     TextView audioRecordText;
 
     // 오디오 권한
+    Thread recordingThread;
+    AudioRecord audioRecorder;
+    boolean isRecording = false;    // 현재 녹음 상태를 확인
+    int sampleRateInHz = 44100;
+    int channelConfig = AudioFormat.CHANNEL_IN_MONO;
+    int audioFormat = AudioFormat.ENCODING_PCM_16BIT;
+    int bufferSizeInBytes = AudioRecord.getMinBufferSize(sampleRateInHz, channelConfig, audioFormat);
     private String recordPermission = Manifest.permission.RECORD_AUDIO;
+    private String writePermission = Manifest.permission.WRITE_EXTERNAL_STORAGE;
     private int PERMISSION_CODE = 21;
+    byte Data[] = new byte[bufferSizeInBytes];
 
     // 오디오 파일 녹음 관련 변수
     private MediaRecorder mediaRecorder;
-    private String audioFileName; // 오디오 녹음 생성 파일 이름
-    private boolean isRecording = false;    // 현재 녹음 상태를 확인
+    private String audioFileName; // 오디오 녹음 PCM 생성 파일 이름
+    private String audioFileName2; // 오디오 녹음 WAV 생성 파일 이름
+
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -207,17 +221,14 @@ public class bSettingfrag extends Fragment implements OnBackPressedListener{
     private void init(ViewGroup rootView) {
         TextView textView=rootView.findViewById(R.id.datesetting);
         textView.setText(getDate());
-        verifyStoragePermissions(activity);
         audioRecordImageBtn = rootView.findViewById(R.id.audioRecordImageBtn);
         audioRecordText = rootView.findViewById(R.id.audioRecordText);
-
         audioRecordImageBtn.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(isRecording) {
                     // 현재 녹음 중 O
                     // 녹음 상태에 따른 변수 아이콘 & 텍스트 변경
-                    isRecording = false; // 녹음 상태 값
                     audioRecordImageBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_record, null)); // 녹음 상태 아이콘 변경
                     audioRecordText.setText("녹음 시작"); // 녹음 상태 텍스트 변경
                     stopRecording();
@@ -230,7 +241,6 @@ public class bSettingfrag extends Fragment implements OnBackPressedListener{
                      * */
                     if(checkAudioPermission()) {
                         // 녹음 상태에 따른 변수 아이콘 & 텍스트 변경
-                        isRecording = true; // 녹음 상태 값
                         audioRecordImageBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_recording_red, null)); // 녹음 상태 아이콘 변경
                         audioRecordText.setText("녹음 중"); // 녹음 상태 텍스트 변경
                         startRecording();
@@ -241,40 +251,7 @@ public class bSettingfrag extends Fragment implements OnBackPressedListener{
     }
 
     // 오디오 파일 권한 체크
-    private boolean checkAudioPermission() {
-        if (ActivityCompat.checkSelfPermission(getActivity(), recordPermission) == PackageManager.PERMISSION_GRANTED) {
-            return true;
-        } else {
-            ActivityCompat.requestPermissions(getActivity(), new String[]{recordPermission}, PERMISSION_CODE);
-            return false;
-        }
-    }
-    private static final int REQUEST_EXTERNAL_STORAGE = 1;
-    private static String[] PERMISSIONS_STORAGE = {
-            Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE
-    };
 
-    /**
-     * Checks if the app has permission to write to device storage
-     *
-     * If the app does not has permission then the user will be prompted to grant permissions
-     *
-     * @param activity
-     */
-    public static void verifyStoragePermissions(Activity activity) {
-        // Check if we have write permission
-        int permission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
-
-        if (permission != PackageManager.PERMISSION_GRANTED) {
-            // We don't have permission so prompt the user
-            ActivityCompat.requestPermissions(
-                    activity,
-                    PERMISSIONS_STORAGE,
-                    REQUEST_EXTERNAL_STORAGE
-            );
-        }
-    }
 
     public double log10(double value) {
         return Math.log(value) / Math.log(10.0D);
@@ -379,86 +356,100 @@ public class bSettingfrag extends Fragment implements OnBackPressedListener{
         String recordPath =getContext().getExternalFilesDir("/").getAbsolutePath();
         // 파일 이름 변수를 현재 날짜가 들어가도록 초기화. 그 이유는 중복된 이름으로 기존에 있던 파일이 덮어 쓰여지는 것을 방지하고자 함.
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        audioFileName = "/storage/emulated/0/Download/" + timeStamp + "_"+"audio.wav"; //"/storage/emulated/0/Download/"
+        audioFileName = "/storage/emulated/0/Download/" + timeStamp + "_"+"audio.pcm"; //"/storage/emulated/0/Download/"
+        audioFileName2 = "/storage/emulated/0/Download/" + timeStamp + "_"+"audio.wav"; //"/storage/emulated/0/Download/"
 
-        //Media Recorder 생성 및 설정
-        mediaRecorder = new MediaRecorder();
-        mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-        //mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+        if(checkAudioPermission()) {
+            audioRecorder = new AudioRecord(MediaRecorder.AudioSource.MIC,
+                    Constants.RECORDER_SAMPLERATE, Constants.RECORDER_CHANNELS,
+                    Constants.RECORDER_AUDIO_ENCODING, Constants.BufferElements2Rec * Constants.BytesPerElement);
+            audioRecorder.startRecording();
 
-        //mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+            isRecording = true;
+            recordingThread = new Thread(new Runnable() {
+                public void run() {
+                    FileOutputStream os = null;
+                    try {
+                        os = new FileOutputStream(audioFileName);
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                    while (isRecording) {
+                        audioRecorder.read(Data, 0, Data.length);
+                        try {
+                            os.write(Data, 0, bufferSizeInBytes);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
 
-
-        mediaRecorder.setOutputFormat(AudioFormat.ENCODING_PCM_16BIT);
-        mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
-        mediaRecorder.setAudioChannels(1);
-        mediaRecorder.setAudioEncodingBitRate(128000);
-        mediaRecorder.setAudioSamplingRate(48000);
-        mediaRecorder.setOutputFile(audioFileName);
-
-        try {
-            mediaRecorder.prepare();
-        } catch (IOException e) {
-            e.printStackTrace();
+                    }
+                    try {
+                        os.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+            recordingThread.start();
         }
-        //녹음 시작
-        mediaRecorder.start();
     }
 
     // 녹음 종료
     private void stopRecording() {
         // 녹음 종료 종료
-        mediaRecorder.stop();
-        try {
-            outputStream = new FileOutputStream(lastPath);
-            isRecording = true;
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        mediaRecorder.release();
-        mediaRecorder = null;
-        File wav=new File(audioFileName);
-        try {
-            updateWavHeader(wav);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        // 파일 경로(String) 값을 Uri로 변환해서 저장
-        //      - Why? : 리사이클러뷰에 들어가는 ArrayList가 Uri를 가지기 때문
-        //      - File Path를 알면 File을  인스턴스를 만들어 사용할 수 있기 때문
-        String path = audioFileName;
-        zAppConstants.println("debug machine output"+path);
-        float[][][][] input = new float[1][128][128][1];
-        try {
-            input= wav2label(path, 128);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (WavFileException e) {
-            e.printStackTrace();
-        } catch (FileFormatNotSupportedException e) {
-            e.printStackTrace();
-        }
-         /// 여기에 input 데이터를 넣어주어야 함!!!
-        float[][] output = new float[1][7];
-
-        //인터프리터 생성
-        Interpreter tflite = getTfliteInterpreter("EmoDB_4_noDelta_94.tflite");
-
-        //모델 돌리기
-        tflite.run(input, output);
-        float[][] max=new float[1][2];
-        max[0][0]=-1;
-        max[0][1]=-100;
-        for(int i =0;i<7;i++){
-            zAppConstants.println("debug machine output"+output[0][i]);
-            if(max[0][1]<output[0][i]){
-                max[0][0]=i+1;
-                max[0][1]=output[0][i];
+        if (isRecording) {
+            if (null != audioRecorder) {
+                isRecording = false;
+                audioRecorder.stop();
+                audioRecorder.release();
+                audioRecorder = null;
+                recordingThread = null;
             }
+            // 파일 경로(String) 값을 Uri로 변환해서 저장
+            //      - Why? : 리사이클러뷰에 들어가는 ArrayList가 Uri를 가지기 때문
+            //      - File Path를 알면 File을  인스턴스를 만들어 사용할 수 있기 때문
+            String path = audioFileName2;
+            File f1 = new File(audioFileName); // The location of your PCM file
+            File f2 = new File(audioFileName2); // The location where you want your WAV file
+            try {
+                rawToWave(f1, f2);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            float[][][][] input = new float[1][128][128][1];
+            try {
+                input = wav2label(path, 128);
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (WavFileException e) {
+                e.printStackTrace();
+            } catch (FileFormatNotSupportedException e) {
+                e.printStackTrace();
+            }
+            /// 여기에 input 데이터를 넣어주어야 함!!!
+            float[][] output = new float[1][7];
+
+            //인터프리터 생성
+            Interpreter tflite = getTfliteInterpreter("EmoDB_4_noDelta_94.tflite");
+
+            //모델 돌리기
+            tflite.run(input, output);
+            float[][] max = new float[1][2];
+            max[0][0] = -1;
+            max[0][1] = -100;
+            for (int i = 0; i < 7; i++) {
+                zAppConstants.println("debug machine output" + output[0][i]);
+                if (max[0][1] < output[0][i]) {
+                    max[0][0] = i + 1;
+                    max[0][1] = output[0][i];
+                }
+            }
+            zAppConstants.println("debug machine output-------------");
+            //출력을 저장
+            saveDiary(path, (int) max[0][0]);
         }
-        //출력을 저장
-        saveDiary(path, (int) max[0][0]);
     }
+
     private Interpreter getTfliteInterpreter(String modelPath) {
         try {
             return new Interpreter(loadModelFile(activity, modelPath));
@@ -477,37 +468,32 @@ public class bSettingfrag extends Fragment implements OnBackPressedListener{
         long declaredLength = fileDescriptor.getDeclaredLength();
         return fileChannel.map(FileChannel.MapMode.READ_ONLY, startOffset, declaredLength);
     }
-/*
-    // 녹음 파일 재생
-    private void playAudio(File file) {
-        mediaPlayer = new MediaPlayer();
-
-        try {
-            mediaPlayer.setDataSource(file.getAbsolutePath());
-            mediaPlayer.prepare();
-            mediaPlayer.start();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        playIcon.setImageDrawable(getResources().getDrawable(R.drawable.ic_audio_pause, null));
-        isPlaying = true;
-
-        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(MediaPlayer mp) {
-                stopAudio();
+    /*
+        // 녹음 파일 재생
+        private void playAudio(File file) {
+            mediaPlayer = new MediaPlayer();
+            try {
+                mediaPlayer.setDataSource(file.getAbsolutePath());
+                mediaPlayer.prepare();
+                mediaPlayer.start();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        });
-
-    }
-
-    // 녹음 파일 중지
-    private void stopAudio() {
-        playIcon.setImageDrawable(getResources().getDrawable(R.drawable.ic_audio_play, null));
-        isPlaying = false;
-        mediaPlayer.stop();
-    }*/
+            playIcon.setImageDrawable(getResources().getDrawable(R.drawable.ic_audio_pause, null));
+            isPlaying = true;
+            mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer mp) {
+                    stopAudio();
+                }
+            });
+        }
+        // 녹음 파일 중지
+        private void stopAudio() {
+            playIcon.setImageDrawable(getResources().getDrawable(R.drawable.ic_audio_play, null));
+            isPlaying = false;
+            mediaPlayer.stop();
+        }*/
     private void saveDiary(String path, int moodIndex) {
         String scontents = "";
         String hcontents = "";
@@ -540,62 +526,113 @@ public class bSettingfrag extends Fragment implements OnBackPressedListener{
         String getTime = zAppConstants.dateFormat6.format(date);
         return getTime;
     }
-    public static void writeWavHeader(OutputStream out, short channels, int sampleRate, short bitDepth) throws IOException {
-        // WAV 포맷에 필요한 little endian 포맷으로 다중 바이트의 수를 raw byte로 변환한다.
-        byte[] littleBytes = ByteBuffer
-                .allocate(14)
-                .order(ByteOrder.LITTLE_ENDIAN)
-                .putShort(channels)
-                .putInt(sampleRate)
-                .putInt(sampleRate * channels * (bitDepth / 8))
-                .putShort((short) (channels * (bitDepth / 8)))
-                .putShort(bitDepth)
-                .array();
-        // 최고를 생성하지는 않겠지만, 적어도 쉽게만 가자.
-        out.write(new byte[]{
-                'R', 'I', 'F', 'F', // Chunk ID
-                0, 0, 0, 0, // Chunk Size (나중에 업데이트 될것)
-                'W', 'A', 'V', 'E', // Format
-                'f', 'm', 't', ' ', //Chunk ID
-                16, 0, 0, 0, // Chunk Size
-                1, 0, // AudioFormat
-                littleBytes[0], littleBytes[1], // Num of Channels
-                littleBytes[2], littleBytes[3], littleBytes[4], littleBytes[5], // SampleRate
-                littleBytes[6], littleBytes[7], littleBytes[8], littleBytes[9], // Byte Rate
-                littleBytes[10], littleBytes[11], // Block Align
-                littleBytes[12], littleBytes[13], // Bits Per Sample
-                'd', 'a', 't', 'a', // Chunk ID
-                0, 0, 0, 0, //Chunk Size (나중에 업데이트 될 것)
-        });
+
+
+    public class Constants {
+
+        final static public int RECORDER_SAMPLERATE = 44100;
+        final static public int RECORDER_CHANNELS = AudioFormat.CHANNEL_IN_MONO;
+        final static public int RECORDER_AUDIO_ENCODING = AudioFormat.ENCODING_PCM_16BIT;
+
+        final static public int BufferElements2Rec = 1024; // want to play 2048 (2K) since 2 bytes we use only 1024
+        final static public int BytesPerElement = 2; // 2 bytes in 16bit format
+
+
     }
-    public static void updateWavHeader(File wav) throws IOException {
-        byte[] sizes = ByteBuffer
-                .allocate(8)
-                .order(ByteOrder.LITTLE_ENDIAN)
-                // 아마 이 두 개를 계산할 때 좀 더 좋은 방법이 있을거라 생각하지만..
-                .putInt((int) (wav.length() - 8)) // ChunkSize
-                .putInt((int) (wav.length() - 44)) // Chunk Size
-                .array();
-        RandomAccessFile accessWave = null;
+    private void rawToWave(final File rawFile, final File waveFile) throws IOException {
+
+        byte[] rawData = new byte[(int) rawFile.length()];
+        DataInputStream input = null;
         try {
-            accessWave = new RandomAccessFile(wav, "rw"); // 읽기-쓰기 모드로 인스턴스 생성
-            // ChunkSize
-            accessWave.seek(4); // 4바이트 지점으로 가서
-            accessWave.write(sizes, 0, 4); // 사이즈 채움
-            // Chunk Size
-            accessWave.seek(40); // 40바이트 지점으로 가서
-            accessWave.write(sizes, 4, 4); // 채움
-        } catch (IOException ex) {
-            // 예외를 다시 던지나, finally 에서 닫을 수 있음
-            throw ex;
+            input = new DataInputStream(new FileInputStream(rawFile));
+            input.read(rawData);
         } finally {
-            if (accessWave != null) {
-                try {
-                    accessWave.close();
-                } catch (IOException ex) {
-                    // 무시
+            if (input != null) {
+                input.close();
+            }
+        }
+
+        DataOutputStream output = null;
+        try {
+            output = new DataOutputStream(new FileOutputStream(waveFile));
+            // WAVE header
+            // see http://ccrma.stanford.edu/courses/422/projects/WaveFormat/
+            writeString(output, "RIFF"); // chunk id
+            writeInt(output, 36 + rawData.length); // chunk size
+            writeString(output, "WAVE"); // format
+            writeString(output, "fmt "); // subchunk 1 id
+            writeInt(output, 16); // subchunk 1 size
+            writeShort(output, (short) 1); // audio format (1 = PCM)
+            writeShort(output, (short) 1); // number of channels
+            writeInt(output, 44100); // sample rate
+            writeInt(output, Constants.RECORDER_SAMPLERATE * 2); // byte rate
+            writeShort(output, (short) 2); // block align
+            writeShort(output, (short) 16); // bits per sample
+            writeString(output, "data"); // subchunk 2 id
+            writeInt(output, rawData.length); // subchunk 2 size
+            // Audio data (conversion big endian -> little endian)
+            /*short[] shorts = new short[rawData.length / 2];
+            ByteBuffer.wrap(rawData).order(ByteOrder.LITTLE_ENDIAN).asShortBuffer().get(shorts);
+            ByteBuffer bytes = ByteBuffer.allocate(shorts.length * 2);
+            for (short s : shorts) {
+                bytes.putShort(s);
+            }*/
+            output.write(rawData);
+
+            //output.write(fullyReadFileToBytes(rawFile));
+        } finally {
+            if (output != null) {
+                output.close();
+            }
+        }
+    }
+    byte[] fullyReadFileToBytes(File f) throws IOException {
+        int size = (int) f.length();
+        byte bytes[] = new byte[size];
+        byte tmpBuff[] = new byte[size];
+        FileInputStream fis= new FileInputStream(f);
+        try {
+
+            int read = fis.read(bytes, 0, size);
+            if (read < size) {
+                int remain = size - read;
+                while (remain > 0) {
+                    read = fis.read(tmpBuff, 0, remain);
+                    System.arraycopy(tmpBuff, 0, bytes, size - remain, read);
+                    remain -= read;
                 }
             }
+        }  catch (IOException e){
+            throw e;
+        } finally {
+            fis.close();
+        }
+
+        return bytes;
+    }
+    private void writeInt(final DataOutputStream output, final int value) throws IOException {
+        output.write(value >> 0);
+        output.write(value >> 8);
+        output.write(value >> 16);
+        output.write(value >> 24);
+    }
+
+    private void writeShort(final DataOutputStream output, final short value) throws IOException {
+        output.write(value >> 0);
+        output.write(value >> 8);
+    }
+
+    private void writeString(final DataOutputStream output, final String value) throws IOException {
+        for (int i = 0; i < value.length(); i++) {
+            output.write(value.charAt(i));
+        }
+    }
+    private boolean checkAudioPermission() {
+        if (ActivityCompat.checkSelfPermission(context, recordPermission) == PackageManager.PERMISSION_GRANTED&&ActivityCompat.checkSelfPermission(context, writePermission) == PackageManager.PERMISSION_GRANTED) {
+            return true;
+        } else {
+            ActivityCompat.requestPermissions(activity, new String[]{recordPermission, writePermission}, PERMISSION_CODE);
+            return false;
         }
     }
 
