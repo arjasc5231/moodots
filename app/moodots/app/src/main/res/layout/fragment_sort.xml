@@ -53,7 +53,7 @@
             android:gravity="center_horizontal"
             android:textSize="20sp"
             android:paddingTop="5dp"
-            android:text="Day"
+            android:text="Mood"
             app:layout_constraintBottom_toTopOf="@+id/containersort"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

@@ -3,6 +3,7 @@ package org.techtown.moodots;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -27,7 +28,28 @@ public class YearMonthWeekPickerDialog extends DialogFragment {
 
     Button btnConfirm;
     Button btnCancel;
-
+    public void weekset(NumberPicker yearPicker, NumberPicker monthPicker, NumberPicker weekPicker){
+        temp.set(yearPicker.getValue(), monthPicker.getValue()-1,1);
+        int lastday=temp.getActualMaximum(Calendar.DAY_OF_MONTH);
+        int first=temp.get(Calendar.DAY_OF_WEEK);
+        int numweek=0;
+        temp.set(yearPicker.getValue(), monthPicker.getValue()-1,lastday);
+        int last = temp.get(Calendar.DAY_OF_WEEK);
+        if(first>=6){
+            numweek--;
+        }
+        if(last<5){
+            numweek--;
+            numweek+=temp.get(Calendar.WEEK_OF_MONTH);
+        }
+        else if(last>=5){
+            numweek+=temp.get(Calendar.WEEK_OF_MONTH);
+        }
+        Log.d("debug value change listener","numweek"+numweek);
+        weekPicker.setMinValue(1);
+        weekPicker.setMaxValue(numweek);
+        weekPicker.setValue(1);
+    }
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -39,8 +61,11 @@ public class YearMonthWeekPickerDialog extends DialogFragment {
         btnCancel = dialog.findViewById(R.id.btn_cancel);
 
         final NumberPicker monthPicker = (NumberPicker) dialog.findViewById(R.id.picker_month);
+        monthPicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
         final NumberPicker yearPicker = (NumberPicker) dialog.findViewById(R.id.picker_year);
+        yearPicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
         final NumberPicker weekPicker = (NumberPicker) dialog.findViewById(R.id.picker_week);
+        weekPicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
 
         int month=cal.get(Calendar.MONTH) + 1;
         monthPicker.setMinValue(1);
@@ -52,16 +77,11 @@ public class YearMonthWeekPickerDialog extends DialogFragment {
         yearPicker.setMaxValue(MAX_YEAR);
         yearPicker.setValue(year);
 
-        temp.set(year, month, 1);
-        temp.get(Calendar.DAY_OF_WEEK);
-        weekPicker.setMinValue(1);
-        weekPicker.setMaxValue(6);
-        weekPicker.setValue(1);
-
-        yearPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
+        weekset(yearPicker, monthPicker, weekPicker);
+        monthPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
             @Override
             public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
-
+                weekset(yearPicker, monthPicker, weekPicker);
             }
         });
         btnCancel.setOnClickListener(new View.OnClickListener(){

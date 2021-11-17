@@ -48,30 +48,18 @@ public class cyearfragment extends Fragment {
     final Calendar forsort= Calendar.getInstance();
     int chooseyear=c.get(Calendar.YEAR);
 
-    public class AxisValueFormat extends ValueFormatter implements IAxisValueFormatter {
+    public class AxisValueFormat extends ValueFormatter implements IAxisValueFormatter{
         private String[] day;
 
         AxisValueFormat(String[] values){
             this.day=values;
         }
         @Override
-        public String getFormattedValue(float value, AxisBase axis) {
-            return day[(int) value];
-        }
-    }
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-        activity= (aMain) getActivity();
-        this.context = context;
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        activity = null;
-        if(context != null){
-            context= null;
+        public String getAxisLabel(float value, AxisBase axis) {
+            if(value>=1&&value<=12) {
+                return day[((int) value)-1];
+            }
+            return "";
         }
     }
 
@@ -197,31 +185,31 @@ public class cyearfragment extends Fragment {
         ArrayList<PieEntry> yValues = new ArrayList<PieEntry>();
 
         if(moodlist[0]!=0) {
-            yValues.add(new PieEntry(moodlist[0], "Angry"));
+            yValues.add(new PieEntry(moodlist[0], "화남"));
             colorset.add(Color.parseColor("#EF534E"));
         }
         if(moodlist[1]!=0) {
-            yValues.add(new PieEntry(moodlist[1], "Joy"));
+            yValues.add(new PieEntry(moodlist[1], "기쁨"));
             colorset.add(Color.parseColor("#FFEE58"));
         }
         if(moodlist[2]!=0) {
-            yValues.add(new PieEntry(moodlist[2], "Fear"));
+            yValues.add(new PieEntry(moodlist[2], "두려움"));
             colorset.add(Color.parseColor("#66BB6A"));
         }
         if(moodlist[3]!=0) {
-            yValues.add(new PieEntry(moodlist[3], "Sad"));
+            yValues.add(new PieEntry(moodlist[3], "슬픔"));
             colorset.add(Color.parseColor("#2196F3"));
         }
         if(moodlist[4]!=0) {
-            yValues.add(new PieEntry(moodlist[4], "Disgust"));
+            yValues.add(new PieEntry(moodlist[4], "혐오"));
             colorset.add(Color.parseColor("#9C27B0"));
         }
         if(moodlist[5]!=0) {
-            yValues.add(new PieEntry(moodlist[5], "Surprise"));
+            yValues.add(new PieEntry(moodlist[5], "놀람"));
             colorset.add(Color.parseColor("#FFA726"));
         }
         if(moodlist[6]!=0) {
-            yValues.add(new PieEntry(moodlist[6], "Neutral"));
+            yValues.add(new PieEntry(moodlist[6], "중립"));
             colorset.add(Color.parseColor("#A1A3A1"));
         }
         PieDataSet dataSet = new PieDataSet(yValues,"");
@@ -252,7 +240,7 @@ public class cyearfragment extends Fragment {
         scatterChart.setHighlightPerTapEnabled(false);
         // enable scaling and dragging
         scatterChart.setDragEnabled(true);
-        scatterChart.setScaleYEnabled(true);
+        scatterChart.setScaleYEnabled(false);
         scatterChart.setScaleXEnabled(false);
         scatterChart.setDoubleTapToZoomEnabled(false);
         scatterChart.setMaxVisibleValueCount(999999999);
@@ -267,10 +255,7 @@ public class cyearfragment extends Fragment {
         l.setXOffset(5f);*/
         YAxis yl = scatterChart.getAxisLeft();
         //yl.setTypeface(tfLight);
-        String[] day=new String[31];
-        for(int t=1;t<32;t++){
-            day[t-1]=Integer.toString(t);
-        }
+
         yl.setLabelCount(25,false);
         //yl.setValueFormatter(new AxisValueFormat(day));
         yl.setDrawGridLines(true);
@@ -281,12 +266,19 @@ public class cyearfragment extends Fragment {
         yl.setUseAutoScaleMaxRestriction(true);
         yl.setInverted(true);
 
-        scatterChart.getAxisRight().setEnabled(false);
+        String[] day=new String[12];
+        for(int t=1;t<=12;t++){
+            day[t-1]=Integer.toString(t);
+        }
+        YAxis yr =scatterChart.getAxisRight();
+        yr.setDrawGridLines(false);
+        yr.setDrawLabels(false);
+        //scatterChart.getAxisRight().setEnabled(false);
         XAxis xl = scatterChart.getXAxis();
-        xl.setLabelCount(12,true);
-        xl.setXOffset(-3f);
-        //xl.setAxisMinimum(1f);
-        xl.setAxisMaximum(12f);
+        xl.setLabelCount(14,true);
+        xl.setValueFormatter(new AxisValueFormat(day));
+        xl.setAxisMinimum(0f);
+        xl.setAxisMaximum(13f);
         //xl.setTypeface(tfLight);
         xl.setDrawGridLines(true);
         //xl.setGranularityEnabled(true);

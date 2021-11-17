@@ -258,11 +258,14 @@ public class bMainfrag extends Fragment implements OnBackPressedListener{
                             mYear=year;
                             mMonth=month;
                             mDay=dayOfMonth;
+                            c.set(year, month, dayOfMonth);
                             Date indate = zAppConstants.dateFormat5.parse(year + "-" + (month + 1) + "-" + dayOfMonth);
                             String day= zAppConstants.dateFormat5.format(indate);
                             date.setText(day);
                             ArrayList<Integer> temp= bringdata();
                             piechart(rootView, temp);
+                            zAppConstants.println("month"+c.get(Calendar.MONTH));
+                            zAppConstants.println("week of month"+c.get(Calendar.WEEK_OF_MONTH));
                         }catch(Exception e){
                             e.printStackTrace();
                         }
@@ -271,6 +274,7 @@ public class bMainfrag extends Fragment implements OnBackPressedListener{
                 datePickerDialog.show();
             }
         });
+
     }
     public void Thread(SeekBar seekbar){
         Runnable task = new Runnable(){

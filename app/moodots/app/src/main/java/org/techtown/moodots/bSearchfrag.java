@@ -508,31 +508,31 @@ public class bSearchfrag extends Fragment implements OnBackPressedListener{
         ArrayList<PieEntry> yValues = new ArrayList<PieEntry>();
 
         if(moodlist[0]!=0) {
-            yValues.add(new PieEntry(moodlist[0], "Angry"));
+            yValues.add(new PieEntry(moodlist[0], "화남"));
             colorset.add(Color.parseColor("#EF534E"));
         }
         if(moodlist[1]!=0) {
-            yValues.add(new PieEntry(moodlist[1], "Joy"));
+            yValues.add(new PieEntry(moodlist[1], "기쁨"));
             colorset.add(Color.parseColor("#FFEE58"));
         }
         if(moodlist[2]!=0) {
-            yValues.add(new PieEntry(moodlist[2], "Fear"));
+            yValues.add(new PieEntry(moodlist[2], "두려움"));
             colorset.add(Color.parseColor("#66BB6A"));
         }
         if(moodlist[3]!=0) {
-            yValues.add(new PieEntry(moodlist[3], "Sad"));
+            yValues.add(new PieEntry(moodlist[3], "슬픔"));
             colorset.add(Color.parseColor("#2196F3"));
         }
         if(moodlist[4]!=0) {
-            yValues.add(new PieEntry(moodlist[4], "Disgust"));
+            yValues.add(new PieEntry(moodlist[4], "혐오"));
             colorset.add(Color.parseColor("#9C27B0"));
         }
         if(moodlist[5]!=0) {
-            yValues.add(new PieEntry(moodlist[5], "Surprise"));
+            yValues.add(new PieEntry(moodlist[5], "놀람"));
             colorset.add(Color.parseColor("#FFA726"));
         }
         if(moodlist[6]!=0) {
-            yValues.add(new PieEntry(moodlist[6], "Neutral"));
+            yValues.add(new PieEntry(moodlist[6], "중립"));
             colorset.add(Color.parseColor("#A1A3A1"));
         }
         PieDataSet dataSet = new PieDataSet(yValues,"");

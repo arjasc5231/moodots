@@ -323,6 +323,7 @@ public class bSettingfrag extends Fragment implements OnBackPressedListener{
         for (int i=0; i<melSpectrogram_f.length; i++) {
             for (int j=0; j<melSpectrogram_f[0].length; j++) {
                 melSpectrogram[i][j] = melSpectrogram_f[i][j];
+
             }
         }
 
@@ -408,7 +409,7 @@ public class bSettingfrag extends Fragment implements OnBackPressedListener{
             // 파일 경로(String) 값을 Uri로 변환해서 저장
             //      - Why? : 리사이클러뷰에 들어가는 ArrayList가 Uri를 가지기 때문
             //      - File Path를 알면 File을  인스턴스를 만들어 사용할 수 있기 때문
-            String path = audioFileName2;
+            String path1 = audioFileName2;
             File f1 = new File(audioFileName); // The location of your PCM file
             File f2 = new File(audioFileName2); // The location where you want your WAV file
             try {
@@ -417,6 +418,11 @@ public class bSettingfrag extends Fragment implements OnBackPressedListener{
                 e.printStackTrace();
             }
             float[][][][] input = new float[1][128][128][1];
+
+
+            String path= "/storage/emulated/0/Download/nea00203.wav";
+
+
             try {
                 input = wav2label(path, 128);
             } catch (IOException e) {
