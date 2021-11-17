@@ -20,6 +20,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -313,6 +314,7 @@ public class bSettingfrag extends Fragment implements OnBackPressedListener{
             audioFeatureValues[i] = (audioFeatureValues[i]) * 2 / (ymax - ymin) - 1;
             //Log.d("debug", "debug audiofeature"+audioFeatureValues[i]+" length "+audioFeatureValues.length+" current "+i);
         }
+        Log.d("debug", "debug audioFeature"+audioFeatureValues.length);
 
         // 스펙트로그램 저장
         float[][] melSpectrogram_f = jLibrosa.generateMelSpectroGram(audioFeatureValues, sample_rate, 512  , 128, 128);
@@ -409,7 +411,7 @@ public class bSettingfrag extends Fragment implements OnBackPressedListener{
             // 파일 경로(String) 값을 Uri로 변환해서 저장
             //      - Why? : 리사이클러뷰에 들어가는 ArrayList가 Uri를 가지기 때문
             //      - File Path를 알면 File을  인스턴스를 만들어 사용할 수 있기 때문
-            String path1 = audioFileName2;
+            String path = audioFileName2;
             File f1 = new File(audioFileName); // The location of your PCM file
             File f2 = new File(audioFileName2); // The location where you want your WAV file
             try {
@@ -420,7 +422,7 @@ public class bSettingfrag extends Fragment implements OnBackPressedListener{
             float[][][][] input = new float[1][128][128][1];
 
 
-            String path= "/storage/emulated/0/Download/nea00203.wav";
+            //String path= "/storage/emulated/0/Download/03a01Wa.wav";
 
 
             try {
@@ -436,7 +438,7 @@ public class bSettingfrag extends Fragment implements OnBackPressedListener{
             float[][] output = new float[1][7];
 
             //인터프리터 생성
-            Interpreter tflite = getTfliteInterpreter("EmoDB_4_noDelta_94.tflite");
+            Interpreter tflite = getTfliteInterpreter("EmoDB_4_noDelta_java_92.tflite");
 
             //모델 돌리기
             tflite.run(input, output);
@@ -536,7 +538,7 @@ public class bSettingfrag extends Fragment implements OnBackPressedListener{
 
     public class Constants {
 
-        final static public int RECORDER_SAMPLERATE = 44100;
+        final static public int RECORDER_SAMPLERATE = 16000;
         final static public int RECORDER_CHANNELS = AudioFormat.CHANNEL_IN_MONO;
         final static public int RECORDER_AUDIO_ENCODING = AudioFormat.ENCODING_PCM_16BIT;
 
@@ -570,7 +572,7 @@ public class bSettingfrag extends Fragment implements OnBackPressedListener{
             writeInt(output, 16); // subchunk 1 size
             writeShort(output, (short) 1); // audio format (1 = PCM)
             writeShort(output, (short) 1); // number of channels
-            writeInt(output, 44100); // sample rate
+            writeInt(output, 16000); // sample rate
             writeInt(output, Constants.RECORDER_SAMPLERATE * 2); // byte rate
             writeShort(output, (short) 2); // block align
             writeShort(output, (short) 16); // bits per sample
