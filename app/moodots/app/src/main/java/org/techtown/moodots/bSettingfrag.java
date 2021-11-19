@@ -60,7 +60,7 @@ public class bSettingfrag extends Fragment implements OnBackPressedListener{
     //녹음용
     ImageButton audioRecordImageBtn;
     TextView audioRecordText;
-
+    int savespeclength=0;
     // 오디오 권한
     Thread recordingThread;
     AudioRecord audioRecorder;
@@ -338,9 +338,10 @@ public class bSettingfrag extends Fragment implements OnBackPressedListener{
         // 차분과 차차분 구하고, stack 맞추기 (일단 0으로 맞춤)
         double[] delta1 = new double[n_frame];
         double[] delta2 = new double[n_frame];
+        savespeclength=melSpectrogram_f[0].length/128;
 
-        float[][][][] stack = new float[melSpectrogram_f.length/128][128][128][1];
-        for (int i=0; i<melSpectrogram_f.length/128; i++){
+        float[][][][] stack = new float[melSpectrogram_f[0].length/128][128][128][1];
+        for (int i=0; i<melSpectrogram_f[0].length/128; i++){
             for (int f=0; f<128; f++){
                 for (int t=0; t<128; t++){
                     stack[i][f][t][0]=(float) melSpectrogram[f][128*i+t];
@@ -435,10 +436,10 @@ public class bSettingfrag extends Fragment implements OnBackPressedListener{
                 e.printStackTrace();
             }
             /// 여기에 input 데이터를 넣어주어야 함!!!
-            float[][] output = new float[1][7];
+            float[][] output = new float[savespeclength][7];
 
             //인터프리터 생성
-            Interpreter tflite = getTfliteInterpreter("EmoDB_4_noDelta_java_92.tflite");
+            Interpreter tflite = getTfliteInterpreter("EmoDBandKESDy_4_noDelta_java_77.tflite");
 
             //모델 돌리기
             tflite.run(input, output);
