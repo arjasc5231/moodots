@@ -390,7 +390,7 @@ public class bBlankFragment extends Fragment implements OnBackPressedListener{
             });
 
             Button addDiaryButton = rootView.findViewById(R.id.addDiaryButton);
-            addDiaryButton.setText("add");
+            addDiaryButton.setText("추가");
             addDiaryButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -455,7 +455,7 @@ public class bBlankFragment extends Fragment implements OnBackPressedListener{
                 }
             });
             Button delete = rootView.findViewById(R.id.delete);
-            delete.setText("cancel");
+            delete.setText("삭제");
             delete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -578,7 +578,7 @@ public class bBlankFragment extends Fragment implements OnBackPressedListener{
             });
 
             Button addDiaryButton = rootView.findViewById(R.id.addDiaryButton);
-            addDiaryButton.setText("modify");
+            addDiaryButton.setText("수정");
             addDiaryButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -621,7 +621,7 @@ public class bBlankFragment extends Fragment implements OnBackPressedListener{
                 }
             });
             Button delete = rootView.findViewById(R.id.delete);
-            delete.setText("delete");
+            delete.setText("삭제");
             delete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
