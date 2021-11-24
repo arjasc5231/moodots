@@ -139,7 +139,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="@layout/button_rightcorner"
-                android:text="녹음" />
+                android:text="세팅" />
 
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
