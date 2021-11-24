@@ -30,7 +30,7 @@ public class aMain extends AppCompatActivity implements AutoPermissionsListener 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        startService();
+        //startService();
         // 액티비티 중복 삭제를 위한 코드. 아래 if문 포함(if문은 login액티비티를 삭제하는 부분)
         if(aHome.activity!=null){
             aHome activity = (aHome) aHome.activity;
@@ -193,7 +193,7 @@ public class aMain extends AppCompatActivity implements AutoPermissionsListener 
         }
     }
 
-    public void startService(){
+    /*public void startService(){
         serviceIntent = new Intent(this, MyService.class);
         startService(serviceIntent);
     }
@@ -201,5 +201,5 @@ public class aMain extends AppCompatActivity implements AutoPermissionsListener 
     public void stopService(){
         serviceIntent = new Intent(this, MyService.class);
         stopService(serviceIntent);
-    }
+    }*/
 }

@@ -30,7 +30,7 @@ public class DiaryDatabase{
         dbHelper = new DatabaseHelper(context);
         db = dbHelper.getWritableDatabase();
 
-/*
+
         String DROP_SQL = "drop table if exists " + TABLE_DIARY;
         try {
             db.execSQL(DROP_SQL);
@@ -48,12 +48,13 @@ public class DiaryDatabase{
                     + "DATE TEXT, "
                     + "TIME TEXT, "
                     + "VOICE TEXT );";
+
         try {
             db.execSQL(CREATE_SQL);
         } catch(Exception ex) {
             Log.e(TAG, "Exception in CREATE_SQL", ex);
         }
-
+        /*
         // create index
         String CREATE_INDEX_SQL = "create index " + TABLE_DIARY + "_IDX ON " + TABLE_DIARY + "("
                 + "CREATE_DATE"
@@ -62,7 +63,7 @@ public class DiaryDatabase{
             db.execSQL(CREATE_INDEX_SQL);
         } catch(Exception ex) {
             Log.e(TAG, "Exception in CREATE_INDEX_SQL", ex);
-        } 데이터베이스 초기화를 위해서 넣는 코드*/
+        } //데이터베이스 초기화를 위해서 넣는 코드*/
 
 
 

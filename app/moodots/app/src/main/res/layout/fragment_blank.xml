@@ -43,6 +43,7 @@
                 />
         </LinearLayout>
         <LinearLayout
+            android:id="@+id/border"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="10"
@@ -51,7 +52,8 @@
             android:layout_marginBottom="10dp"
             android:layout_marginLeft="15dp"
             android:layout_marginRight="15dp"
-            android:background="@drawable/diaryadd_layout_border"
+            android:background="@drawable/diaryadd_layout_border_angry"
+
             >
 
             <LinearLayout
@@ -61,8 +63,8 @@
 
                 <ImageView
                     android:id="@+id/currentmood"
-                    android:layout_width="42dp"
-                    android:layout_height="42dp"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
                     app:srcCompat="@mipmap/ic_angry" />
                 <TextView
                     android:id="@+id/currentmoodtext"
@@ -74,7 +76,8 @@
                     android:paddingBottom="10dp"
                     android:text="화가 났나요?"
                     android:textSize="15dp"
-                    android:layout_gravity="center_horizontal"/>
+                    android:layout_gravity="center_horizontal"
+                    android:fontFamily="@font/nanumsquareround"/>
             </LinearLayout>
 
             <LinearLayout
@@ -95,7 +98,8 @@
 
                     android:text="일시"
                     android:textSize="20dp"
-                    android:paddingEnd="10dp"/>
+                    android:paddingEnd="10dp"
+                    android:fontFamily="@font/nanumsquareround"/>
 
                 <Button
                     android:id="@+id/date"
@@ -105,7 +109,8 @@
                     android:padding="0dp"
                     style="?android:attr/borderlessButtonStyle"
                     android:textSize="20sp"
-                    android:text="Button" />
+                    android:text="Button"
+                    android:fontFamily="@font/nanumsquareround"/>
 
                 <Button
                     android:id="@+id/time"
@@ -115,7 +120,8 @@
                     android:padding="0dp"
                     style="?android:attr/borderlessButtonStyle"
                     android:textSize="20sp"
-                    android:text="Button" />
+                    android:text="Button"
+                    android:fontFamily="@font/nanumsquareround"/>
 
             </LinearLayout>
 
@@ -133,54 +139,55 @@
                     android:layout_height="wrap_content"
                     android:textSize="23sp"
                     android:text="감정"
-                    android:paddingEnd="10dp"/>
+                    android:paddingEnd="10dp"
+                    android:fontFamily="@font/nanumsquareround"/>
 
                 <Button
                     android:id="@+id/angry"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="42dp"
                     android:layout_weight="1"
                     android:background="@mipmap/ic_angry" />
 
                 <Button
                     android:id="@+id/joy"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="42dp"
                     android:layout_weight="1"
                     android:background="@mipmap/ic_joy" />
 
                 <Button
                     android:id="@+id/fear"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="42dp"
                     android:layout_weight="1"
                     android:background="@mipmap/ic_fear" />
 
                 <Button
                     android:id="@+id/sad"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="42dp"
                     android:layout_weight="1"
                     android:background="@mipmap/ic_sad" />
 
                 <Button
                     android:id="@+id/disgust"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="42dp"
                     android:layout_weight="1"
                     android:background="@mipmap/ic_disgust" />
 
                 <Button
                     android:id="@+id/surprise"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="42dp"
                     android:layout_weight="1"
                     android:background="@mipmap/ic_surprise" />
 
                 <Button
                     android:id="@+id/neutral"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="42dp"
                     android:layout_weight="1"
                     android:background="@mipmap/ic_neutral" />
             </LinearLayout>
@@ -200,7 +207,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textSize="20dp"
-                    android:text="일기" />
+                    android:text="일기"
+                    android:fontFamily="@font/nanumsquareround"/>
 
                 <EditText
                     android:id="@+id/contents"
@@ -211,6 +219,7 @@
                     android:ems="10"
                     android:gravity="top"
                     android:hint="일기를 입력하세요."
+                    android:fontFamily="@font/nanumsquareround"
 
                     android:inputType="textMultiLine"
                     android:scrollHorizontally="false" />
@@ -228,7 +237,8 @@
                     android:gravity="top"
                     android:hint="#을 눌러 해시태그 입력을 시작하세요. 뛰어쓰기를 하면 자동으로 #이 생성됩니다. 최대 5개의 해시태그 입력이 가능합니다."
                     android:inputType="textMultiLine"
-                    android:scrollHorizontally="false" />
+                    android:scrollHorizontally="false"
+                    android:fontFamily="@font/nanumsquareround" />
                 <!--<HashTagEditTextView
                     android:id="@+id/hashcontents"
                     android:layout_width="match_parent"
@@ -265,7 +275,8 @@
                     android:text="삭제"
                     android:layout_gravity="start"
                     android:textSize="20dp"
-                    style="?android:attr/borderlessButtonStyle"/>
+                    style="?android:attr/borderlessButtonStyle"
+                    android:fontFamily="@font/nanumsquareround"/>
 
                 <View
                     android:layout_width="0dp"
@@ -281,7 +292,8 @@
                     android:background="@layout/button_diary"
                     android:textStyle="bold"
                     android:text="추가"
-                    android:textSize="20dp" />
+                    android:textSize="20dp"
+                    android:fontFamily="@font/nanumsquareround"/>
 
             </LinearLayout>
         </LinearLayout>
@@ -308,7 +320,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="@layout/button_leftcorner"
-                android:text="메인" />
+                android:text="메인"
+                android:fontFamily="@font/nanumsquareround"/>
 
             <Button
                 android:id="@+id/sort"
@@ -316,7 +329,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="@layout/button_middle"
-                android:text="정렬" />
+                android:text="정렬"
+                android:fontFamily="@font/nanumsquareround"/>
 
             <Button
                 android:id="@+id/newDiaryButton"
@@ -325,7 +339,8 @@
                 android:layout_weight="1"
                 android:background="@layout/button_middle"
                 android:textStyle="bold"
-                android:text="추가" />
+                android:text="추가"
+                android:fontFamily="@font/nanumsquareround"/>
 
             <Button
                 android:id="@+id/search"
@@ -333,7 +348,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="@layout/button_middle"
-                android:text="검색" />
+                android:text="검색"
+                android:fontFamily="@font/nanumsquareround"/>
 
             <Button
                 android:id="@+id/setting"
@@ -341,7 +357,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="@layout/button_rightcorner"
-                android:text="세팅" />
+                android:text="세팅"
+                android:fontFamily="@font/nanumsquareround"/>
 
         </LinearLayout>
     </LinearLayout>

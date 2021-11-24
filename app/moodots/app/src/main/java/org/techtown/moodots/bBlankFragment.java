@@ -28,6 +28,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -325,6 +326,7 @@ public class bBlankFragment extends Fragment implements OnBackPressedListener{
             Log.d(TAG, "active add");
             date.setText(getDate());
             time.setText(getTime());
+            LinearLayout linear = rootView.findViewById(R.id.border);
             Button angry = rootView.findViewById(R.id.angry);
             angry.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -332,6 +334,7 @@ public class bBlankFragment extends Fragment implements OnBackPressedListener{
                     currentmood.setImageResource(R.mipmap.ic_angry);
                     moodtext.setText("화가 났나요?");
                     moodIndex = 1;
+                    linear.setBackgroundResource(R.drawable.diaryadd_layout_border_angry);
                 }
             });
             Button joy = rootView.findViewById(R.id.joy);
@@ -341,6 +344,7 @@ public class bBlankFragment extends Fragment implements OnBackPressedListener{
                     currentmood.setImageResource(R.mipmap.ic_joy);
                     moodtext.setText("기쁜가요?");
                     moodIndex = 2;
+                    linear.setBackgroundResource(R.drawable.diaryadd_layout_border_joy);
                 }
             });
             Button fear = rootView.findViewById(R.id.fear);
@@ -350,6 +354,7 @@ public class bBlankFragment extends Fragment implements OnBackPressedListener{
                     currentmood.setImageResource(R.mipmap.ic_fear);
                     moodtext.setText("두려운가요?");
                     moodIndex = 3;
+                    linear.setBackgroundResource(R.drawable.diaryadd_layout_border_fear);
                 }
             });
             Button sad = rootView.findViewById(R.id.sad);
@@ -359,6 +364,7 @@ public class bBlankFragment extends Fragment implements OnBackPressedListener{
                     currentmood.setImageResource(R.mipmap.ic_sad);
                     moodtext.setText("슬픈가요?");
                     moodIndex = 4;
+                    linear.setBackgroundResource(R.drawable.diaryadd_layout_border_sad);
                 }
             });
             Button disgust = rootView.findViewById(R.id.disgust);
@@ -368,6 +374,7 @@ public class bBlankFragment extends Fragment implements OnBackPressedListener{
                     currentmood.setImageResource(R.mipmap.ic_disgust);
                     moodtext.setText("혐오스러운가요?");
                     moodIndex = 5;
+                    linear.setBackgroundResource(R.drawable.diaryadd_layout_border_disgust);
                 }
             });
             Button surprise = rootView.findViewById(R.id.surprise);
@@ -377,6 +384,7 @@ public class bBlankFragment extends Fragment implements OnBackPressedListener{
                     currentmood.setImageResource(R.mipmap.ic_surprise);
                     moodtext.setText("놀랐나요?");
                     moodIndex = 6;
+                    linear.setBackgroundResource(R.drawable.diaryadd_layout_border_surprise);
                 }
             });
             Button neutral = rootView.findViewById(R.id.neutral);
@@ -386,6 +394,7 @@ public class bBlankFragment extends Fragment implements OnBackPressedListener{
                     currentmood.setImageResource(R.mipmap.ic_neutral);
                     moodtext.setText("아무런 감정이 느껴지지 않나요?");
                     moodIndex = 7;
+                    linear.setBackgroundResource(R.drawable.diaryadd_layout_border_neutral);
                 }
             });
 

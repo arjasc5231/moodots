@@ -94,8 +94,8 @@ public class bSearchfrag extends Fragment implements OnBackPressedListener{
                              Bundle savedInstanceState) {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_search,container,false);
         textsearch=(TextView) rootView.findViewById(R.id.searchtext);
-        TextView datesearch=(TextView) rootView.findViewById(R.id.datesearch);
-        datesearch.setText(bSortfrag.getDate());
+        //TextView datesearch=(TextView) rootView.findViewById(R.id.datesearch);
+        //datesearch.setText(bSortfrag.getDate());
         getChildFragmentManager().beginTransaction().add(R.id.containersort, moodfragment).commit();
 
         buttonUI(rootView);

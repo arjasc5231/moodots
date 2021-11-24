@@ -1,4 +1,4 @@
-package org.techtown.moodots;
+/*package org.techtown.moodots;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -14,6 +14,9 @@ import android.util.Log;
 
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
+
+import org.techtown.moodots.R;
+import org.techtown.moodots.aMain;
 
 public class MyService extends Service {
     BackgroundTask task;
@@ -69,13 +72,13 @@ public class MyService extends Service {
         @RequiresApi(api = Build.VERSION_CODES.CUPCAKE)
         @Override
         protected Integer doInBackground(Integer... integers) {
-            /*while(isCancelled()==false){
-                try{
-                    Log.d("thread", value+"번째 실행중");
-                    Thread.sleep(100);
-                    value++;
-                }catch(InterruptedException ex){}
-            }*/
+            //while(isCancelled()==false){
+                //try{
+                  //  Log.d("thread", value+"번째 실행중");
+                  // Thread.sleep(100);
+                  //  value++;
+                //}catch(InterruptedException ex){}
+            //}
             return value;
         }
 
@@ -105,4 +108,4 @@ public class MyService extends Service {
         task.cancel(true);
     }
 
-}
+}*/

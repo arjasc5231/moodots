@@ -240,8 +240,8 @@ public class bSettingfrag extends Fragment implements OnBackPressedListener{
     }
 
     private void init(ViewGroup rootView) {
-        TextView textView=rootView.findViewById(R.id.datesetting);
-        textView.setText(getDate());
+        //TextView textView=rootView.findViewById(R.id.datesetting);
+        //textView.setText(getDate());
         audioRecordImageBtn = rootView.findViewById(R.id.audioRecordImageBtn);
         audioRecordText = rootView.findViewById(R.id.audioRecordText);
         audioRecordImageBtn.setOnClickListener(new Button.OnClickListener() {
