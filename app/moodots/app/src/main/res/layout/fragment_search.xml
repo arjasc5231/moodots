@@ -130,6 +130,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="@layout/button_middle"
+                android:textStyle="bold"
                 android:text="검색" />
 
             <Button

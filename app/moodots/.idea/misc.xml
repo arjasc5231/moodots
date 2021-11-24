@@ -22,6 +22,7 @@
         <entry key="..\:/Users/Administrator/Desktop/moodots/moodots/app/moodots/app/src/main/res/layout/fragment_week.xml" value="0.5448369565217391" />
         <entry key="..\:/Users/Administrator/Desktop/moodots/moodots/app/moodots/app/src/main/res/layout/fragment_year.xml" value="0.5448369565217391" />
         <entry key="..\:/Users/Administrator/Desktop/moodots/moodots/app/moodots/app/src/main/res/menu/menu_bottom.xml" value="0.5744791666666667" />
+        <entry key="..\:/Users/admin/Desktop/Runner/moodots/app/moodots/app/src/main/res/drawable/button_select.xml" value="0.38229166666666664" />
         <entry key="..\:/Users/admin/Desktop/Runner/moodots/app/moodots/app/src/main/res/layout/activity_home.xml" value="0.18333333333333332" />
         <entry key="..\:/Users/admin/Desktop/Runner/moodots/app/moodots/app/src/main/res/layout/activity_login.xml" value="0.18333333333333332" />
         <entry key="..\:/Users/admin/Desktop/Runner/moodots/app/moodots/app/src/main/res/layout/activity_main.xml" value="0.18333333333333332" />
@@ -40,7 +41,7 @@
         <entry key="..\:/Users/admin/Desktop/Runner/moodots/app/moodots/app/src/main/res/layout/fragment_mood.xml" value="0.18333333333333332" />
         <entry key="..\:/Users/admin/Desktop/Runner/moodots/app/moodots/app/src/main/res/layout/fragment_search.xml" value="0.18333333333333332" />
         <entry key="..\:/Users/admin/Desktop/Runner/moodots/app/moodots/app/src/main/res/layout/fragment_setting.xml" value="0.18333333333333332" />
-        <entry key="..\:/Users/admin/Desktop/Runner/moodots/app/moodots/app/src/main/res/layout/fragment_sort.xml" value="0.18333333333333332" />
+        <entry key="..\:/Users/admin/Desktop/Runner/moodots/app/moodots/app/src/main/res/layout/fragment_sort.xml" value="0.12" />
         <entry key="..\:/Users/admin/Desktop/Runner/moodots/app/moodots/app/src/main/res/layout/fragment_week.xml" value="0.18333333333333332" />
         <entry key="..\:/Users/admin/Desktop/Runner/moodots/app/moodots/app/src/main/res/layout/fragment_year.xml" value="0.18333333333333332" />
         <entry key="..\:/Users/admin/Desktop/Runner/moodots/app/moodots/app/src/main/res/layout/item_audio.xml" value="0.18333333333333332" />
@@ -49,6 +50,15 @@
         <entry key="..\:/Users/admin/Desktop/Runner/moodots/app/moodots/app/src/main/res/layout/yearmonthweekpicker.xml" value="0.18333333333333332" />
         <entry key="..\:/Users/admin/Desktop/Runner/moodots/app/moodots/app/src/main/res/layout/yearpicker.xml" value="0.18333333333333332" />
         <entry key="..\:/Users/admin/Desktop/Runner/moodots/app/moodots/app/src/main/res/menu/menu_bottom.xml" value="0.18333333333333332" />
+        <entry key="..\:/Users/admin/Desktop/Runner/moodots/app/moodots/app/src/main/res/mipmap-anydpi-v26/angry_main.xml" value="0.38229166666666664" />
+        <entry key="..\:/Users/admin/Desktop/Runner/moodots/app/moodots/app/src/main/res/mipmap-anydpi-v26/angry_main_round.xml" value="0.38229166666666664" />
+        <entry key="..\:/Users/admin/Desktop/Runner/moodots/app/moodots/app/src/main/res/mipmap-anydpi-v26/disgust_main.xml" value="0.38229166666666664" />
+        <entry key="..\:/Users/admin/Desktop/Runner/moodots/app/moodots/app/src/main/res/mipmap-anydpi-v26/disgust_main_round.xml" value="0.38229166666666664" />
+        <entry key="..\:/Users/admin/Desktop/Runner/moodots/app/moodots/app/src/main/res/mipmap-anydpi-v26/fear_main.xml" value="0.38229166666666664" />
+        <entry key="..\:/Users/admin/Desktop/Runner/moodots/app/moodots/app/src/main/res/mipmap-anydpi-v26/fear_main_round.xml" value="0.38229166666666664" />
+        <entry key="..\:/Users/admin/Desktop/Runner/moodots/app/moodots/app/src/main/res/mipmap-anydpi-v26/sad_main.xml" value="0.38229166666666664" />
+        <entry key="..\:/Users/admin/Desktop/Runner/moodots/app/moodots/app/src/main/res/mipmap-anydpi-v26/sad_main_round.xml" value="0.38229166666666664" />
+        <entry key="..\:/Users/admin/Desktop/Runner/moodots/app/moodots/app/src/main/res/mipmap-anydpi-v26/surprise_main_round.xml" value="0.38229166666666664" />
       </map>
     </option>
   </component>

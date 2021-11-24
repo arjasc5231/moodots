@@ -185,6 +185,7 @@
                 android:layout_height="wrap_content"
                 android:background="@layout/button_leftcorner"
                 android:layout_weight="1"
+                android:textStyle="bold"
                 android:text="메인" />
 
             <Button
