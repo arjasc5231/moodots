@@ -206,8 +206,8 @@ public class bBlankFragment extends Fragment implements OnBackPressedListener{
         //final int[] max = {0};
         //hashcontents.setText("#");
         //hashcontents.setSelection(1);
-        TextView textView=rootView.findViewById(R.id.dateadd);
-        textView.setText(getDate());
+        //TextView textView=rootView.findViewById(R.id.dateadd);
+        //textView.setText(getDate());
         currentmood = rootView.findViewById(R.id.currentmood);
         date = rootView.findViewById(R.id.date);
         time = rootView.findViewById(R.id.time);
@@ -326,7 +326,7 @@ public class bBlankFragment extends Fragment implements OnBackPressedListener{
             Log.d(TAG, "active add");
             date.setText(getDate());
             time.setText(getTime());
-            LinearLayout linear = rootView.findViewById(R.id.border);
+            LinearLayout linear = rootView.findViewById(R.id.diary_border);
             Button angry = rootView.findViewById(R.id.angry);
             angry.setOnClickListener(new View.OnClickListener() {
                 @Override
