@@ -18,7 +18,7 @@
             android:orientation="horizontal"
             android:paddingTop="10dp"
             android:paddingBottom="10dp"
-            app:layout_constraintBottom_toTopOf="@+id/keywordpick"
+            app:layout_constraintBottom_toTopOf="@+id/searchbtn"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
@@ -40,164 +40,54 @@
                 android:text="date"
                 android:textSize="25sp" />
         </LinearLayout>
-
-        <Button
-            android:id="@+id/keywordpick"
-            style="?android:attr/borderlessButtonStyle"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/searchbtn"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
-            android:backgroundTint="@color/white"
-            android:text="TextView"
-            android:textSize="20sp"
-            app:layout_constraintBottom_toTopOf="@id/recyclerlayout"
+            android:orientation="horizontal"
+            android:gravity="center"
+            app:layout_constraintBottom_toTopOf="@+id/containersort"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/textlayout" />
+            app:layout_constraintTop_toBottomOf="@id/textlayout" >
+            <Button
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:background="@drawable/ic_baseline_keyboard_arrow_left_24"
+                android:id="@+id/leftbtn"
+                />
+            <TextView
+                android:id="@+id/searchtext"
+                android:layout_width="100dp"
+                android:layout_height="match_parent"
+                android:text="Mood"
+                android:gravity="center"
+                android:textSize="20sp" />
 
-        <LinearLayout
-            android:id="@+id/recyclerlayout"
+            <Button
+                android:id="@+id/rightbtn"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:background="@drawable/ic_baseline_keyboard_arrow_right_24" />
+        </LinearLayout>
+        <FrameLayout
+            android:id="@+id/containersort"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-
-            android:orientation="horizontal"
-            app:layout_constraintBottom_toTopOf="@id/piechartlayout"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/keywordpick">
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                />
-        </LinearLayout>
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/piechartlayout"
-            android:layout_width="match_parent"
-            android:layout_height="210dp"
-            android:orientation="horizontal"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
             app:layout_constraintBottom_toTopOf="@+id/buttonlayout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/recyclerlayout">
+            app:layout_constraintTop_toBottomOf="@id/searchbtn">
 
-            <LinearLayout
-                android:id="@+id/moodsummary"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:orientation="vertical"
-                app:layout_constraintBottom_toBottomOf="@id/piechartlayout"
-                app:layout_constraintEnd_toStartOf="@id/clocklayout"
-                app:layout_constraintStart_toStartOf="@id/piechartlayout"
-                app:layout_constraintTop_toTopOf="@id/piechartlayout">
+        </FrameLayout>
 
-                <TextView
-                    android:id="@+id/angry"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="TextView"
-                    android:textSize="20sp" />
 
-                <TextView
-                    android:id="@+id/joy"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="TextView"
-                    android:textSize="20sp" />
 
-                <TextView
-                    android:id="@+id/fear"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="TextView"
-                    android:textSize="20sp" />
-
-                <TextView
-                    android:id="@+id/sad"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="TextView"
-                    android:textSize="20sp" />
-
-                <TextView
-                    android:id="@+id/disgust"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="TextView"
-                    android:textSize="20sp" />
-
-                <TextView
-                    android:id="@+id/surprise"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="TextView"
-                    android:textSize="20sp" />
-
-                <TextView
-                    android:id="@+id/neutral"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="TextView"
-                    android:textSize="20sp" />
-            </LinearLayout>
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="210dp"
-                android:layout_height="210dp"
-                android:id="@+id/clocklayout"
-                app:layout_constraintBottom_toBottomOf="@id/piechartlayout"
-                app:layout_constraintEnd_toEndOf="@id/piechartlayout"
-                app:layout_constraintStart_toEndOf="@+id/moodsummary"
-                app:layout_constraintTop_toTopOf="@id/piechartlayout">
-
-                <com.github.mikephil.charting.charts.PieChart
-                    android:id="@+id/piechart"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@color/white"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"/>
-                <ImageButton
-                    android:id="@+id/moodindicate"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:backgroundTint="@color/white"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    android:src="@drawable/angry_main_foreground"
-                    />
-
-                <TextView
-                    android:id="@+id/moodtime"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="PM 00:00"
-                    android:textSize="25sp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <TextView
-                    android:id="@+id/moodtext"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="분노"
-                    android:textSize="15sp"
-                    android:layout_marginTop="60dp"
-                    app:layout_constraintBottom_toTopOf="@+id/moodtime"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/piechart"
-                    />
-            </androidx.constraintlayout.widget.ConstraintLayout>
-        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <LinearLayout
             android:id="@+id/buttonlayout"

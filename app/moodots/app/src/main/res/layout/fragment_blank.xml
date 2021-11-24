@@ -206,7 +206,7 @@
                     android:id="@+id/contents"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:layout_weight="15"
+                    android:layout_weight="10"
                     android:background="@drawable/diaryadd_contents_border"
                     android:ems="10"
                     android:gravity="top"
@@ -291,6 +291,55 @@
             >
 
         </androidx.recyclerview.widget.RecyclerView>
+        <LinearLayout
+            android:id="@+id/buttonlayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:orientation="horizontal"
+            >
+
+            <Button
+                android:id="@+id/main"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@layout/button_leftcorner"
+                android:text="메인" />
+
+            <Button
+                android:id="@+id/sort"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@layout/button_middle"
+                android:text="정렬" />
+
+            <Button
+                android:id="@+id/newDiaryButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@layout/button_middle"
+                android:text="추가" />
+
+            <Button
+                android:id="@+id/search"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@layout/button_middle"
+                android:text="검색" />
+
+            <Button
+                android:id="@+id/setting"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@layout/button_rightcorner"
+                android:text="녹음" />
+
+        </LinearLayout>
     </LinearLayout>
 
 

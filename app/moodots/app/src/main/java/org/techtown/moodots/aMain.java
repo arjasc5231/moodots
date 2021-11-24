@@ -2,6 +2,7 @@ package org.techtown.moodots;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.os.Bundle;
@@ -14,6 +15,7 @@ import java.io.IOException;
 
 public class aMain extends AppCompatActivity implements AutoPermissionsListener {
     private static final String TAG = "MainActivity";
+    Intent serviceIntent;
     MediaRecorder recorder;
     MediaPlayer player;
     String filename;
@@ -28,7 +30,7 @@ public class aMain extends AppCompatActivity implements AutoPermissionsListener 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        startService();
         // 액티비티 중복 삭제를 위한 코드. 아래 if문 포함(if문은 login액티비티를 삭제하는 부분)
         if(aHome.activity!=null){
             aHome activity = (aHome) aHome.activity;
@@ -189,5 +191,15 @@ public class aMain extends AppCompatActivity implements AutoPermissionsListener 
         if (player != null) {
             player.release();
         }
+    }
+
+    public void startService(){
+        serviceIntent = new Intent(this, MyService.class);
+        startService(serviceIntent);
+    }
+
+    public void stopService(){
+        serviceIntent = new Intent(this, MyService.class);
+        stopService(serviceIntent);
     }
 }

@@ -46,7 +46,7 @@ public class cmoodfragment extends Fragment {
     String temp;
     aMain activity;
     RecyclerView recyclerView;
-    DiaryAdapter adapter;
+    DiaryAdapter_search adapter;
     OnTabItemSelectedListener listener;
 
     ImageButton playerbutton;
@@ -211,7 +211,7 @@ public class cmoodfragment extends Fragment {
     public void initUI(ViewGroup rootView){
         btnkeywordPicker= rootView.findViewById(R.id.moodpick);
         btnkeywordPicker.setText("화남");
-        String[] moodlist= {"화남", "기쁨", "두려움", "슬픔", "혐오", "놀람", "중립"};
+        String[] moodlist= {"화남", "기쁨", "두려움", "슬픔", "역겨움", "놀람", "중립"};
 
         btnkeywordPicker.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -241,7 +241,7 @@ public class cmoodfragment extends Fragment {
                                     case "슬픔":
                                         moodsee=4;
                                         break;
-                                    case "혐오":
+                                    case "역겨움":
                                         moodsee=5;
                                         break;
                                     case "놀람":
@@ -270,9 +270,9 @@ public class cmoodfragment extends Fragment {
         //layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         //GridLayoutManager layoutManager = new GridLayoutManager(getContext(),2);
         recyclerView.setLayoutManager(layoutManager);
-        adapter = new DiaryAdapter();
+        adapter = new DiaryAdapter_search();
         recyclerView.setAdapter(adapter);
-        adapter.setOnButtonClickListener(new OnDiaryButtonClickListener() {
+        /*adapter.setOnButtonClickListener(new OnDiaryButtonClickListener() {
             @Override
             public void onButtonClick(DiaryAdapter.ViewHolder holder, SeekBar seekBar, View view, int position) {
                 Diary item = adapter.getItem(position);
@@ -304,19 +304,18 @@ public class cmoodfragment extends Fragment {
                     Toast.makeText(getContext(),"녹음 파일이 없습니다.",Toast.LENGTH_SHORT).show();
                 }
             }
-        });
-        adapter.setOnItemClickListener(new OnDiaryItemClickListener() {
+        });*/
+        adapter.setOnSearchItemClickListener(new OnSearchItemClickListener() {
             @Override
-            public void onItemClick(DiaryAdapter.ViewHolder holder, View view, int position) {
-                // 새로 추가할 imageView 생성
+            public void onsearchItemClick(DiaryAdapter_search.ViewHolder holder, View view, int position) {
                 Diary item = adapter.getItem(position);
                 Toast temp =Toast.makeText(getContext(), "item click", Toast.LENGTH_SHORT);
                 temp.show();
             }
         });
-        adapter.setOnItemLongClickListener(new OnItemLongClickListener() {
+        adapter.setOnSearchItemLongClickListener(new OnSearchItemLongClickListener() {
             @Override
-            public void onItemLongClick(DiaryAdapter.ViewHolder holder, View view, int position) {
+            public void onsearchItemLongClick(DiaryAdapter_search.ViewHolder holder, View view, int position) {
                 Diary item = adapter.getItem(position);
                 Bundle result = new Bundle();
                 result.putInt("bundleKey0", item._id);
@@ -334,7 +333,6 @@ public class cmoodfragment extends Fragment {
                 transaction.commit();
             }
         });
-
     }
     public void Thread(SeekBar seekbar){
         Runnable task = new Runnable(){

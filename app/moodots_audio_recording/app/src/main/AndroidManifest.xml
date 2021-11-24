@@ -3,6 +3,10 @@
     package="com.moodots.myaudio">
 
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_MEDIA_LOCATION"/>
+    <uses-permission android:name="android.permission.START_FOREGROUND_SERVICES_FROM_BACKGROUND"/>
 
     <application
         android:allowBackup="true"
@@ -11,6 +15,22 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MyAudio">
+        <service
+            android:foregroundServiceType="location|microphone"
+
+            android:name=".MyService"
+            android:enabled="true"
+            android:exported="true"
+            android:stopWithTask="false"></service>
+        <receiver
+            android:name="com.moodots.myaudio.RestartBroadcastReceiver"
+            android:enabled="true"
+            android:exported="true"
+            android:label="RestartServiceWhenStopped">
+            <intent-filter>
+                <action android:name="com.moodots.myaudio.RestartService" />
+            </intent-filter>
+        </receiver>
         <activity
             android:name=".MainActivity"
             android:exported="true">

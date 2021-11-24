@@ -62,6 +62,17 @@ public class cyearfragment extends Fragment {
             return "";
         }
     }
+    public class pieValueFormatter extends ValueFormatter implements IAxisValueFormatter {
+
+        public pieValueFormatter() {
+
+        }
+
+        @Override
+        public String getPieLabel(float value, PieEntry pieEntry) {
+            return String.valueOf((int) value);
+        }
+    }
 
 
     @Override
@@ -169,17 +180,22 @@ public class cyearfragment extends Fragment {
         Legend l = pieChart.getLegend();
         l.setEnabled(false);
         int[] moodlist=new int[7];
+        int count=0;
         for(int i=0;i<percent.size();i++){
             int p=percent.get(i).getMood()-1;
             moodlist[p]+=1;
+            count+=1;
         }
-        angry.setText("화남:"+moodlist[0]+"회");
-        joy.setText("기쁨:"+moodlist[1]+"회");
-        fear.setText("두려움:"+moodlist[2]+"회");
-        sad.setText("슬픔:"+moodlist[3]+"회");
-        disgust.setText("혐오:"+moodlist[4]+"회");
-        surprise.setText("놀람:"+moodlist[5]+"회");
-        neutral.setText("중립:"+moodlist[6]+"회");
+        if(count==0){
+            count=1;
+        }
+        angry.setText("화남:"+String.format("%6d",(int)(((float)moodlist[0]/count)*100))+"%");
+        joy.setText("기쁨:"+String.format("%6d",(int)(((float)moodlist[1]/count)*100))+"%");
+        fear.setText("두려움:"+String.format("%2d",(int)(((float)moodlist[2]/count)*100))+"%");
+        sad.setText("슬픔:"+String.format("%6d",(int)(((float)moodlist[3]/count)*100))+"%");
+        disgust.setText("역겨움:"+String.format("%2d",(int)(((float)moodlist[4]/count)*100))+"%");
+        surprise.setText("놀람:"+String.format("%5d",(int)(((float)moodlist[5]/count)*100))+"%");
+        neutral.setText( "중립:"+String.format("%5d",(int)(((float)moodlist[6]/count)*100))+"%");
 
         ArrayList<Integer> colorset=new ArrayList<Integer>();
         ArrayList<PieEntry> yValues = new ArrayList<PieEntry>();
@@ -201,7 +217,7 @@ public class cyearfragment extends Fragment {
             colorset.add(Color.parseColor("#2196F3"));
         }
         if(moodlist[4]!=0) {
-            yValues.add(new PieEntry(moodlist[4], "혐오"));
+            yValues.add(new PieEntry(moodlist[4], "역겨움"));
             colorset.add(Color.parseColor("#9C27B0"));
         }
         if(moodlist[5]!=0) {
@@ -216,10 +232,12 @@ public class cyearfragment extends Fragment {
         dataSet.setSliceSpace(0f);
         dataSet.setSelectionShift(0f);
         dataSet.setColors(colorset);
-        pieChart.setEntryLabelColor(Color.BLACK);
+        pieChart.setDrawEntryLabels(false);
         PieData data = new PieData((dataSet));
-        data.setValueTextSize(15f);
-        data.setValueTextColor(Color.BLACK);
+        data.setDrawValues(false);
+        //data.setValueTextSize(15f);
+        //data.setValueTextColor(Color.BLACK);
+        //data.setValueFormatter(new pieValueFormatter());
         /*double temp=0;
         if((moodlist[0]+moodlist[1]+moodlist[2]+moodlist[3]+moodlist[4]+moodlist[5]+moodlist[6])==0){
             pieChart.setCenterText("작성된 일기가 없습니다.");

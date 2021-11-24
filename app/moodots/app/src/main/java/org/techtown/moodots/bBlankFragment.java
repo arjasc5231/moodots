@@ -64,6 +64,9 @@ public class bBlankFragment extends Fragment implements OnBackPressedListener{
     DiaryAdapter_blank adapter;
     String voice;
     MediaPlayer mediaPlayer;
+    String prevdata;
+    int prev;
+
     int playingposition=-1;
     boolean isPlaying;
     @Override
@@ -92,13 +95,61 @@ public class bBlankFragment extends Fragment implements OnBackPressedListener{
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_blank,container,false);
         initUI(rootView);
         loadDiaryListData();
+        buttonUI(rootView);
         return rootView;
     }
 
     @Override
     public void onBackPressed() {
         stopAudio();
-        activity.replaceFragment(1);
+        Log.d("debug prev","prev: "+prev);
+        if(prev==1){
+            Bundle result = new Bundle();
+            result.putString("bundleKey1", prevdata);
+            FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+            bMainfrag mainfragment = new bMainfrag();//프래그먼트2 선언
+            mainfragment.setArguments(result);//번들을 프래그먼트2로 보낼 준비
+            transaction.replace(R.id.container, mainfragment);
+            transaction.commit();
+        }
+        else if(prev==2){
+            Bundle result = new Bundle();
+            result.putString("bundleKey1", prevdata);
+            FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+            bSortfrag sortfragment = new bSortfrag();//프래그먼트2 선언
+            sortfragment.setArguments(result);//번들을 프래그먼트2로 보낼 준비
+            transaction.replace(R.id.container, sortfragment);
+            transaction.commit();
+        }
+        else if(prev==3){
+            Bundle result = new Bundle();
+            result.putString("bundleKey1", prevdata);
+            result.putInt("bundelKey2", prev);
+            FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+            bSearchfrag searchfragment = new bSearchfrag();//프래그먼트2 선언
+            searchfragment.setArguments(result);//번들을 프래그먼트2로 보낼 준비
+            transaction.replace(R.id.container, searchfragment);
+            transaction.commit();
+        }
+        else if(prev==5){
+            Bundle result = new Bundle();
+            result.putInt("bundelKey2", prev);
+            FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+            bSettingfrag settingfragment = new bSettingfrag();//프래그먼트2 선언
+            settingfragment.setArguments(result);//번들을 프래그먼트2로 보낼 준비
+            transaction.replace(R.id.container, settingfragment);
+            transaction.commit();
+        }
+        else{
+            Bundle result = new Bundle();
+            result.putString("bundleKey1", prevdata);
+            result.putInt("bundelKey2", prev);
+            FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+            bSearchfrag searchfragment = new bSearchfrag();//프래그먼트2 선언
+            searchfragment.setArguments(result);//번들을 프래그먼트2로 보낼 준비
+            transaction.replace(R.id.container, searchfragment);
+            transaction.commit();
+        }
     }
 
     @Override
@@ -106,7 +157,48 @@ public class bBlankFragment extends Fragment implements OnBackPressedListener{
         super.onResume();
         activity.setOnBackPressedListener(this);
     }
-
+    private void buttonUI(ViewGroup rootView){
+        Button main=rootView.findViewById(R.id.main);
+        main.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                if (listener != null) {
+                    Toast.makeText(getContext(), "no ", Toast.LENGTH_SHORT).show();
+                }
+                activity.replaceFragment(1);
+            }
+        });
+        Button search=rootView.findViewById(R.id.search);
+        search.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                if (listener != null) {
+                    Toast.makeText(getContext(), "no ", Toast.LENGTH_SHORT).show();
+                }
+                activity.replaceFragment(3);
+            }
+        });
+        Button setting=rootView.findViewById(R.id.setting);
+        setting.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                if (listener != null) {
+                    Toast.makeText(getContext(), "no ", Toast.LENGTH_SHORT).show();
+                }
+                activity.replaceFragment(4);
+            }
+        });
+        Button sort = rootView.findViewById(R.id.sort);
+        sort.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (listener != null) {
+                    Toast.makeText(getContext(), "no ", Toast.LENGTH_SHORT).show();
+                }
+                activity.replaceFragment(2);
+            }
+        });
+    }
     public void initUI(ViewGroup rootView){
         moodtext=rootView.findViewById(R.id.currentmoodtext);
         hashcontents=rootView.findViewById(R.id.hashcontents);
@@ -204,6 +296,8 @@ public class bBlankFragment extends Fragment implements OnBackPressedListener{
                 result.putString("bundleKey6",item.date);
                 result.putString("bundleKey7", item.time);
                 result.putString("bundleKey8", item.voice);
+                result.putInt("bundleKey9", prev);
+                result.putString("bundleKey10", prevdata);
                 FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
                 bBlankFragment blankfragment = new bBlankFragment();//프래그먼트2 선언
                 blankfragment.setArguments(result);//번들을 프래그먼트2로 보낼 준비
@@ -222,6 +316,9 @@ public class bBlankFragment extends Fragment implements OnBackPressedListener{
             datecall = getArguments().getString("bundleKey6");
             timecall = getArguments().getString("bundleKey7");
             voice = getArguments().getString("bundleKey8");
+            prev= getArguments().getInt("bundleKey9");
+            prevdata= getArguments().getString("bundleKey10");
+            zAppConstants.println("debug prevdata at blank"+prevdata);
             Log.d(TAG, "id"+_id);
         }
         if(mMode==1) {
@@ -304,11 +401,53 @@ public class bBlankFragment extends Fragment implements OnBackPressedListener{
                         contents.setText("");
                         hashcontents.setText("");
                         stopAudio();
-                        activity.replaceFragment(1);
-                    } else if (mMode == zAppConstants.MODE_MODIFY) {
-                        modifyDiary();
-                        stopAudio();
-                        activity.replaceFragment(1);
+                        if(prev==1){
+                            Bundle result = new Bundle();
+                            result.putString("bundleKey1", prevdata);
+                            FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+                            bMainfrag mainfragment = new bMainfrag();//프래그먼트2 선언
+                            mainfragment.setArguments(result);//번들을 프래그먼트2로 보낼 준비
+                            transaction.replace(R.id.container, mainfragment);
+                            transaction.commit();
+                        }
+                        else if(prev==2){
+                            Bundle result = new Bundle();
+                            result.putString("bundleKey1", prevdata);
+                            FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+                            bSortfrag sortfragment = new bSortfrag();//프래그먼트2 선언
+                            sortfragment.setArguments(result);//번들을 프래그먼트2로 보낼 준비
+                            transaction.replace(R.id.container, sortfragment);
+                            transaction.commit();
+                        }
+                        else if(prev==3){
+                            Bundle result = new Bundle();
+                            result.putString("bundleKey1", prevdata);
+                            result.putInt("bundelKey2", prev);
+                            FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+                            bSearchfrag searchfragment = new bSearchfrag();//프래그먼트2 선언
+                            searchfragment.setArguments(result);//번들을 프래그먼트2로 보낼 준비
+                            transaction.replace(R.id.container, searchfragment);
+                            transaction.commit();
+                        }
+                        else if(prev==5){
+                            Bundle result = new Bundle();
+                            result.putInt("bundelKey2", prev);
+                            FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+                            bSettingfrag settingfragment = new bSettingfrag();//프래그먼트2 선언
+                            settingfragment.setArguments(result);//번들을 프래그먼트2로 보낼 준비
+                            transaction.replace(R.id.container, settingfragment);
+                            transaction.commit();
+                        }
+                        else{
+                            Bundle result = new Bundle();
+                            result.putString("bundleKey1", prevdata);
+                            result.putInt("bundelKey2", prev);
+                            FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+                            bSearchfrag searchfragment = new bSearchfrag();//프래그먼트2 선언
+                            searchfragment.setArguments(result);//번들을 프래그먼트2로 보낼 준비
+                            transaction.replace(R.id.container, searchfragment);
+                            transaction.commit();
+                        }
                     }
                     if (listener != null) {
                         listener.onTabSelected(0);
@@ -446,7 +585,35 @@ public class bBlankFragment extends Fragment implements OnBackPressedListener{
                     checkmod=1;
                     modifyDiary();
                     stopAudio();
-                    activity.replaceFragment(1);
+                    if(prev==1){
+                        Bundle result = new Bundle();
+                        result.putString("bundleKey1", prevdata);
+                        FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+                        bMainfrag mainfragment = new bMainfrag();//프래그먼트2 선언
+                        mainfragment.setArguments(result);//번들을 프래그먼트2로 보낼 준비
+                        transaction.replace(R.id.container, mainfragment);
+                        transaction.commit();
+                    }
+                    else if(prev==3){
+                        Bundle result = new Bundle();
+                        result.putString("bundleKey1", prevdata);
+                        result.putInt("bundelKey2", prev);
+                        FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+                        bSearchfrag searchfragment = new bSearchfrag();//프래그먼트2 선언
+                        searchfragment.setArguments(result);//번들을 프래그먼트2로 보낼 준비
+                        transaction.replace(R.id.container, searchfragment);
+                        transaction.commit();
+                    }
+                    else{
+                        Bundle result = new Bundle();
+                        result.putString("bundleKey1", prevdata);
+                        result.putInt("bundelKey2", prev);
+                        FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+                        bSearchfrag searchfragment = new bSearchfrag();//프래그먼트2 선언
+                        searchfragment.setArguments(result);//번들을 프래그먼트2로 보낼 준비
+                        transaction.replace(R.id.container, searchfragment);
+                        transaction.commit();
+                    }
 
                     if (listener != null) {
                         listener.onTabSelected(0);
@@ -469,7 +636,39 @@ public class bBlankFragment extends Fragment implements OnBackPressedListener{
                     }
                     deleteDiary();
                     stopAudio();
-                    activity.replaceFragment(1);
+                    if(prev==1){
+                        Bundle result = new Bundle();
+                        result.putString("bundleKey1", prevdata);
+                        FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+                        bMainfrag mainfragment = new bMainfrag();//프래그먼트2 선언
+                        mainfragment.setArguments(result);//번들을 프래그먼트2로 보낼 준비
+                        transaction.replace(R.id.container, mainfragment);
+                        transaction.commit();
+                    }
+                    else if(prev==3){
+                        Bundle result = new Bundle();
+                        result.putString("bundleKey1", prevdata);
+                        result.putInt("bundelKey2", prev);
+                        FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+                        bSearchfrag searchfragment = new bSearchfrag();//프래그먼트2 선언
+                        searchfragment.setArguments(result);//번들을 프래그먼트2로 보낼 준비
+                        transaction.replace(R.id.container, searchfragment);
+                        transaction.commit();
+                    }
+                    else{
+                        Bundle result = new Bundle();
+                        result.putString("bundleKey1", prevdata);
+                        result.putInt("bundelKey2", prev);
+                        FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+                        bSearchfrag searchfragment = new bSearchfrag();//프래그먼트2 선언
+                        searchfragment.setArguments(result);//번들을 프래그먼트2로 보낼 준비
+                        transaction.replace(R.id.container, searchfragment);
+                        transaction.commit();
+                    }
+
+                    if (listener != null) {
+                        listener.onTabSelected(0);
+                    }
                 }
             });
             date.setOnClickListener(new View.OnClickListener() {

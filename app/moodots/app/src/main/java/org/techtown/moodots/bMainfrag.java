@@ -28,10 +28,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
+import com.github.mikephil.charting.formatter.IAxisValueFormatter;
+import com.github.mikephil.charting.formatter.ValueFormatter;
 
 import java.io.File;
 import java.io.IOException;
@@ -52,6 +55,8 @@ public class bMainfrag extends Fragment implements OnBackPressedListener{
     aMain activity;
     ImageButton playerbutton;
     SeekBar seekbartemp;
+    String prevdata;
+    int current =1;
     private MediaPlayer mediaPlayer = null;
     private Boolean isPlaying = false;
     final Calendar c = Calendar.getInstance();
@@ -121,6 +126,7 @@ public class bMainfrag extends Fragment implements OnBackPressedListener{
     }
 
     private void initUI(ViewGroup rootView){
+
         ConstraintLayout layout=(ConstraintLayout) rootView.findViewById(R.id.clocklayout);
         TextView moodtime=rootView.findViewById(R.id.moodtime);
         TextView moodtext=rootView.findViewById(R.id.moodtext);
@@ -128,6 +134,12 @@ public class bMainfrag extends Fragment implements OnBackPressedListener{
         textView.setText(getDate());
         date= rootView.findViewById(R.id.datepick);
         date.setText(getDate());
+        if (getArguments() != null)
+        {
+            prevdata= getArguments().getString("bundleKey1");
+            date.setText(prevdata);
+            zAppConstants.println("debug prevdata"+prevdata);
+        }
         PieChart piechart= rootView.findViewById(R.id.piechart);
         piechart.bringToFront();
         ImageButton iv = rootView.findViewById(R.id.moodindicate);
@@ -241,6 +253,8 @@ public class bMainfrag extends Fragment implements OnBackPressedListener{
                 println("active here"+item.date);
                 result.putString("bundleKey7", item.time);
                 result.putString("bundleKey8", item.voice);
+                result.putInt("bundleKey9", 1);
+                result.putString("bundleKey10", (String)date.getText());
                 FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
                 bBlankFragment blankfragment = new bBlankFragment();//프래그먼트2 선언
                 blankfragment.setArguments(result);//번들을 프래그먼트2로 보낼 준비
@@ -338,11 +352,16 @@ public class bMainfrag extends Fragment implements OnBackPressedListener{
                 if (listener != null) {
                     Toast.makeText(getContext(), "no ", Toast.LENGTH_SHORT).show();
                 }
+                stopAudio(0);
                 Bundle result = new Bundle();
                 result.putInt("bundleKey", 1);
-                getParentFragmentManager().setFragmentResult("requestKey", result);
-                stopAudio(0);
-                activity.replaceFragment(0);
+                result.putInt("bundleKey9", 1);
+                result.putString("bundleKey10", (String)date.getText());
+                FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+                bBlankFragment blankfragment = new bBlankFragment();//프래그먼트2 선언
+                blankfragment.setArguments(result);//번들을 프래그먼트2로 보낼 준비
+                transaction.replace(R.id.container, blankfragment);
+                transaction.commit();
             }
         });
     }
@@ -529,6 +548,17 @@ public class bMainfrag extends Fragment implements OnBackPressedListener{
             mediaPlayer.stop();
         }
     }
+    public class MyAxisValueFormatter extends ValueFormatter implements IAxisValueFormatter {
+
+        public MyAxisValueFormatter() {
+
+        }
+
+        @Override
+        public String getPieLabel(float value, PieEntry pieEntry) {
+            return String.valueOf((int) value);
+        }
+    }
     public void piechart(ViewGroup rootView, ArrayList<Integer> percent){
         pieChart=rootView.findViewById(R.id.piechart);
         pieChart.setUsePercentValues(true);
@@ -583,10 +613,11 @@ public class bMainfrag extends Fragment implements OnBackPressedListener{
         dataSet.setSliceSpace(0f);
         dataSet.setSelectionShift(0f);
         dataSet.setColors(colorset);
-        pieChart.setEntryLabelColor(Color.BLACK);
+        pieChart.setDrawEntryLabels(false);
         PieData data = new PieData((dataSet));
         data.setValueTextSize(15f);
         data.setValueTextColor(Color.BLACK);
+        data.setValueFormatter(new MyAxisValueFormatter());
         /*double temp=0;
         if((moodlist[0]+moodlist[1]+moodlist[2]+moodlist[3]+moodlist[4]+moodlist[5]+moodlist[6])==0){
             pieChart.setCenterText("작성된 일기가 없습니다.");

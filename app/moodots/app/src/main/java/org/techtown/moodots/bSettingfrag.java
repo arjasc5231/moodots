@@ -17,6 +17,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -36,6 +37,7 @@ import com.jlibrosa.audio.wavFile.WavFileException;
 
 import org.tensorflow.lite.Interpreter;
 
+import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -52,6 +54,7 @@ import java.nio.channels.FileChannel;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedList;
 
 public class bSettingfrag extends Fragment implements OnBackPressedListener{
     aMain activity;
@@ -72,7 +75,20 @@ public class bSettingfrag extends Fragment implements OnBackPressedListener{
     private String recordPermission = Manifest.permission.RECORD_AUDIO;
     private String writePermission = Manifest.permission.WRITE_EXTERNAL_STORAGE;
     private int PERMISSION_CODE = 21;
+    boolean isrec=false;
     byte Data[] = new byte[bufferSizeInBytes];
+
+    public int bufferRead;
+    public int bufferReadshort;
+    int startingIndex=0;
+    int endIndex=-1;
+    int total;
+    int count=0;
+
+
+    LinkedList<byte[]> recData = new LinkedList<byte[]>();
+    LinkedList<short[]> recDatashort = new LinkedList<short[]>();
+
 
     // 오디오 파일 녹음 관련 변수
     private MediaRecorder mediaRecorder;
@@ -122,7 +138,7 @@ public class bSettingfrag extends Fragment implements OnBackPressedListener{
                     isRecording = false; // 녹음 상태 값
                     //audioRecordImageBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_recording_red, null)); // 녹음 상태 아이콘 변경
                     audioRecordText.setText("녹음 시작"); // 녹음 상태 텍스트 변경
-                    stopRecording();
+                    stopRecording(0);
                     // 녹화 이미지 버튼 변경 및 리코딩 상태 변수값 변경
                 }
                 activity.replaceFragment(2);
@@ -141,7 +157,7 @@ public class bSettingfrag extends Fragment implements OnBackPressedListener{
                     isRecording = false; // 녹음 상태 값
                     //audioRecordImageBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_recording_red, null)); // 녹음 상태 아이콘 변경
                     audioRecordText.setText("녹음 시작"); // 녹음 상태 텍스트 변경
-                    stopRecording();
+                    stopRecording(0);
                     // 녹화 이미지 버튼 변경 및 리코딩 상태 변수값 변경
                 }
                 activity.replaceFragment(3);
@@ -160,7 +176,7 @@ public class bSettingfrag extends Fragment implements OnBackPressedListener{
                     isRecording = false; // 녹음 상태 값
                     //audioRecordImageBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_recording_red, null)); // 녹음 상태 아이콘 변경
                     audioRecordText.setText("녹음 시작"); // 녹음 상태 텍스트 변경
-                    stopRecording();
+                    stopRecording(0);
                     // 녹화 이미지 버튼 변경 및 리코딩 상태 변수값 변경
                 }
                 activity.replaceFragment(1);
@@ -179,13 +195,17 @@ public class bSettingfrag extends Fragment implements OnBackPressedListener{
                     isRecording = false; // 녹음 상태 값
                     //audioRecordImageBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_recording_red, null)); // 녹음 상태 아이콘 변경
                     audioRecordText.setText("녹음 시작"); // 녹음 상태 텍스트 변경
-                    stopRecording();
+                    stopRecording(0);
                     // 녹화 이미지 버튼 변경 및 리코딩 상태 변수값 변경
                 }
                 Bundle result = new Bundle();
                 result.putInt("bundleKey", 1);
-                getParentFragmentManager().setFragmentResult("requestKey", result);
-                activity.replaceFragment(0);
+                result.putInt("bundleKey9", 5);
+                FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+                bBlankFragment blankfragment = new bBlankFragment();//프래그먼트2 선언
+                blankfragment.setArguments(result);//번들을 프래그먼트2로 보낼 준비
+                transaction.replace(R.id.container, blankfragment);
+                transaction.commit();
             }
         });
     }
@@ -232,7 +252,7 @@ public class bSettingfrag extends Fragment implements OnBackPressedListener{
                     // 녹음 상태에 따른 변수 아이콘 & 텍스트 변경
                     audioRecordImageBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_record, null)); // 녹음 상태 아이콘 변경
                     audioRecordText.setText("녹음 시작"); // 녹음 상태 텍스트 변경
-                    stopRecording();
+                    stopRecording(0);
                     // 녹화 이미지 버튼 변경 및 리코딩 상태 변수값 변경
                 } else {
                     // 현재 녹음 중 X
@@ -353,7 +373,17 @@ public class bSettingfrag extends Fragment implements OnBackPressedListener{
 
         return stack;
     }
+    public class Constants {
 
+        final static public int RECORDER_SAMPLERATE = 44100;
+        final static public int RECORDER_CHANNELS = AudioFormat.CHANNEL_IN_MONO;
+        final static public int RECORDER_AUDIO_ENCODING = AudioFormat.ENCODING_PCM_16BIT;
+
+        final static public int BufferElements2Rec = 1024; // want to play 2048 (2K) since 2 bytes we use only 1024
+        final static public int BytesPerElement = 2; // 2 bytes in 16bit format
+
+
+    }
     // 녹음 시작
     private void startRecording() {
         //파일의 외부 경로 확인
@@ -363,12 +393,13 @@ public class bSettingfrag extends Fragment implements OnBackPressedListener{
         audioFileName = "/storage/emulated/0/Download/" + timeStamp + "_"+"audio.pcm"; //"/storage/emulated/0/Download/"
         audioFileName2 = "/storage/emulated/0/Download/" + timeStamp + "_"+"audio.wav"; //"/storage/emulated/0/Download/"
 
+
         if(checkAudioPermission()) {
             audioRecorder = new AudioRecord(MediaRecorder.AudioSource.MIC,
                     Constants.RECORDER_SAMPLERATE, Constants.RECORDER_CHANNELS,
                     Constants.RECORDER_AUDIO_ENCODING, Constants.BufferElements2Rec * Constants.BytesPerElement);
             audioRecorder.startRecording();
-
+            short [] buffershort=new short[bufferSizeInBytes*2];
             isRecording = true;
             recordingThread = new Thread(new Runnable() {
                 public void run() {
@@ -378,20 +409,88 @@ public class bSettingfrag extends Fragment implements OnBackPressedListener{
                     } catch (FileNotFoundException e) {
                         e.printStackTrace();
                     }
+                    int index=0;
+                    int checkstart=0;
                     while (isRecording) {
-                        audioRecorder.read(Data, 0, Data.length);
-                        try {
-                            os.write(Data, 0, bufferSizeInBytes);
-                        } catch (IOException e) {
-                            e.printStackTrace();
+                        bufferRead=audioRecorder.read(Data, 0, Data.length);
+                        //bufferReadshort=audioRecorder.read(buffershort, 0, buffershort.length);
+                        if(index<4) {
+                            total = 0;
+                            for (int i = 0; i < bufferRead; i++) {
+                                total += Math.abs(Data[i]);
+                            }
+                            recData.add(Data);
+                            index++;
                         }
-
+                        else {
+                            index = 0;
+                            int vol = 0;
+                            vol = (total);
+                            String timeStamp1 = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+                            zAppConstants.println("debug vol: " + vol + " debug total: " + total + " time " + timeStamp1 + " buffer read " + bufferRead);
+                            if (isrec == false) {
+                                if (vol > 125000) {
+                                    if (count == 0) {
+                                        startingIndex = recData.size();
+                                    }
+                                    count += 1;
+                                }
+                                if (vol < 125000) {
+                                    checkstart+=1;
+                                }
+                                if(checkstart==3){
+                                    count = 0;
+                                    checkstart=0;
+                                }
+                                if (count > 10) {
+                                    count = 0;
+                                    isrec = true;
+                                    startingIndex -= 52;
+                                    if (startingIndex < 0) {
+                                        startingIndex = 0;
+                                    }
+                                    zAppConstants.println("debug vol+startindex" + startingIndex);
+                                    for (int j = startingIndex; j < recData.size()-1; j++) {
+                                        try {
+                                            byte[] temp = recData.get(j);
+                                            os.write(temp);
+                                        } catch (IOException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                }
+                            }
+                            if (isrec == true) {
+                                try {
+                                    os.write(Data);
+                                    //os.write(Data, 0, bufferSizeInBytes);
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                                if (vol < 125000) {
+                                    count += 1;
+                                }
+                                // 도중에 다시 소리가 커지는 경우 잠시 쉬었다가 계속 말하는 경우이므로 cnt 값은 0
+                                if (vol > 125000) {
+                                    count = 0;
+                                }
+                                // endIndex 를 저장하고 레벨체킹을 끝냄
+                                if (count > 15) {
+                                    endIndex = recData.size();
+                                    isRecording = false;
+                                    zAppConstants.println("debug vol+recordend" + startingIndex);
+                                    try {
+                                        os.close();
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
+                                    stopRecording(1);
+                                }
+                            }
+                        }
                     }
-                    try {
-                        os.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                    recData.clear();
+                    recDatashort.clear();
                 }
             });
             recordingThread.start();
@@ -399,9 +498,9 @@ public class bSettingfrag extends Fragment implements OnBackPressedListener{
     }
 
     // 녹음 종료
-    private void stopRecording() {
+    private void stopRecording(int mode) {
         // 녹음 종료 종료
-        if (isRecording) {
+        if (isRecording||mode==1) {
             if (null != audioRecorder) {
                 isRecording = false;
                 audioRecorder.stop();
@@ -537,17 +636,7 @@ public class bSettingfrag extends Fragment implements OnBackPressedListener{
     }
 
 
-    public class Constants {
 
-        final static public int RECORDER_SAMPLERATE = 16000;
-        final static public int RECORDER_CHANNELS = AudioFormat.CHANNEL_IN_MONO;
-        final static public int RECORDER_AUDIO_ENCODING = AudioFormat.ENCODING_PCM_16BIT;
-
-        final static public int BufferElements2Rec = 1024; // want to play 2048 (2K) since 2 bytes we use only 1024
-        final static public int BytesPerElement = 2; // 2 bytes in 16bit format
-
-
-    }
     private void rawToWave(final File rawFile, final File waveFile) throws IOException {
 
         byte[] rawData = new byte[(int) rawFile.length()];
@@ -573,22 +662,22 @@ public class bSettingfrag extends Fragment implements OnBackPressedListener{
             writeInt(output, 16); // subchunk 1 size
             writeShort(output, (short) 1); // audio format (1 = PCM)
             writeShort(output, (short) 1); // number of channels
-            writeInt(output, 16000); // sample rate
+            writeInt(output, 44100); // sample rate
             writeInt(output, Constants.RECORDER_SAMPLERATE * 2); // byte rate
             writeShort(output, (short) 2); // block align
             writeShort(output, (short) 16); // bits per sample
             writeString(output, "data"); // subchunk 2 id
             writeInt(output, rawData.length); // subchunk 2 size
             // Audio data (conversion big endian -> little endian)
-            /*short[] shorts = new short[rawData.length / 2];
+            short[] shorts = new short[rawData.length / 2];
             ByteBuffer.wrap(rawData).order(ByteOrder.LITTLE_ENDIAN).asShortBuffer().get(shorts);
             ByteBuffer bytes = ByteBuffer.allocate(shorts.length * 2);
             for (short s : shorts) {
                 bytes.putShort(s);
-            }*/
-            output.write(rawData);
+            }
+            //output.write(rawData);
 
-            //output.write(fullyReadFileToBytes(rawFile));
+            output.write(fullyReadFileToBytes(rawFile));
         } finally {
             if (output != null) {
                 output.close();

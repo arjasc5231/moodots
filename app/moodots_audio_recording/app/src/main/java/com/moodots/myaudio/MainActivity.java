@@ -1,6 +1,7 @@
 package com.moodots.myaudio;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.media.AudioFormat;
 import android.media.MediaPlayer;
@@ -29,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
 
     ImageButton audioRecordImageBtn;
     TextView audioRecordText;
+    Intent serviceIntent;
 
     // 오디오 권한
     private String recordPermission = Manifest.permission.RECORD_AUDIO;
@@ -46,8 +48,8 @@ public class MainActivity extends AppCompatActivity {
     ImageView playIcon;
 
     /** 리사이클러뷰 */
-    private com.moodots.myaudio.AudioAdapter audioAdapter;
-    private ArrayList<Uri> audioList;
+    public ArrayList<Uri> audioList = new ArrayList<>();
+    public com.moodots.myaudio.AudioAdapter audioAdapter=new AudioAdapter(this, audioList);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,7 +74,8 @@ public class MainActivity extends AppCompatActivity {
                     isRecording = false; // 녹음 상태 값
                     audioRecordImageBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_recording_red, null)); // 녹음 상태 아이콘 변경
                     audioRecordText.setText("녹음 시작"); // 녹음 상태 텍스트 변경
-                    stopRecording();
+                    //stopRecording();
+                    stopService();
                     // 녹화 이미지 버튼 변경 및 리코딩 상태 변수값 변경
                 } else {
                     // 현재 녹음 중 X
@@ -85,7 +88,8 @@ public class MainActivity extends AppCompatActivity {
                         isRecording = true; // 녹음 상태 값
                         audioRecordImageBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_recording_red, null)); // 녹음 상태 아이콘 변경
                         audioRecordText.setText("녹음 중"); // 녹음 상태 텍스트 변경
-                        startRecording();
+                        startService();
+                        //startRecording();
                     }
                 }
             }
@@ -94,8 +98,7 @@ public class MainActivity extends AppCompatActivity {
         // 리사이클러뷰
         RecyclerView audioRecyclerView = findViewById(R.id.recyclerview);
 
-        audioList = new ArrayList<>();
-        audioAdapter = new AudioAdapter(this, audioList);
+
         audioRecyclerView.setAdapter(audioAdapter);
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(this);
         mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -148,50 +151,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // 녹음 시작
-    private void startRecording() {
-        //파일의 외부 경로 확인
-        String recordPath = getExternalFilesDir("/").getAbsolutePath();
-        // 파일 이름 변수를 현재 날짜가 들어가도록 초기화. 그 이유는 중복된 이름으로 기존에 있던 파일이 덮어 쓰여지는 것을 방지하고자 함.
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        audioFileName = recordPath + "/" +"RecordExample_" + timeStamp + "_"+"audio.mp4";
 
-        //Media Recorder 생성 및 설정
-        mediaRecorder = new MediaRecorder();
-        mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-        mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-        mediaRecorder.setOutputFile(audioFileName);
-        mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-
-        try {
-            mediaRecorder.prepare();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        //녹음 시작
-        mediaRecorder.start();
-    }
-
-    // 녹음 종료
-    private void stopRecording() {
-        // 녹음 종료 종료
-        mediaRecorder.stop();
-        mediaRecorder.release();
-        mediaRecorder = null;
-
-        // 파일 경로(String) 값을 Uri로 변환해서 저장
-        //      - Why? : 리사이클러뷰에 들어가는 ArrayList가 Uri를 가지기 때문
-        //      - File Path를 알면 File을  인스턴스를 만들어 사용할 수 있기 때문
-        audioUri = Uri.parse(audioFileName);
-
-
-        // 데이터 ArrayList에 담기
-        audioList.add(audioUri);
-
-
-        // 데이터 갱신
-        audioAdapter.notifyDataSetChanged();
-
-    }
 
     // 녹음 파일 재생
     private void playAudio(File file) {
@@ -222,6 +182,32 @@ public class MainActivity extends AppCompatActivity {
         playIcon.setImageDrawable(getResources().getDrawable(R.drawable.ic_audio_play, null));
         isPlaying = false;
         mediaPlayer.stop();
+    }
+
+
+
+    public void startService(){
+        serviceIntent = new Intent(this, MyService.class);
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            startForegroundService(serviceIntent);
+        }
+        else{
+            startService(serviceIntent);
+        }
+    }
+
+    public void stopService(){
+        serviceIntent = new Intent(this, MyService.class);
+        stopService(serviceIntent);
+        /*audioUri = Uri.parse(audioFileName);
+
+
+        // 데이터 ArrayList에 담기
+        audioList.add(audioUri);
+
+
+        // 데이터 갱신
+        audioAdapter.notifyDataSetChanged();*/
     }
 
 }
