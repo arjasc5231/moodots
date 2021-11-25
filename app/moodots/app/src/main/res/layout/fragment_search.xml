@@ -21,25 +21,7 @@
             app:layout_constraintBottom_toTopOf="@+id/searchbtn"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <TextView
-                android:id="@+id/pagesearch"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:text="SEARCH"
-                android:textSize="25sp" />
-
-            <TextView
-                android:id="@+id/datesearch"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight="1.4"
-                android:gravity="right"
-                android:text="date"
-                android:textSize="25sp" />
-        </LinearLayout>
+            app:layout_constraintTop_toTopOf="parent"/>
         <LinearLayout
             android:id="@+id/searchbtn"
             android:layout_width="match_parent"
@@ -64,7 +46,8 @@
                 android:layout_height="match_parent"
                 android:text="Mood"
                 android:gravity="center"
-                android:textSize="20sp" />
+                android:textSize="20sp"
+                android:fontFamily="@font/nanumsquareround"/>
 
             <Button
                 android:id="@+id/rightbtn"
@@ -106,7 +89,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="@layout/button_leftcorner"
-                android:text="메인" />
+                android:text="메인"
+                android:fontFamily="@font/nanumsquareround"/>
 
             <Button
                 android:id="@+id/sort"
@@ -114,7 +98,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="@layout/button_middle"
-                android:text="정렬" />
+                android:text="정렬"
+                android:fontFamily="@font/nanumsquareround"/>
 
             <Button
                 android:id="@+id/newDiaryButton"
@@ -122,7 +107,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="@layout/button_middle"
-                android:text="추가" />
+                android:text="추가"
+                android:fontFamily="@font/nanumsquareround"/>
 
             <Button
                 android:id="@+id/search"
@@ -130,7 +116,9 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="@layout/button_middle"
-                android:text="검색" />
+                android:textStyle="bold"
+                android:text="검색"
+                android:fontFamily="@font/nanumsquareround"/>
 
             <Button
                 android:id="@+id/setting"
@@ -138,7 +126,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="@layout/button_rightcorner"
-                android:text="녹음" />
+                android:text="세팅"
+                android:fontFamily="@font/nanumsquareround"/>
 
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>

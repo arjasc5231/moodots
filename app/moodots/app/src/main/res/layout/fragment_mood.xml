@@ -30,6 +30,7 @@
                 android:backgroundTint="@color/white"
                 android:text="TextView"
                 android:textSize="20sp"
+                android:fontFamily="@font/nanumsquareround"
                 />
 
         </LinearLayout>

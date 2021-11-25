@@ -29,6 +29,7 @@
             android:backgroundTint="@color/white"
             android:text="TextView"
             android:textSize="20sp"
+            android:fontFamily="@font/nanumsquareround"
             />
 
     </LinearLayout>
@@ -75,7 +76,8 @@
                 android:layout_height="wrap_content"
                 android:gravity="left"
                 android:text="TextView"
-                android:textSize="20sp"/>
+                android:textSize="20sp"
+                android:fontFamily="@font/nanumsquareround"/>
 
             <TextView
                 android:id="@+id/joy"
@@ -83,7 +85,8 @@
                 android:layout_height="wrap_content"
                 android:gravity="left"
                 android:text="TextView"
-                android:textSize="20sp"/>
+                android:textSize="20sp"
+                android:fontFamily="@font/nanumsquareround"/>
 
             <TextView
                 android:id="@+id/fear"
@@ -91,7 +94,8 @@
                 android:layout_height="wrap_content"
                 android:gravity="left"
                 android:text="TextView"
-                android:textSize="20sp"/>
+                android:textSize="20sp"
+                android:fontFamily="@font/nanumsquareround"/>
 
             <TextView
                 android:id="@+id/sad"
@@ -99,7 +103,8 @@
                 android:layout_height="wrap_content"
                 android:text="TextView"
                 android:gravity="left"
-                android:textSize="20sp"/>
+                android:textSize="20sp"
+                android:fontFamily="@font/nanumsquareround"/>
 
             <TextView
                 android:id="@+id/disgust"
@@ -107,7 +112,8 @@
                 android:layout_height="wrap_content"
                 android:text="TextView"
                 android:gravity="left"
-                android:textSize="20sp"/>
+                android:textSize="20sp"
+                android:fontFamily="@font/nanumsquareround"/>
 
             <TextView
                 android:id="@+id/surprise"
@@ -115,7 +121,8 @@
                 android:layout_height="wrap_content"
                 android:text="TextView"
                 android:gravity="left"
-                android:textSize="20sp"/>
+                android:textSize="20sp"
+                android:fontFamily="@font/nanumsquareround"/>
 
             <TextView
                 android:id="@+id/neutral"
@@ -123,7 +130,8 @@
                 android:layout_height="wrap_content"
                 android:text="TextView"
                 android:gravity="right"
-                android:textSize="20sp"/>
+                android:textSize="20sp"
+                android:fontFamily="@font/nanumsquareround"/>
         </LinearLayout>
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="210dp"
@@ -164,7 +172,8 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                android:fontFamily="@font/nanumsquareround"/>
 
             <TextView
                 android:id="@+id/moodtext"
@@ -177,6 +186,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/piechart"
+                android:fontFamily="@font/nanumsquareround"
                 />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>

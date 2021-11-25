@@ -51,8 +51,8 @@ public class bSortfrag extends Fragment implements OnBackPressedListener{
                              Bundle savedInstanceState) {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_sort,container,false);
         textsort=(TextView) rootView.findViewById(R.id.sorttext);
-        TextView datesort=(TextView) rootView.findViewById(R.id.datesort);
-        datesort.setText(getDate());
+        //TextView datesort=(TextView) rootView.findViewById(R.id.datesort);
+        //datesort.setText(getDate());
         getChildFragmentManager().beginTransaction().add(R.id.containersort, weekfragment).commit();
         Button left= (Button) rootView.findViewById(R.id.leftbtn);
         left.setOnClickListener(new View.OnClickListener(){

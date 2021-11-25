@@ -16,272 +16,308 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:id="@+id/textlayout"
-            app:layout_constraintBottom_toTopOf="@+id/recyclerView"
+            app:layout_constraintBottom_toTopOf="@+id/diary_border"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             android:paddingTop="10dp"
             android:paddingBottom="10dp"
-            >
-
-            <TextView
-                android:id="@+id/pageadd"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text="DIARY"
-                android:layout_weight="1"
-                android:textSize="25sp" />
-
-            <TextView
-                android:id="@+id/dateadd"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text="date"
-                android:textSize="25sp"
-                android:layout_weight="1"
-                android:gravity="right"
-                />
-        </LinearLayout>
-        <LinearLayout
+            />
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="10"
-            android:orientation="vertical"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="10dp"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="15dp"
-            android:background="@drawable/diaryadd_layout_border"
-            >
-
+            android:layout_height="wrap_content">
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:id="@+id/currentmood"
-                    android:layout_width="42dp"
-                    android:layout_height="42dp"
-                    app:srcCompat="@mipmap/ic_angry" />
-                <TextView
-                    android:id="@+id/currentmoodtext"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="80dp"
-                    android:layout_marginEnd="40dp"
-                    android:paddingTop="10dp"
-                    android:paddingBottom="10dp"
-                    android:text="화가 났나요?"
-                    android:textSize="15dp"
-                    android:layout_gravity="center_horizontal"/>
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingTop="15dp"
-                android:paddingEnd="20dp"
-                android:paddingStart="20dp"
-                >
-
-
-
-                <TextView
-                    android:id="@+id/textView2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-
-                    android:text="일시"
-                    android:textSize="20dp"
-                    android:paddingEnd="10dp"/>
-
-                <Button
-                    android:id="@+id/date"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:backgroundTint="@color/white"
-                    android:padding="0dp"
-                    style="?android:attr/borderlessButtonStyle"
-                    android:textSize="20sp"
-                    android:text="Button" />
-
-                <Button
-                    android:id="@+id/time"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:backgroundTint="@color/white"
-                    android:padding="0dp"
-                    style="?android:attr/borderlessButtonStyle"
-                    android:textSize="20sp"
-                    android:text="Button" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingEnd="10dp"
-                android:paddingStart="20dp"
-                >
-
-                <TextView
-                    android:id="@+id/textView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="23sp"
-                    android:text="감정"
-                    android:paddingEnd="10dp"/>
-
-                <Button
-                    android:id="@+id/angry"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:background="@mipmap/ic_angry" />
-
-                <Button
-                    android:id="@+id/joy"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:background="@mipmap/ic_joy" />
-
-                <Button
-                    android:id="@+id/fear"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:background="@mipmap/ic_fear" />
-
-                <Button
-                    android:id="@+id/sad"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:background="@mipmap/ic_sad" />
-
-                <Button
-                    android:id="@+id/disgust"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:background="@mipmap/ic_disgust" />
-
-                <Button
-                    android:id="@+id/surprise"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:background="@mipmap/ic_surprise" />
-
-                <Button
-                    android:id="@+id/neutral"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:background="@mipmap/ic_neutral" />
-            </LinearLayout>
-
-            <LinearLayout
+                android:id ="@+id/diary_border"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="1"
+                android:layout_weight="10"
                 android:orientation="vertical"
-
-                android:paddingEnd="20dp"
-                android:paddingStart="20dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="10dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:background="@drawable/diaryadd_layout_border_angry"
                 >
 
-                <TextView
-                    android:id="@+id/textView3"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="20dp"
-                    android:text="일기" />
+                    android:orientation="horizontal">
 
-                <EditText
-                    android:id="@+id/contents"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="10"
-                    android:background="@drawable/diaryadd_contents_border"
-                    android:ems="10"
-                    android:gravity="top"
-                    android:hint="일기를 입력하세요."
+                    <ImageView
+                        android:id="@+id/currentmood"
+                        android:layout_width="39dp"
+                        android:layout_height="39dp"
+                        app:srcCompat="@mipmap/ic_angry" />
 
-                    android:inputType="textMultiLine"
-                    android:scrollHorizontally="false" />
-                <View
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:layout_weight="1" />
-                <EditText
-                    android:id="@+id/hashcontents"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="5"
-                    android:background="@drawable/diaryadd_contents_border"
-                    android:ems="10"
-                    android:gravity="top"
-                    android:hint="#을 눌러 해시태그 입력을 시작하세요. 뛰어쓰기를 하면 자동으로 #이 생성됩니다. 최대 5개의 해시태그 입력이 가능합니다."
-                    android:inputType="textMultiLine"
-                    android:scrollHorizontally="false" />
-                <!--<HashTagEditTextView
-                    android:id="@+id/hashcontents"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="5"
-                    android:background="@drawable/diaryadd_contents_border"
-                    android:ems="10"
-                    android:gravity="top"
-                    android:itemMaxLength="5"
-                    android:itemMaxCount="5"
-                    android:autoPoundSign="true"
-                    android:itemMaxLengthOverMent="The tag is too long."
-                    android:itemMaxCountOverMent="Too many tags."
-                    />-->
-            </LinearLayout>
+                    <TextView
+                        android:id="@+id/currentmoodtext"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginStart="80dp"
+                        android:layout_marginEnd="40dp"
+                        android:paddingTop="10dp"
+                        android:paddingBottom="10dp"
+                        android:text="화가 났나요?"
+                        android:textSize="15dp"
+                        android:fontFamily="@font/nanumsquareround"/>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="0.13"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
-                android:paddingTop="10dp"
-                android:paddingEnd="10dp"
-                android:paddingStart="10dp"
-                android:paddingBottom="5dp">
 
-                <Button
-                    android:id="@+id/delete"
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="300dp"
+                    android:layout_height="30dp"
+                    android:orientation="horizontal"
+                    android:layout_gravity="right"
+                    android:layout_marginEnd="15dp"
+                    android:background="@drawable/button_select">
+
+                    <!--                <ImageView-->
+                    <!--                    android:id="@+id/moodImageView"-->
+                    <!--                    android:layout_width="56dp"-->
+                    <!--                    android:layout_height="match_parent"-->
+                    <!--                    android:layout_marginStart="10dp"-->
+                    <!--                    app:srcCompat="@drawable/moodots_icon_ver1" />-->
+
+                    <SeekBar
+                        android:id="@+id/seekBar"
+                        android:layout_width="200dp"
+                        android:layout_height="30dp"
+                        android:layout_gravity="center_vertical"
+                        android:layout_weight="1" />
+
+                    <ImageButton
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:id="@+id/playerbutton"
+                        android:backgroundTint="@color/white"
+                        android:src="@drawable/ic_audio_play"
+                        android:adjustViewBounds="true"
+                        />
+
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="43dp"
+                    android:orientation="horizontal"
+                    android:paddingStart="20dp"
+                    android:paddingTop="15dp"
+                    android:paddingEnd="20dp">
+
+
+                    <TextView
+                        android:id="@+id/textView2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+
+                        android:paddingEnd="10dp"
+                        android:text="일시"
+                        android:textSize="20dp"
+                        android:fontFamily="@font/nanumsquareround"/>
+
+                    <Button
+                        android:id="@+id/date"
+                        style="?android:attr/borderlessButtonStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="@color/white"
+                        android:padding="0dp"
+                        android:text="Button"
+                        android:textSize="20sp"
+                        android:fontFamily="@font/nanumsquareround"/>
+
+                    <Button
+                        android:id="@+id/time"
+                        style="?android:attr/borderlessButtonStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="@color/white"
+                        android:padding="0dp"
+                        android:text="Button"
+                        android:textSize="20sp"
+                        android:fontFamily="@font/nanumsquareround"/>
+
+                </LinearLayout>
+
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@layout/button_diary"
-                    android:text="Delete"
-                    android:layout_gravity="start"
-                    android:textSize="20dp"
-                    style="?android:attr/borderlessButtonStyle"/>
+                    android:orientation="horizontal"
+                    android:paddingEnd="10dp"
+                    android:paddingStart="20dp"
+                    >
 
-                <View
-                    android:layout_width="0dp"
+                    <TextView
+                        android:id="@+id/textView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="23sp"
+                        android:text="감정"
+                        android:paddingEnd="10dp"
+                        android:fontFamily="@font/nanumsquareround"/>
+
+                    <Button
+                        android:id="@+id/angry"
+                        android:layout_width="wrap_content"
+                        android:layout_height="43dp"
+                        android:layout_weight="1"
+                        android:background="@mipmap/ic_angry" />
+
+                    <Button
+                        android:id="@+id/joy"
+                        android:layout_width="wrap_content"
+                        android:layout_height="43dp"
+                        android:layout_weight="1"
+                        android:background="@mipmap/ic_joy" />
+
+                    <Button
+                        android:id="@+id/fear"
+                        android:layout_width="wrap_content"
+                        android:layout_height="43dp"
+                        android:layout_weight="1"
+                        android:background="@mipmap/ic_fear" />
+
+                    <Button
+                        android:id="@+id/sad"
+                        android:layout_width="wrap_content"
+                        android:layout_height="43dp"
+                        android:layout_weight="1"
+                        android:background="@mipmap/ic_sad" />
+
+                    <Button
+                        android:id="@+id/disgust"
+                        android:layout_width="wrap_content"
+                        android:layout_height="43dp"
+                        android:layout_weight="1"
+                        android:background="@mipmap/ic_disgust" />
+
+                    <Button
+                        android:id="@+id/surprise"
+                        android:layout_width="wrap_content"
+                        android:layout_height="43dp"
+                        android:layout_weight="1"
+                        android:background="@mipmap/ic_surprise" />
+
+                    <Button
+                        android:id="@+id/neutral"
+                        android:layout_width="wrap_content"
+                        android:layout_height="43dp"
+                        android:layout_weight="1"
+                        android:background="@mipmap/ic_neutral" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:layout_weight="1" />
-                <Button
-                    android:id="@+id/addDiaryButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@layout/button_diary"
-                    android:layout_gravity="end"
-                    android:text="add"
-                    android:textSize="20dp"
-                    style="?android:attr/borderlessButtonStyle"/>
+                    android:layout_weight="1"
+                    android:orientation="vertical"
 
+                    android:paddingEnd="20dp"
+                    android:paddingStart="20dp"
+                    >
+
+                    <TextView
+                        android:id="@+id/textView3"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="20dp"
+                        android:text="일기"
+                        android:fontFamily="@font/nanumsquareround"/>
+
+                    <EditText
+                        android:id="@+id/contents"
+                        android:layout_width="match_parent"
+                        android:layout_height="150dp"
+                        android:layout_weight="10"
+                        android:background="@drawable/diaryadd_contents_border"
+                        android:ems="10"
+                        android:gravity="top"
+                        android:hint="일기를 입력하세요."
+                        android:fontFamily="@font/nanumsquareround"
+                        android:inputType="textMultiLine"
+                        android:scrollHorizontally="false" />
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="10dp"
+                        android:layout_weight="1" />
+                    <EditText
+                        android:id="@+id/hashcontents"
+                        android:layout_width="match_parent"
+                        android:layout_height="80dp"
+                        android:layout_weight="5"
+                        android:background="@drawable/diaryadd_contents_border"
+                        android:ems="10"
+                        android:gravity="top"
+                        android:textSize="15sp"
+                        android:hint="#을 눌러 해시태그 입력을 시작하세요. 뛰어쓰기를 하면 자동으로 #이 생성됩니다. 최대 5개의 해시태그 입력이 가능합니다."
+                        android:inputType="textMultiLine"
+                        android:scrollHorizontally="false"
+                        android:fontFamily="@font/nanumsquareround"/>
+                    <!--<HashTagEditTextView
+                        android:id="@+id/hashcontents"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="5"
+                        android:background="@drawable/diaryadd_contents_border"
+                        android:ems="10"
+                        android:gravity="top"
+                        android:itemMaxLength="5"
+                        android:itemMaxCount="5"
+                        android:autoPoundSign="true"
+                        android:itemMaxLengthOverMent="The tag is too long."
+                        android:itemMaxCountOverMent="Too many tags."
+                        />-->
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:layout_weight="0.13"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:paddingTop="10dp"
+                    android:paddingEnd="10dp"
+                    android:paddingStart="10dp"
+                    android:paddingBottom="5dp">
+
+                    <Button
+                        android:id="@+id/delete"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@layout/button_diary"
+                        android:textStyle="bold"
+                        android:text="삭제"
+                        android:layout_gravity="start"
+                        android:textSize="20dp"
+                        style="?android:attr/borderlessButtonStyle"
+                        android:fontFamily="@font/nanumsquareround"/>
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1" />
+
+                    <Button
+                        android:id="@+id/addDiaryButton"
+                        style="?android:attr/borderlessButtonStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end"
+                        android:background="@layout/button_diary"
+                        android:textStyle="bold"
+                        android:text="추가"
+                        android:textSize="20dp"
+                        android:fontFamily="@font/nanumsquareround"/>
+
+                </LinearLayout>
             </LinearLayout>
-        </LinearLayout>
+        </ScrollView>
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"
@@ -297,6 +333,10 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             android:orientation="horizontal"
+
+            app:layout_constraintTop_toBottomOf="@+id/recyclerView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             >
 
             <Button
@@ -305,7 +345,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="@layout/button_leftcorner"
-                android:text="메인" />
+                android:text="메인"
+                android:fontFamily="@font/nanumsquareround"/>
 
             <Button
                 android:id="@+id/sort"
@@ -313,7 +354,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="@layout/button_middle"
-                android:text="정렬" />
+                android:text="정렬"
+                android:fontFamily="@font/nanumsquareround"/>
 
             <Button
                 android:id="@+id/newDiaryButton"
@@ -321,7 +363,9 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="@layout/button_middle"
-                android:text="추가" />
+                android:textStyle="bold"
+                android:text="추가"
+                android:fontFamily="@font/nanumsquareround"/>
 
             <Button
                 android:id="@+id/search"
@@ -329,7 +373,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="@layout/button_middle"
-                android:text="검색" />
+                android:text="검색"
+                android:fontFamily="@font/nanumsquareround"/>
 
             <Button
                 android:id="@+id/setting"
@@ -337,7 +382,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="@layout/button_rightcorner"
-                android:text="녹음" />
+                android:text="세팅"
+                android:fontFamily="@font/nanumsquareround"/>
 
         </LinearLayout>
     </LinearLayout>

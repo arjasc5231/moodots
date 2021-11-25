@@ -130,8 +130,8 @@ public class bMainfrag extends Fragment implements OnBackPressedListener{
         ConstraintLayout layout=(ConstraintLayout) rootView.findViewById(R.id.clocklayout);
         TextView moodtime=rootView.findViewById(R.id.moodtime);
         TextView moodtext=rootView.findViewById(R.id.moodtext);
-        TextView textView=rootView.findViewById(R.id.datemain);
-        textView.setText(getDate());
+        //TextView textView=rootView.findViewById(R.id.datemain);
+        //textView.setText(getDate());
         date= rootView.findViewById(R.id.datepick);
         date.setText(getDate());
         if (getArguments() != null)
@@ -571,7 +571,7 @@ public class bMainfrag extends Fragment implements OnBackPressedListener{
         pieChart.setRotationEnabled(false);
         pieChart.animateY(2000);
         Legend l = pieChart.getLegend();
-        l.setEnabled(false);
+        l.setEnabled(true); // Legend 설정해서 감정에 대한 색상 표시
         int[] moodlist=new int[7];
         for(int i=0;i<percent.size();i++){
             int p=percent.get(i)-1;

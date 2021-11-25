@@ -22,8 +22,8 @@
 
             <ImageView
                 android:id="@+id/moodImageView"
-                android:layout_width="56dp"
-                android:layout_height="match_parent"
+                android:layout_width="49dp"
+                android:layout_height="49dp"
                 android:layout_marginStart="10dp"
                 app:srcCompat="@drawable/moodots_icon_ver1" />
 
