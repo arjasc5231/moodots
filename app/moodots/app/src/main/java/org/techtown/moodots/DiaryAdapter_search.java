@@ -34,6 +34,7 @@ public class DiaryAdapter_search extends RecyclerView.Adapter<DiaryAdapter_searc
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int position) {
         Diary item = items.get(position);
+        viewHolder.setItem(item);
         viewHolder.date.setText(item.getDate());
         viewHolder.time.setText(item.getTime());
         viewHolder.content.setText(item.getContents());
@@ -84,19 +85,52 @@ public class DiaryAdapter_search extends RecyclerView.Adapter<DiaryAdapter_searc
         TextView content;
         TextView keyword;
         Drawable layer;
+        LinearLayout linearleft;
+        LinearLayout linearright;
         int mood;
         MediaPlayer mediaPlayer;
         //녹음 관련 변수
 
+        public void setItem(Diary item) {
+            mood = item.getMood();
+            changeborder(mood);
+        }
         public ViewHolder(View itemView, final OnSearchItemClickListener listener, final OnSearchItemLongClickListener longlistener) {
             super(itemView);
             date = itemView.findViewById(R.id.date);
             time = itemView.findViewById(R.id.time);
             content = itemView.findViewById(R.id.content);
             keyword = itemView.findViewById(R.id.keyword);
-            LinearLayout linearleft = itemView.findViewById(R.id.cardview_border);
-            LinearLayout linearright = itemView.findViewById(R.id.cardview_border);
+            linearleft = itemView.findViewById(R.id.cardview_border1);
+            linearright = itemView.findViewById(R.id.cardview_border2);
 
+
+            /*date.setText(item.getDate());
+            time.setText(item.getTime());
+            content.setText(item.getContents());
+            keyword.setText(item.getHashcontents());*/
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int position = getAdapterPosition();
+                    if (listener != null) {
+                        listener.onsearchItemClick(ViewHolder.this, v, position);
+                    }
+                }
+            });
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    int position = getAdapterPosition();
+                    if (longlistener != null) {
+                        longlistener.onsearchItemLongClick(ViewHolder.this, view, position);
+                    }
+                    return true;
+                }
+            });
+        }
+
+        public void changeborder(int mood){
             if(mood==1){
                 linearleft.setBackgroundResource(R.drawable.view_search_angry);
                 linearright.setBackgroundResource(R.drawable.fill_color_angry);
@@ -125,41 +159,9 @@ public class DiaryAdapter_search extends RecyclerView.Adapter<DiaryAdapter_searc
                 linearleft.setBackgroundResource(R.drawable.view_search_neutral);
                 linearright.setBackgroundResource(R.drawable.fill_color_neutral);
             }
-
-            /*date.setText(item.getDate());
-            time.setText(item.getTime());
-            content.setText(item.getContents());
-            keyword.setText(item.getHashcontents());*/
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    int position = getAdapterPosition();
-                    if (listener != null) {
-                        listener.onsearchItemClick(ViewHolder.this, v, position);
-                    }
-                }
-            });
-            itemView.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View view) {
-                    int position = getAdapterPosition();
-                    if (longlistener != null) {
-                        longlistener.onsearchItemLongClick(ViewHolder.this, view, position);
-                    }
-                    return true;
-                }
-            });
         }
         /*
-        public void setItem(Diary item) {
-            int mood = item.getMood();
-            int moodIndex = mood;
-            String voice = item.getVoice();
-            String date = item.getDate();
-            String time = item.getTime();
-            String content = item.getContents();
-            String keyword = item.getHashcontents();
-        }
+
 
          */
     }

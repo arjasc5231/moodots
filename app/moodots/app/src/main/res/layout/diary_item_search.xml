@@ -20,7 +20,7 @@
             android:orientation="horizontal">
 
             <LinearLayout
-                android:id="@+id/cardview_border"
+                android:id="@+id/cardview_border1"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginLeft="3dp"
@@ -77,6 +77,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/cardview_border2"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="99"

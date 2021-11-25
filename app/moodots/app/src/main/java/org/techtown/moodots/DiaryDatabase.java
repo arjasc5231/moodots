@@ -31,7 +31,7 @@ public class DiaryDatabase{
         db = dbHelper.getWritableDatabase();
 
 
-        String DROP_SQL = "drop table if exists " + TABLE_DIARY;
+        /*String DROP_SQL = "drop table if exists " + TABLE_DIARY;
         try {
             db.execSQL(DROP_SQL);
         } catch(Exception ex) {
@@ -54,7 +54,7 @@ public class DiaryDatabase{
         } catch(Exception ex) {
             Log.e(TAG, "Exception in CREATE_SQL", ex);
         }
-        /*
+
         // create index
         String CREATE_INDEX_SQL = "create index " + TABLE_DIARY + "_IDX ON " + TABLE_DIARY + "("
                 + "CREATE_DATE"
