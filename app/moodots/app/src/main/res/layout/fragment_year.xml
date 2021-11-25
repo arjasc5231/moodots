@@ -67,7 +67,7 @@
 
                 <TextView
                     android:id="@+id/angry"
-                    android:layout_width="100dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="left"
                     android:text="TextView"
@@ -76,7 +76,7 @@
 
                 <TextView
                     android:id="@+id/joy"
-                    android:layout_width="100dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="left"
                     android:text="TextView"
@@ -85,7 +85,7 @@
 
                 <TextView
                     android:id="@+id/fear"
-                    android:layout_width="100dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="left"
                     android:text="TextView"
@@ -94,7 +94,7 @@
 
                 <TextView
                     android:id="@+id/sad"
-                    android:layout_width="100dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="TextView"
                     android:gravity="left"
@@ -103,7 +103,7 @@
 
                 <TextView
                     android:id="@+id/disgust"
-                    android:layout_width="100dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="TextView"
                     android:gravity="left"
