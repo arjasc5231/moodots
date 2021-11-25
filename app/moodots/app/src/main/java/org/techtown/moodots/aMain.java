@@ -1,8 +1,11 @@
 package org.techtown.moodots;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.os.Bundle;
@@ -26,16 +29,24 @@ public class aMain extends AppCompatActivity implements AutoPermissionsListener 
     bBlankFragment blankfrag;
     OnBackPressedListener listener;
     public static DiaryDatabase mDatabase = null;
+
+    private String recordPermission = Manifest.permission.RECORD_AUDIO;
+    private String writePermission = Manifest.permission.WRITE_EXTERNAL_STORAGE;
+    private int PERMISSION_CODE = 21;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        //startService();
         // 액티비티 중복 삭제를 위한 코드. 아래 if문 포함(if문은 login액티비티를 삭제하는 부분)
         if(aHome.activity!=null){
             aHome activity = (aHome) aHome.activity;
             activity.finish();
         }
+        if(checkAudioPermission())
+            Log.d("start", "debug start service");
+        startService();
         bSettingfrag =new bSettingfrag();
         bSearchfrag =new bSearchfrag();
         bMainfrag =new bMainfrag();
@@ -140,52 +151,7 @@ public class aMain extends AppCompatActivity implements AutoPermissionsListener 
     @Override
     public void onGranted(int requestCode, String[] permissions) {
     }
-    public void startRecording() {
-        if (recorder == null) {
-            recorder = new MediaRecorder();
-        }
-        recorder.setAudioSource(MediaRecorder.AudioSource.MIC); //MediaRecorder가 알아서 마이크 입력을 찾음
-        recorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4 ); // 출력 형태
-        recorder.setAudioEncoder(MediaRecorder.AudioEncoder.DEFAULT); //실제 단말에서 지원하냐 안하냐
-        recorder.setOutputFile(filename);
 
-        try {
-            recorder.prepare();
-            recorder.start();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void stopRecording() {
-        if (recorder == null){
-            return;
-        }
-
-        recorder.stop();
-        recorder.release();
-        recorder = null;
-
-    }
-
-    public void playAudio() {
-        killPlayer();
-
-        try {
-            player = new MediaPlayer();
-            player.setDataSource("file://" + filename);
-            player.prepare();
-            player.start();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void stopAudio() {
-        if (player != null) {
-            player.stop();
-        }
-    }
 
     public void killPlayer() {
         if (player != null) {
@@ -193,7 +159,7 @@ public class aMain extends AppCompatActivity implements AutoPermissionsListener 
         }
     }
 
-    /*public void startService(){
+    public void startService(){
         serviceIntent = new Intent(this, MyService.class);
         startService(serviceIntent);
     }
@@ -201,5 +167,14 @@ public class aMain extends AppCompatActivity implements AutoPermissionsListener 
     public void stopService(){
         serviceIntent = new Intent(this, MyService.class);
         stopService(serviceIntent);
-    }*/
+    }
+    private boolean checkAudioPermission() {
+        if (ActivityCompat.checkSelfPermission(getApplicationContext(), recordPermission) == PackageManager.PERMISSION_GRANTED&&ActivityCompat.checkSelfPermission(getApplicationContext(), writePermission) == PackageManager.PERMISSION_GRANTED) {
+            return true;
+        } else {
+            ActivityCompat.requestPermissions(this, new String[]{recordPermission, writePermission}, PERMISSION_CODE);
+            return false;
+        }
+    }
+
 }

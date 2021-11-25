@@ -120,11 +120,9 @@ public class MyService extends Service {
         @Override
         protected Integer doInBackground(Integer... integers) {
             int value=0;
-            startRecording();
-
-            if(isCancelled()==true) {
-                stopRecording();
-                stopSelf();
+            while(isCancelled()==false){
+                value++;
+                Log.d("myservice", "debug value "+value);
             }
             return value;
         }
@@ -188,7 +186,7 @@ public class MyService extends Service {
         Intent broadcastIntent = new Intent("com.moodots.myaudio.RestartService");
         sendBroadcast(broadcastIntent);
         stoptimertask();
-        //Log.d("Myservice","onDestroy");
+        Log.d("Myservice","onDestroy");
         //task.cancel(true);
     }
 

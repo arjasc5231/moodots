@@ -76,13 +76,15 @@ public class bSettingfrag extends Fragment implements OnBackPressedListener{
     private String writePermission = Manifest.permission.WRITE_EXTERNAL_STORAGE;
     private int PERMISSION_CODE = 21;
     boolean isrec=false;
-    byte Data[] = new byte[bufferSizeInBytes];
+
+
 
     public int bufferRead;
     public int bufferReadshort;
     int startingIndex=0;
     int endIndex=-1;
     int total;
+    int totaltemp;
     int count=0;
 
 
@@ -397,9 +399,10 @@ public class bSettingfrag extends Fragment implements OnBackPressedListener{
         if(checkAudioPermission()) {
             audioRecorder = new AudioRecord(MediaRecorder.AudioSource.MIC,
                     Constants.RECORDER_SAMPLERATE, Constants.RECORDER_CHANNELS,
-                    Constants.RECORDER_AUDIO_ENCODING, Constants.BufferElements2Rec * Constants.BytesPerElement);
+                    Constants.RECORDER_AUDIO_ENCODING, bufferSizeInBytes/2 );// 마지막 buffersize의 차이를 모르겠다.(2로 나눈것과 나누지 않은것. 이부분에 대한 분석 필요
+            Log.d("debug befferminsize","debug buffer  "+bufferSizeInBytes);
             audioRecorder.startRecording();
-            short [] buffershort=new short[bufferSizeInBytes*2];
+
             isRecording = true;
             recordingThread = new Thread(new Runnable() {
                 public void run() {
@@ -409,83 +412,98 @@ public class bSettingfrag extends Fragment implements OnBackPressedListener{
                     } catch (FileNotFoundException e) {
                         e.printStackTrace();
                     }
-                    int index=0;
-                    int checkstart=0;
+                    int index = 0;
+                    int checkstart = 0;
                     while (isRecording) {
-                        bufferRead=audioRecorder.read(Data, 0, Data.length);
-                        //bufferReadshort=audioRecorder.read(buffershort, 0, buffershort.length);
-                        if(index<4) {
-                            total = 0;
-                            for (int i = 0; i < bufferRead; i++) {
-                                total += Math.abs(Data[i]);
-                            }
-                            recData.add(Data);
-                            index++;
+                        byte[] Data = new byte[bufferSizeInBytes];
+                        byte Data2[] = new byte[bufferSizeInBytes];
+                        byte[] temp= new byte[bufferSizeInBytes];
+                        short[] Datashort= new short[bufferSizeInBytes/2];
+                        bufferReadshort=audioRecorder.read(Datashort, 0, Datashort.length);
+                        for(int i= 0; i<Datashort.length;i++) {
+                            Data[2*i] = (byte) (Datashort[i] & 0xff);
+                            Data[2*i+1] = (byte) ((Datashort[i] >> 8) & 0xff);
                         }
-                        else {
-                            index = 0;
-                            int vol = 0;
-                            vol = (total);
-                            String timeStamp1 = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-                            zAppConstants.println("debug vol: " + vol + " debug total: " + total + " time " + timeStamp1 + " buffer read " + bufferRead);
-                            if (isrec == false) {
-                                if (vol > 125000) {
-                                    if (count == 0) {
-                                        startingIndex = recData.size();
-                                    }
-                                    count += 1;
+
+                        total = 0;
+                        totaltemp=0;
+                        for (int i = 0; i < bufferReadshort; i++) {
+                            total += Math.abs(Datashort[i]);
+                        }
+                        for (int i = 0; i < Data.length; i++) {
+                            totaltemp += Math.abs(Data[i]);
+                        }
+                        recDatashort.add(Datashort);
+                        recData.addLast(Data);
+                        index = 0;
+                        int vol = 0;
+                        vol = (total / bufferReadshort);
+                        String timeStamp1 = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+                        zAppConstants.println("debug vol: " + vol + " debug total: " + totaltemp + " time " + timeStamp1 + " buffer read " + recData.size()+"   "+recDatashort.size());
+                        if (isrec == false) {
+                            if (vol > 2000) {
+                                if (count == 0) {
+                                    startingIndex = recDatashort.size()-1;
                                 }
-                                if (vol < 125000) {
-                                    checkstart+=1;
-                                }
-                                if(checkstart==3){
-                                    count = 0;
-                                    checkstart=0;
-                                }
-                                if (count > 10) {
-                                    count = 0;
-                                    isrec = true;
-                                    startingIndex -= 52;
-                                    if (startingIndex < 0) {
-                                        startingIndex = 0;
-                                    }
-                                    zAppConstants.println("debug vol+startindex" + startingIndex);
-                                    for (int j = startingIndex; j < recData.size()-1; j++) {
-                                        try {
-                                            byte[] temp = recData.get(j);
-                                            os.write(temp);
-                                        } catch (IOException e) {
-                                            e.printStackTrace();
-                                        }
-                                    }
-                                }
+                                count += 1;
                             }
-                            if (isrec == true) {
-                                try {
-                                    os.write(Data);
-                                    //os.write(Data, 0, bufferSizeInBytes);
-                                } catch (IOException e) {
-                                    e.printStackTrace();
+                            if (vol < 500) {
+                                checkstart += 1;
+                            }
+                            if (checkstart == 20) {
+                                count = 0;
+                                startingIndex=0;
+                                checkstart = 0;
+                            }
+                            if (count > 10) {
+                                count = 0;
+                                isrec = true;
+                                if (startingIndex < 0) {
+                                    startingIndex = 0;
                                 }
-                                if (vol < 125000) {
-                                    count += 1;
-                                }
-                                // 도중에 다시 소리가 커지는 경우 잠시 쉬었다가 계속 말하는 경우이므로 cnt 값은 0
-                                if (vol > 125000) {
-                                    count = 0;
-                                }
-                                // endIndex 를 저장하고 레벨체킹을 끝냄
-                                if (count > 15) {
-                                    endIndex = recData.size();
-                                    isRecording = false;
-                                    zAppConstants.println("debug vol+recordend" + startingIndex);
+                                zAppConstants.println("debug vol+startindex" + startingIndex+"   "+recDatashort.size());
+                                for (int j =startingIndex ; j < recDatashort.size()-1; j++) {
+                                    temp=recData.get(j);
+                                    total=0;
+                                    for (int i = 0; i <temp.length; i++) {
+                                        total += Math.abs(temp[i]);
+                                    }
+                                    Log.d("index", "debug vol index  "+j+" debug total  "+total+"debug length  "+recData.size());
                                     try {
-                                        os.close();
+                                        os.write(temp);
                                     } catch (IOException e) {
                                         e.printStackTrace();
                                     }
-                                    stopRecording(1);
                                 }
+                            }
+                        }
+
+                        if (isrec == true) {
+                            try {
+                                os.write(Data);
+                                //os.write(Data, 0, bufferSizeInBytes);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                            if (vol < 500) {
+                                count += 1;
+                            }
+                            // 도중에 다시 소리가 커지는 경우 잠시 쉬었다가 계속 말하는 경우이므로 cnt 값은 0
+                            if (vol > 2000) {
+                                count = 0;
+                            }
+                            // endIndex 를 저장하고 레벨체킹을 끝냄
+                            if (count > 40) {
+                                endIndex = recDatashort.size() - 1;
+                                isRecording = false;
+                                isrec = false;
+                                zAppConstants.println("debug vol+recordend" + startingIndex+endIndex);
+                                try {
+                                    os.close();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                                stopRecording(1);
                             }
                         }
                     }
@@ -496,7 +514,6 @@ public class bSettingfrag extends Fragment implements OnBackPressedListener{
             recordingThread.start();
         }
     }
-
     // 녹음 종료
     private void stopRecording(int mode) {
         // 녹음 종료 종료
