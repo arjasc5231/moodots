@@ -163,49 +163,49 @@
 
                     <Button
                         android:id="@+id/angry"
-                        android:layout_width="wrap_content"
+                        android:layout_width="43dp"
                         android:layout_height="43dp"
                         android:layout_weight="1"
                         android:background="@mipmap/ic_angry" />
 
                     <Button
                         android:id="@+id/joy"
-                        android:layout_width="wrap_content"
+                        android:layout_width="43dp"
                         android:layout_height="43dp"
                         android:layout_weight="1"
                         android:background="@mipmap/ic_joy" />
 
                     <Button
                         android:id="@+id/fear"
-                        android:layout_width="wrap_content"
+                        android:layout_width="43dp"
                         android:layout_height="43dp"
                         android:layout_weight="1"
                         android:background="@mipmap/ic_fear" />
 
                     <Button
                         android:id="@+id/sad"
-                        android:layout_width="wrap_content"
+                        android:layout_width="43dp"
                         android:layout_height="43dp"
                         android:layout_weight="1"
                         android:background="@mipmap/ic_sad" />
 
                     <Button
                         android:id="@+id/disgust"
-                        android:layout_width="wrap_content"
+                        android:layout_width="43dp"
                         android:layout_height="43dp"
                         android:layout_weight="1"
                         android:background="@mipmap/ic_disgust" />
 
                     <Button
                         android:id="@+id/surprise"
-                        android:layout_width="wrap_content"
+                        android:layout_width="43dp"
                         android:layout_height="43dp"
                         android:layout_weight="1"
                         android:background="@mipmap/ic_surprise" />
 
                     <Button
                         android:id="@+id/neutral"
-                        android:layout_width="wrap_content"
+                        android:layout_width="43dp"
                         android:layout_height="43dp"
                         android:layout_weight="1"
                         android:background="@mipmap/ic_neutral" />
