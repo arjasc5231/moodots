@@ -2,23 +2,37 @@ package org.techtown.moodots;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.Manifest;
+import android.app.Activity;
+import android.app.ActivityManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.AssetFileDescriptor;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.jlibrosa.audio.JLibrosa;
+import com.jlibrosa.audio.exception.FileFormatNotSupportedException;
+import com.jlibrosa.audio.wavFile.WavFileException;
 import com.pedro.library.AutoPermissions;
 import com.pedro.library.AutoPermissionsListener;
 
+import org.tensorflow.lite.Interpreter;
+
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.MappedByteBuffer;
+import java.nio.channels.FileChannel;
 
 public class aMain extends AppCompatActivity implements AutoPermissionsListener {
     private static final String TAG = "MainActivity";
     Intent serviceIntent;
+    public static Context maincontext;
     MediaRecorder recorder;
     MediaPlayer player;
     String filename;
@@ -29,6 +43,7 @@ public class aMain extends AppCompatActivity implements AutoPermissionsListener 
     bBlankFragment blankfrag;
     OnBackPressedListener listener;
     public static DiaryDatabase mDatabase = null;
+    int savespeclength = -1;
 
     private String recordPermission = Manifest.permission.RECORD_AUDIO;
     private String writePermission = Manifest.permission.WRITE_EXTERNAL_STORAGE;
@@ -40,18 +55,27 @@ public class aMain extends AppCompatActivity implements AutoPermissionsListener 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         // 액티비티 중복 삭제를 위한 코드. 아래 if문 포함(if문은 login액티비티를 삭제하는 부분)
-        if(aHome.activity!=null){
+        /*if(aHome.activity!=null){
             aHome activity = (aHome) aHome.activity;
             activity.finish();
-        }
-        if(checkAudioPermission())
-            Log.d("start", "debug start service");
-        startService();
+        }*/
+        maincontext= this;
         bSettingfrag =new bSettingfrag();
         bSearchfrag =new bSearchfrag();
         bMainfrag =new bMainfrag();
         bSortfrag =new bSortfrag();
         blankfrag = new bBlankFragment();
+        if(stopforeground.activity!=null){
+            stopforeground activity = (stopforeground) stopforeground.activity;
+            activity.finish();
+            stopService();
+            Bundle fromstop = new Bundle();
+            fromstop.putBoolean("bundleKey1",isServiceRunningCheck());
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            bSettingfrag.setArguments(fromstop);//번들을 프래그먼트2로 보낼 준비
+            transaction.replace(R.id.container, bSettingfrag);
+            transaction.commit();
+        }
         openDatabase();
         getSupportFragmentManager().beginTransaction().replace(R.id.container, bMainfrag).commit();
         //BottomNavigationView bottomNavigation = findViewById(R.id.bottom_navigation);
@@ -76,6 +100,84 @@ public class aMain extends AppCompatActivity implements AutoPermissionsListener 
                 return false;
             }
         });*/
+        if(checkAudioPermission())
+            Log.d("start", "debug start service");
+        if(isServiceRunningCheck()==false){
+            startService();
+        }
+        Intent intent = new Intent(this, aHome.class);
+        startActivity(intent);
+        if(addfromforeground.activity!=null){
+            Intent add= getIntent();
+            String date= add.getStringExtra("date");
+            String year= date.substring(0,4);
+            String month= date.substring(4,6);
+            String day= date.substring(6,8);
+            StringBuilder newdate= new StringBuilder(year);
+            newdate.append("-");
+            newdate.append(month);
+            newdate.append("-");
+            newdate.append(day);
+            String time= add.getStringExtra("time");
+            String hour= time.substring(0,2);
+            String minute= time.substring(1,3);
+            StringBuilder newtime= new StringBuilder(hour);
+            newtime.append(":");
+            newtime.append(minute);
+            String voice=add.getStringExtra("voice");
+            addfromforeground activity = (addfromforeground) addfromforeground.activity;
+            activity.finish();
+            float[][][][] input = new float[1][128][128][1];
+
+
+            try {
+                input = wav2label(voice, 128);
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (WavFileException e) {
+                e.printStackTrace();
+            } catch (FileFormatNotSupportedException e) {
+                e.printStackTrace();
+            }
+            /// 여기에 input 데이터를 넣어주어야 함!!!
+            float[][] output = new float[savespeclength][7];
+
+            //인터프리터 생성
+            Interpreter tflite = getTfliteInterpreter("EmoDBandKESDy_4_noDelta_java_77.tflite");
+
+            //모델 돌리기
+            tflite.run(input, output);
+            float[][] max = new float[1][2];
+            max[0][0] = -1;
+            max[0][1] = -100;
+            for (int i = 0; i < 7; i++) {
+                zAppConstants.println("debug machine output" + output[0][i]);
+                if (max[0][1] < output[0][i]) {
+                    max[0][0] = i + 1;
+                    max[0][1] = output[0][i];
+                }
+            }
+            int mood= (int) max[0][0];
+            zAppConstants.println("debug machine output-------------");
+            Bundle result = new Bundle();
+            //result.putInt("bundleKey0", item._id);
+            result.putInt("bundleKey", 2);
+            result.putInt("bundleKey2", mood);
+            //result.putString("bundleKey3",item.contents);
+            //result.putString("bundleKey4",item.hashcontents);
+            //result.putInt("bundleKey5", item.checkmod);
+            result.putString("bundleKey6", String.valueOf(newdate));
+            //println("active here"+item.date);
+            result.putString("bundleKey7", String.valueOf(newtime));
+            result.putString("bundleKey8", voice);
+            result.putInt("bundleKey9", 1);
+            //result.putString("bundleKey10", (String)date.getText());
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            bBlankFragment blankfragment = new bBlankFragment();//프래그먼트2 선언
+            blankfragment.setArguments(result);//번들을 프래그먼트2로 보낼 준비
+            transaction.replace(R.id.container, blankfragment);
+            transaction.commit();
+        }
 
     }
 
@@ -132,7 +234,12 @@ public class aMain extends AppCompatActivity implements AutoPermissionsListener 
             getSupportFragmentManager().beginTransaction().replace(R.id.container, bSearchfrag).commit();
         }
         else if(index==4){
-            getSupportFragmentManager().beginTransaction().replace(R.id.container, bSettingfrag).commit();
+            Bundle check = new Bundle();
+            check.putBoolean("bundleKey1", isServiceRunningCheck());
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            bSettingfrag.setArguments(check);//번들을 프래그먼트2로 보낼 준비
+            transaction.replace(R.id.container, bSettingfrag);
+            transaction.commit();
         }
     }
 
@@ -159,6 +266,123 @@ public class aMain extends AppCompatActivity implements AutoPermissionsListener 
         }
     }
 
+    private Interpreter getTfliteInterpreter(String modelPath) {
+        try {
+            return new Interpreter(loadModelFile(this, modelPath));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    // 모델 생성 함수
+    private MappedByteBuffer loadModelFile(Activity activity, String modelPath) throws IOException {
+        AssetFileDescriptor fileDescriptor = activity.getAssets().openFd(modelPath);
+        FileInputStream inputStream = new FileInputStream(fileDescriptor.getFileDescriptor());
+        FileChannel fileChannel = inputStream.getChannel();
+        long startOffset = fileDescriptor.getStartOffset();
+        long declaredLength = fileDescriptor.getDeclaredLength();
+        return fileChannel.map(FileChannel.MapMode.READ_ONLY, startOffset, declaredLength);
+    }
+    public double log10(double value) {
+        return Math.log(value) / Math.log(10.0D);
+    }
+
+    public double[][] powerToDb(double[][] melS) {
+        double[][] log_spec = new double[melS.length][melS[0].length];
+        double maxValue = -100.0D;
+
+        int i;
+        int j;
+        for(i = 0; i < melS.length; ++i) {
+            for(j = 0; j < melS[0].length; ++j) {
+                double magnitude = Math.abs(melS[i][j]);
+                if (magnitude > 1.0E-10D) {
+                    log_spec[i][j] = 10.0D * this.log10(magnitude);
+                } else {
+                    log_spec[i][j] = -100.0D;
+                }
+
+                if (log_spec[i][j] > maxValue) {
+                    maxValue = log_spec[i][j];
+                }
+            }
+        }
+
+        for(i = 0; i < melS.length; ++i) {
+            for(j = 0; j < melS[0].length; ++j) {
+                if (log_spec[i][j] < maxValue - 80.0D) {
+                    log_spec[i][j] = maxValue - 80.0D;
+                }
+            }
+        }
+
+        return log_spec;
+    }
+    public float[][][][] wav2label(String filename, int timeUnit) throws IOException, WavFileException, FileFormatNotSupportedException {
+        // parameters
+        int sample_rate = 16000;
+        int n_fft = (int)(sample_rate * 0.025);
+        int hop_length = (int)(sample_rate * 0.01);
+        int n_mel = 128;
+
+        // Jlibrosa
+        JLibrosa jLibrosa = new JLibrosa();
+
+        // wav 읽기
+        float audioFeatureValues[] = jLibrosa.loadAndRead(filename, sample_rate, -1);
+
+        // 정규화
+        float ymax = -99999;
+        float ymin = 99999;
+
+        for(float i : audioFeatureValues) ymax = Math.max(i , ymax);
+        for(float i : audioFeatureValues) ymin = Math.min(i , ymin);
+
+        for (int i = 0; i < audioFeatureValues.length; i++) {
+            audioFeatureValues[i] = (audioFeatureValues[i]) * 2 / (ymax - ymin) - 1;
+            //Log.d("debug", "debug audiofeature"+audioFeatureValues[i]+" length "+audioFeatureValues.length+" current "+i);
+        }
+        Log.d("debug", "debug audioFeature"+audioFeatureValues.length);
+
+        // 스펙트로그램 저장
+        float[][] melSpectrogram_f = jLibrosa.generateMelSpectroGram(audioFeatureValues, sample_rate, 512  , 128, 128);
+
+        // power_to_db => ( 10 * log10( S / ref) ref = abs(S)
+
+        double[][] melSpectrogram = new double[melSpectrogram_f.length][melSpectrogram_f[0].length];
+        for (int i=0; i<melSpectrogram_f.length; i++) {
+            for (int j=0; j<melSpectrogram_f[0].length; j++) {
+                melSpectrogram[i][j] = melSpectrogram_f[i][j];
+
+            }
+        }
+
+        melSpectrogram = powerToDb(melSpectrogram);
+
+        // 프레임수 frame -> 행, key -> 렬
+        int n_frame = melSpectrogram_f.length;
+        int n_key = melSpectrogram_f[0].length;
+
+        // 차분과 차차분 구하고, stack 맞추기 (일단 0으로 맞춤)
+        double[] delta1 = new double[n_frame];
+        double[] delta2 = new double[n_frame];
+        savespeclength=melSpectrogram_f[0].length/128;
+
+        float[][][][] stack = new float[melSpectrogram_f[0].length/128][128][128][1];
+        for (int i=0; i<melSpectrogram_f[0].length/128; i++){
+            for (int f=0; f<128; f++){
+                for (int t=0; t<128; t++){
+                    stack[i][f][t][0]=(float) melSpectrogram[f][128*i+t];
+                }
+            }
+        }
+
+        // 4차원 array list 생성해서 각각 담기
+
+        return stack;
+    }
+
     public void startService(){
         serviceIntent = new Intent(this, MyService.class);
         startService(serviceIntent);
@@ -176,5 +400,19 @@ public class aMain extends AppCompatActivity implements AutoPermissionsListener 
             return false;
         }
     }
+    public boolean isServiceRunningCheck() {
+        ActivityManager manager = (ActivityManager) this.getSystemService(Activity.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if ("org.techtown.moodots.MyService.Moodots".equals(service.service.getClassName())) {
+                Log.d("debug", "debug isServiceRnning true");
+                return true;
+            }
+        }
+        Log.d("debug", "debug isServiceRnning false");
+        return false;
+    }
+
+
+
 
 }

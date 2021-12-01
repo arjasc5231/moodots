@@ -209,6 +209,7 @@
                 android:text="세팅"
                 android:fontFamily="@font/nanumsquareround"/>
 
+
         </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,20 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".MainActivity" >
-    <Button
-        android:id="@+id/startBtn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="서비스 시작" />
+    android:background="#FFFFFF"
+    tools:context=".aMain">
 
-    <Button
-        android:id="@+id/stopBtn"
+    <!--수평 방향으로 버튼들이 스크롤 될 수 있게 구성
+    버튼은 Day, Week, Month, Year, Setting, Extra로 구성
+    색상은 각각 #EF534E, #FFA726, #FFEE58, #66BB6A, #42A5F5, #AB47BC-->
+    //프레그먼트를 위해 위쪽 부분에 프레임 레이아웃을 설정
+    //marginbottom을 이용하면 리스트 아래 부분이 네비게이션바에 가려지는 문제 해결
+
+    <FrameLayout
+        android:id="@+id/container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="서비스 취소" />
-</LinearLayout>
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+    </FrameLayout>
+    //화면 전환을 위한 아래쪽 네비게이션 뷰 설정
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
