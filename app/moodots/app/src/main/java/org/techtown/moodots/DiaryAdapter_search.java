@@ -80,6 +80,7 @@ public class DiaryAdapter_search extends RecyclerView.Adapter<DiaryAdapter_searc
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         String voice;
+        String dateinitem;
         TextView date;
         TextView time;
         TextView content;
@@ -93,7 +94,9 @@ public class DiaryAdapter_search extends RecyclerView.Adapter<DiaryAdapter_searc
 
         public void setItem(Diary item) {
             mood = item.getMood();
-            changeborder(mood);
+            int moodIndex = mood;
+            voice= item.getVoice();
+            dateinitem=item.getDate();
         }
         public ViewHolder(View itemView, final OnSearchItemClickListener listener, final OnSearchItemLongClickListener longlistener) {
             super(itemView);

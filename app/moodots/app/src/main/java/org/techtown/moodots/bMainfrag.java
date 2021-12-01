@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.media.MediaPlayer;
@@ -364,6 +365,7 @@ public class bMainfrag extends Fragment implements OnBackPressedListener{
                 transaction.commit();
             }
         });
+
     }
     public ArrayList<Integer> bringdata(){
         ArrayList<Integer> percent=new ArrayList<Integer>();

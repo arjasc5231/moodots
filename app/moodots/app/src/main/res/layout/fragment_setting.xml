@@ -7,69 +7,140 @@
     tools:context=".bSettingfrag">
 
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <View
+            android:id="@+id/toptempview"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
         <LinearLayout
-            android:id="@+id/textlayout"
+            android:id="@+id/wraplayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintBottom_toTopOf="@+id/tempview"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp"
-            />
+            android:layout_weight="0"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/recordview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:paddingTop="10dp"
+                android:layout_marginBottom="30dp"
+                android:paddingBottom="10dp">
+
+                <ImageButton
+                    android:id="@+id/audioRecordImageBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="20dp"
+                    android:padding="16dp"
+                    android:src="@drawable/ic_record" />
+
+                <TextView
+                    android:id="@+id/audioRecordText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/nanumsquareround"
+                    android:text="녹음 시작"
+                    android:textSize="24dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/lettertypelayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="50dp"
+                android:layout_marginVertical="5dp"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/lettertype"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/nanumsquareround"
+                    android:text="글꼴 변경"
+                    android:textSize="20dp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/letterchangelayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="50dp"
+                android:layout_marginVertical="5dp"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/letterchange"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/nanumsquareround"
+                    android:text="글씨 크기 변경"
+                    android:textSize="20dp" />
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:id="@+id/darkmodelayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="50dp"
+                android:layout_marginVertical="5dp"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/darkmode"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/nanumsquareround"
+                    android:text="다크모드"
+                    android:textSize="20dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/deleteallrecordlayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="50dp"
+                android:layout_marginVertical="5dp"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/deleteallrecord"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/nanumsquareround"
+                    android:text="모든 녹음파일 삭제"
+                    android:textSize="20dp" />
+
+            </LinearLayout>
+        </LinearLayout>
+
         <View
             android:id="@+id/tempview"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            app:layout_constraintBottom_toTopOf="@id/recordLayout"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textlayout"/>
+            android:layout_weight="2" />
 
-        <LinearLayout
-            android:id="@+id/recordLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="4dp"
-            android:gravity="center"
-            android:orientation="vertical"
-            app:layout_constraintTop_toBottomOf="@+id/tempview"
-            app:layout_constraintBottom_toTopOf="@id/buttonlayout"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent">
-
-            <!--녹음 실행 및 중지 버튼-->
-            <ImageButton
-                android:id="@+id/audioRecordImageBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="16dp"
-                android:src="@drawable/ic_record" />
-
-            <TextView
-                android:id="@+id/audioRecordText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="녹음 시작"
-                android:textSize="24dp"
-                android:fontFamily="@font/nanumsquareround"/>
-
-        </LinearLayout>
         <LinearLayout
             android:id="@+id/buttonlayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
-            android:orientation="horizontal"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/recordLayout">
+            android:orientation="horizontal">
 
             <Button
                 android:id="@+id/main"
@@ -77,8 +148,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="@layout/button_leftcorner"
-                android:text="메인"
-                android:fontFamily="@font/nanumsquareround"/>
+                android:fontFamily="@font/nanumsquareround"
+                android:text="메인" />
 
             <Button
                 android:id="@+id/sort"
@@ -86,8 +157,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="@layout/button_middle"
-                android:text="정렬"
-                android:fontFamily="@font/nanumsquareround"/>
+                android:fontFamily="@font/nanumsquareround"
+                android:text="정렬" />
 
             <Button
                 android:id="@+id/newDiaryButton"
@@ -95,8 +166,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="@layout/button_middle"
-                android:text="추가"
-                android:fontFamily="@font/nanumsquareround"/>
+                android:fontFamily="@font/nanumsquareround"
+                android:text="추가" />
 
             <Button
                 android:id="@+id/search"
@@ -104,8 +175,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="@layout/button_middle"
-                android:text="검색"
-                android:fontFamily="@font/nanumsquareround"/>
+                android:fontFamily="@font/nanumsquareround"
+                android:text="검색" />
 
             <Button
                 android:id="@+id/setting"
@@ -113,12 +184,15 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="@layout/button_rightcorner"
-                android:textStyle="bold"
+                android:fontFamily="@font/nanumsquareround"
                 android:text="세팅"
-                android:fontFamily="@font/nanumsquareround"/>
+                android:textStyle="bold" />
+
 
         </LinearLayout>
-    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </LinearLayout>
 
 
 

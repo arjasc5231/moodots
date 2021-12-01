@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".cmonthfragment">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <Button
+            android:id="@+id/datepick"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="TextView"
+            style="?android:attr/borderlessButtonStyle"
+            android:backgroundTint="@color/white"
+            android:textSize="20sp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            app:layout_constraintBottom_toTopOf="@id/scatterlayout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:fontFamily="@font/nanumsquareround"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="20"
+            android:orientation="horizontal"
+            android:id="@+id/scatterlayout"
+            app:layout_constraintBottom_toTopOf="@id/piechartlayout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/datepick">
+
+            <com.github.mikephil.charting.charts.ScatterChart
+                android:id="@+id/scatterchart"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                >
+
+            </com.github.mikephil.charting.charts.ScatterChart>
+        </LinearLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/piechartlayout"
+            android:layout_width="match_parent"
+            android:layout_height="210dp"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/scatterlayout">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:id="@+id/moodsummary"
+                android:layout_marginStart="10dp"
+                app:layout_constraintBottom_toBottomOf="@id/piechartlayout"
+                app:layout_constraintEnd_toStartOf="@id/piechart"
+                app:layout_constraintStart_toStartOf="@id/piechartlayout"
+                app:layout_constraintTop_toTopOf="@id/piechartlayout">
+
+                <TextView
+                    android:id="@+id/angry"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="left"
+                    android:text="TextView"
+                    android:textSize="20sp"
+                    android:fontFamily="@font/nanumsquareround"/>
+
+                <TextView
+                    android:id="@+id/joy"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="left"
+                    android:text="TextView"
+                    android:textSize="20sp"
+                    android:fontFamily="@font/nanumsquareround"/>
+
+                <TextView
+                    android:id="@+id/fear"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="left"
+                    android:text="TextView"
+                    android:textSize="20sp"
+                    android:fontFamily="@font/nanumsquareround"/>
+
+                <TextView
+                    android:id="@+id/sad"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:text="TextView"
+                    android:gravity="left"
+                    android:textSize="20sp"
+                    android:fontFamily="@font/nanumsquareround"/>
+
+                <TextView
+                    android:id="@+id/disgust"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:text="TextView"
+                    android:gravity="left"
+                    android:textSize="20sp"
+                    android:fontFamily="@font/nanumsquareround"/>
+
+                <TextView
+                    android:id="@+id/surprise"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="TextView"
+                    android:gravity="left"
+                    android:textSize="20sp"
+                    android:fontFamily="@font/nanumsquareround"/>
+
+                <TextView
+                    android:id="@+id/neutral"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="TextView"
+                    android:gravity="right"
+                    android:textSize="20sp"
+                    android:fontFamily="@font/nanumsquareround"/>
+            </LinearLayout>
+
+            <com.github.mikephil.charting.charts.PieChart
+                android:id="@+id/piechart"
+                android:layout_width="210dp"
+                android:layout_height="match_parent"
+                app:layout_constraintBottom_toBottomOf="@id/piechartlayout"
+                app:layout_constraintEnd_toEndOf="@id/piechartlayout"
+                app:layout_constraintStart_toEndOf="@+id/moodsummary"
+                app:layout_constraintTop_toTopOf="@id/piechartlayout"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</FrameLayout>

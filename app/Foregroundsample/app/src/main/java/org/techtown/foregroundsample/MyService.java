@@ -10,6 +10,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.pm.ServiceInfo;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
@@ -40,6 +41,7 @@ public class MyService extends Service {
     BackgroundTask task;
 
     MainActivity activity;
+    MyService service;
     Thread recordingThread;
     AudioRecord audioRecorder;
     boolean isRecording = false;    // 현재 녹음 상태를 확인
@@ -104,6 +106,7 @@ public class MyService extends Service {
     }
 
     public void initializeNotification(){
+        Log.d("debug ", "initializeNotification");
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "1");
         builder.setSmallIcon(R.mipmap.ic_launcher);
         NotificationCompat.BigTextStyle style = new NotificationCompat.BigTextStyle();
@@ -135,14 +138,16 @@ public class MyService extends Service {
         protected Integer doInBackground(Integer... integers) {
             int value=0;
             Log.d("myservice", "debug doinbackground");
-            startRecording();
-            /*while(isCancelled()==false){
-                try{
-                    Log.d("thread", value+"번째 실행중");
-                    Thread.sleep(10);
-                    value++;
-                }catch(InterruptedException ex){}
-            }*/
+            while(isCancelled()==false) {
+                Log.d("debug", "dbeug foregoround" + value);
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                value++;
+                //startRecording();
+            }
             Log.d("debug foreground","isCancelled작동됨");
             return value;
         }
@@ -185,6 +190,10 @@ public class MyService extends Service {
         private void startRecording() {
             //파일의 외부 경로 확인
             // 파일 이름 변수를 현재 날짜가 들어가도록 초기화. 그 이유는 중복된 이름으로 기존에 있던 파일이 덮어 쓰여지는 것을 방지하고자 함.
+            File folder = new File("/storage/emulated/0/Download/moodots/");
+            if(!folder.exists()){
+                folder.mkdirs();
+            }
             String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
             audioFileName = "/storage/emulated/0/Download/" + timeStamp + "_" + "audio.pcm"; //"/storage/emulated/0/Download/"
             audioFileName2 = "/storage/emulated/0/Download/" + timeStamp + "_" + "audio.wav"; //"/storage/emulated/0/Download/"
@@ -328,7 +337,40 @@ public class MyService extends Service {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+                saveDiary(path, 1);
             }
+        }
+        private void saveDiary(String path, int moodIndex) {
+            String scontents = "";
+            String hcontents = "";
+            String sdate = getDate();
+            String stime = getTime();
+            String voice = path;
+            String sql = "insert into " + DiaryDatabase.TABLE_DIARY +
+                    "(MOOD, CONTENTS, HASHCONTENTS, CHECKMOD, DATE, TIME, VOICE) values(" +
+                    "'"+ moodIndex + "', " +
+                    "'"+ scontents + "', " +
+                    "'"+ hcontents + "', " +
+                    "'"+ 0 + "', " +
+                    "'"+ sdate + "', " +
+                    "'"+ stime + "', " +
+                    "'"+ voice + "'" +")";
+
+            DiaryDatabase database = DiaryDatabase.getInstance(getApplicationContext());
+            database.execSQL(sql);
+
+        }
+        private String getDate() {
+            long now = System.currentTimeMillis();
+            Date date = new Date(now);
+            String getDate = zAppConstants.dateFormat5.format(date);
+            return getDate;
+        }
+        private String getTime() {
+            long now = System.currentTimeMillis();
+            Date date = new Date(now);
+            String getTime = zAppConstants.dateFormat6.format(date);
+            return getTime;
         }
         private void rawToWave(final File rawFile, final File waveFile) throws IOException {
 
@@ -424,7 +466,9 @@ public class MyService extends Service {
     public void onDestroy() {
         super.onDestroy();
         Log.d("Myservice","onDestroy");
-        task.cancel(true);
+        if(task!=null) {
+            task.cancel(true);
+        }
     }
 
 }
