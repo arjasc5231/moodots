@@ -1,0 +1,2 @@
+rootProject.name = "SampleBinder"
+include ':app'

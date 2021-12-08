@@ -4,5 +4,5 @@ import android.view.View;
 import android.widget.SeekBar;
 
 public interface OnDiaryButtonClickListener {
-    public void onButtonClick(DiaryAdapter.ViewHolder holder , SeekBar seekBar, View view, int position);
+    public void onButtonClick(nadapter_DiaryAdapter.ViewHolder holder , SeekBar seekBar, View view, int position);
 }

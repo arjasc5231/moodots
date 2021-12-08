@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_above="@+id/bottom_navigation"
-    tools:context=".bMainfrag">
+    tools:context=".fragment_bMainfrag">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -103,8 +103,8 @@
                 app:layout_constraintTop_toTopOf="parent"/>
             <ImageButton
                 android:id="@+id/moodindicate"
-                android:layout_width="210dp"
-                android:layout_height="210dp"
+                android:layout_width="220dp"
+                android:layout_height="220dp"
                 android:backgroundTint="@color/white"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"

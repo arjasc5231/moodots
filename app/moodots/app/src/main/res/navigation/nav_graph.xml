@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/mainfrag"
-        android:name="org.techtown.moodots.bMainfrag"
+        android:name="org.techtown.moodots.fragment_bMainfrag"
         android:label="fragment_main"
         tools:layout="@layout/fragment_main" >
         <action
@@ -19,7 +19,7 @@
     </fragment>
     <fragment
         android:id="@+id/blankFragment"
-        android:name="org.techtown.moodots.bBlankFragment"
+        android:name="org.techtown.moodots.fragment_BlankFragment"
         android:label="fragment_blank"
         tools:layout="@layout/fragment_blank" >
         <action
@@ -28,7 +28,7 @@
     </fragment>
     <fragment
         android:id="@+id/sortfrag"
-        android:name="org.techtown.moodots.bSortfrag"
+        android:name="org.techtown.moodots.fragment_bSortfrag"
         android:label="fragment_sort"
         tools:layout="@layout/fragment_sort" >
         <action

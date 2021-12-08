@@ -18,20 +18,25 @@
         android:roundIcon="@mipmap/ic_main_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Moodots">
-        <activity android:name=".addfromforeground"></activity>
 
         <service
-            android:name=".MyService"
+            android:name=".service_MyService"
             android:enabled="true"
             android:exported="false"
             android:foregroundServiceType="microphone"/>
-
         <activity
-            android:name=".aHome"
+            android:name=".service_activity_stopforeground"
+            android:exported="true"/>
+        <activity
+            android:name=".service_activity_addfromforeground"
+            android:exported="true"/>
+        <activity
+            android:name=".astart_activity_aHome"
             android:exported="true" />
         <activity
-            android:name=".aMain"
-            android:exported="true">
+            android:name=".astart_activity_aMain"
+            android:exported="true"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
