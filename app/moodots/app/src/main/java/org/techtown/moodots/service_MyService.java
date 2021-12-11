@@ -1,6 +1,7 @@
 package org.techtown.moodots;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -18,9 +19,11 @@ import android.media.MediaRecorder;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.IBinder;
+import android.service.controls.actions.CommandAction;
 import android.util.Log;
 import android.widget.RemoteViews;
 
+import androidx.annotation.MainThread;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
@@ -94,7 +97,6 @@ public class service_MyService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
-        // TODO: Return the communication channel to the service.
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
@@ -105,7 +107,6 @@ public class service_MyService extends Service {
         task = new BackgroundTask();
         task.execute();
         initializeNotification();
-
         /*if(intent!=null){
             String action = intent.getAction();
             if("pause".equals(action)){
@@ -151,7 +152,7 @@ public class service_MyService extends Service {
         //builder.setContentIntent(pendinIntent);
         NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O){
-            manager.createNotificationChannel(new NotificationChannel("1", "Moodots", NotificationManager.IMPORTANCE_NONE));
+            manager.createNotificationChannel(new NotificationChannel("recordingnoti", "Moodots", NotificationManager.IMPORTANCE_NONE));
         }
         Notification notification = builder.build();
         startForeground(1, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE);
@@ -262,7 +263,7 @@ public class service_MyService extends Service {
             Log.d("here","debug here before while");
             while (isRecording&&isCancelled()==false) {
                 byte[] Data = new byte[bufferSizeInBytes];
-                Log.d("debug", "debug buffersizeinbyte"+bufferSizeInBytes);
+                //Log.d("debug", "debug buffersizeinbyte"+bufferSizeInBytes); //16000일때 1280
                 byte[] temp = new byte[bufferSizeInBytes];
                 short[] Datashort = new short[bufferSizeInBytes / 2];
                 bufferReadshort = audioRecorder.read(Datashort, 0, Datashort.length);
@@ -302,12 +303,12 @@ public class service_MyService extends Service {
                     if (vol < 500) {
                         checkstart += 1;
                     }
-                    if (checkstart == 20) {
+                    if (checkstart == 600) {
                         count = 0;
                         startingIndex = 0;
                         checkstart = 0;
                     }
-                    if (count > 3) {
+                    if (count > 17) {
                         count = 0;
                         isrec = true;
                         if (startingIndex < 0) {
@@ -367,6 +368,7 @@ public class service_MyService extends Service {
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
+
                         stopRecording(1);
                     }
                 }
@@ -378,7 +380,7 @@ public class service_MyService extends Service {
             //recordingThread.start();
 
         }
-        private void stopRecording(int mode){
+        public void stopRecording(int mode){
             // 녹음 종료 종료
             if (isRecording || mode == 1) {
                 if (null != audioRecorder) {
@@ -389,6 +391,7 @@ public class service_MyService extends Service {
                     recordingThread = null;
                 }
                 File f1 = new File(audioFileName);
+                File f2 = null;
                 if(f1.exists()){
                     long filesize = f1.length();
                     if(filesize<10){
@@ -396,7 +399,7 @@ public class service_MyService extends Service {
                         recordsuccess=false;
                     }
                     else{
-                        File f2 = new File(audioFileName2); // The location where you want your WAV file
+                        f2 = new File(audioFileName2); // The location where you want your WAV file
                         try {
                             rawToWave(f1, f2);
                             recordsuccess=true;
@@ -448,6 +451,12 @@ public class service_MyService extends Service {
                     else if (a>=s && a>=h) {result=0;}
                     else {result=1;}
                     mood = result+1;
+                    String[] changefilename= audioFileName2.split("\\.");
+                    audioFileName2= changefilename[0]+"_"+mood+"."+changefilename[1];
+                    File audiofileafter = new File(audioFileName2);
+                    if(f2.renameTo(audiofileafter)){
+                        Log.d("debug", "debug filerename success"+audioFileName2);
+                    }
                     zAppConstants.println("debug machine output  " + mood);
                     zAppConstants.println("debug machine output from service-------------");
                     /// 여기에 input 데이터를 넣어주어야 함!!!
@@ -583,6 +592,7 @@ public class service_MyService extends Service {
                         stack[i][f][t][0]=(float) melSpectrogram[f][128*i+t];
                     }
                 }
+
             }
 
             // 4차원 array list 생성해서 각각 담기
@@ -681,9 +691,9 @@ public class service_MyService extends Service {
     }
     public void recordendnotification(){
         NOTIFICATION_ID+=1;
-        if(NOTIFICATION_ID>200){
+        /*if(NOTIFICATION_ID>200){
             NOTIFICATION_ID=101;
-        }
+        }*/
         createNotificationChannel();
         String[] split= audioFileName2.split("_");
         String[] split2= split[0].split("/");
@@ -703,6 +713,29 @@ public class service_MyService extends Service {
         remoteViews.setTextViewText(R.id.newadd, "새로운 녹음이 추가되었습니다.");
         remoteViews.setTextViewText(R.id.date, split2[split2.length-1]+"_"+split[1]);
         remoteViews.setImageViewResource(R.id.moodots, R.drawable.moodots_icon_ver1);
+        switch (mood){
+            case 1:
+                remoteViews.setImageViewResource(R.id.moodots, R.drawable.angry);
+                break;
+            case 2:
+                remoteViews.setImageViewResource(R.id.moodots, R.drawable.joy);
+                break;
+            case 3:
+                remoteViews.setImageViewResource(R.id.moodots, R.drawable.fear);
+                break;
+            case 4:
+                remoteViews.setImageViewResource(R.id.moodots, R.drawable.sad);
+                break;
+            case 5:
+                remoteViews.setImageViewResource(R.id.moodots, R.drawable.disgust);
+                break;
+            case 6:
+                remoteViews.setImageViewResource(R.id.moodots, R.drawable.surprise);
+                break;
+            case 7:
+                remoteViews.setImageViewResource(R.id.moodots, R.drawable.neutral);
+                break;
+        }
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID);
         builder.setCustomContentView(remoteViews);
         builder.setSmallIcon(R.drawable.moodots_icon_ver1);

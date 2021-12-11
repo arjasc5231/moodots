@@ -83,7 +83,7 @@ import java.util.Date;
     public ArrayList<zDiary> bringdata(int moodsee){
         ArrayList<zDiary> percent=new ArrayList<zDiary>();
         String sql = "SELECT _id, MOOD, CONTENTS, HASHCONTENTS, CHECKMOD, DATE, TIME, VOICE FROM " + zDiaryDatabase.TABLE_DIARY +" ORDER BY DATE DESC, TIME DESC;";
-        int recordCount= -1;
+        int recordCount= 0;
         zDiaryDatabase database = zDiaryDatabase.getInstance(context);
         if (database != null) {
             Cursor outCursor = database.rawQuery(sql);
@@ -221,6 +221,9 @@ import java.util.Date;
                             public void onClick(DialogInterface dialog, int which) {
                                 btnkeywordPicker.setText(temp);
                                 int moodsee=0;
+                                if(temp==null){
+                                    temp=moodlist[0];
+                                }
                                 switch(temp){
                                     case "화남":
                                         moodsee=1;

@@ -1,23 +1,14 @@
-package org.techtown.moodots;
+package org.techtown.foregroundsample;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
-import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.app.NotificationManagerCompat;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,6 +19,13 @@ import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Legend;
@@ -40,28 +38,24 @@ import com.github.mikephil.charting.formatter.ValueFormatter;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 
 import static android.os.SystemClock.sleep;
 
-public class fragment_bMainfrag extends Fragment implements OnBackPressedListener{
+public class bMainfrag extends Fragment implements OnBackPressedListener {
     private static final String TAG="Mainfrag";
     PieChart pieChart;
     Button date;
     RecyclerView recyclerView;
-    nadapter_DiaryAdapter adapter;
+    DiaryAdapter adapter;
     Context context;
     OnTabItemSelectedListener listener;
-    astart_activity_aMain activity;
+    aMain activity;
     ImageButton playerbutton;
     SeekBar seekbartemp;
     String prevdata;
-    String voice;
     int current =1;
-    int lastidinbringdata=-1;
     private MediaPlayer mediaPlayer = null;
     private Boolean isPlaying = false;
     final Calendar c = Calendar.getInstance();
@@ -71,7 +65,7 @@ public class fragment_bMainfrag extends Fragment implements OnBackPressedListene
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        activity= (astart_activity_aMain) getActivity();
+        activity= (aMain) getActivity();
         this.context = context;
         if(context instanceof OnTabItemSelectedListener){
             listener= (OnTabItemSelectedListener) context;
@@ -96,6 +90,7 @@ public class fragment_bMainfrag extends Fragment implements OnBackPressedListene
         initUI(rootView);
         ArrayList<Integer> percent= bringdata();
         piechart(rootView, percent);
+
         return rootView;
     }
 
@@ -130,18 +125,14 @@ public class fragment_bMainfrag extends Fragment implements OnBackPressedListene
     }
 
     private void initUI(ViewGroup rootView){
-        NotificationManager notifManager= (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        notifManager.cancelAll();
+
         ConstraintLayout layout=(ConstraintLayout) rootView.findViewById(R.id.clocklayout);
         TextView moodtime=rootView.findViewById(R.id.moodtime);
-        moodtime.setTypeface(astart_activity_aMain.face);
         TextView moodtext=rootView.findViewById(R.id.moodtext);
-        moodtext.setTypeface(astart_activity_aMain.face);
         //TextView textView=rootView.findViewById(R.id.datemain);
         //textView.setText(getDate());
         date= rootView.findViewById(R.id.datepick);
         date.setText(getDate());
-        date.setTypeface(astart_activity_aMain.face);
         if (getArguments() != null)
         {
             prevdata= getArguments().getString("bundleKey1");
@@ -162,15 +153,14 @@ public class fragment_bMainfrag extends Fragment implements OnBackPressedListene
         //layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         //GridLayoutManager layoutManager = new GridLayoutManager(getContext(),2);
         recyclerView.setLayoutManager(layoutManager);
-        adapter = new nadapter_DiaryAdapter();
+        adapter = new DiaryAdapter();
         recyclerView.setAdapter(adapter);
 
         adapter.setOnButtonClickListener(new OnDiaryButtonClickListener() {
             @Override
-            public void onButtonClick(nadapter_DiaryAdapter.ViewHolder holder, SeekBar seekBar, View view, int position) {
-                zDiary item = adapter.getItem(position);
-                if(!item.getVoice().equals("null")) {
-                    Log.d("debug", "debug voice path not empty");
+            public void onButtonClick(DiaryAdapter.ViewHolder holder, SeekBar seekBar, View view, int position) {
+                Diary item = adapter.getItem(position);
+                if(!item.getVoice().isEmpty()) {
                     File file = new File(item.getVoice());
                     if (isPlaying) {
                         // 음성 녹화 파일이 여러개를 클릭했을 때 재생중인 파일의 Icon을 비활성화(비 재생중)으로 바꾸기 위함.
@@ -201,9 +191,9 @@ public class fragment_bMainfrag extends Fragment implements OnBackPressedListene
         });
         adapter.setOnItemClickListener(new OnDiaryItemClickListener() {
             @Override
-            public void onItemClick(nadapter_DiaryAdapter.ViewHolder holder, View view, int position) {
+            public void onItemClick(DiaryAdapter.ViewHolder holder, View view, int position) {
                 // 새로 추가할 imageView 생성
-                zDiary item = adapter.getItem(position);
+                Diary item = adapter.getItem(position);
                 switch(item.mood){
                     case 1:
                         iv.setImageResource(R.drawable.angry_main_foreground);
@@ -248,9 +238,9 @@ public class fragment_bMainfrag extends Fragment implements OnBackPressedListene
         });
         adapter.setOnItemLongClickListener(new OnItemLongClickListener() {
             @Override
-            public void onItemLongClick(nadapter_DiaryAdapter.ViewHolder holder, View view, int position) {
+            public void onItemLongClick(DiaryAdapter.ViewHolder holder, View view, int position) {
                 println("active here");
-                zDiary item = adapter.getItem(position);
+                Diary item = adapter.getItem(position);
                 Bundle result = new Bundle();
                 result.putInt("bundleKey0", item._id);
                 result.putInt("bundleKey", 2);
@@ -265,7 +255,7 @@ public class fragment_bMainfrag extends Fragment implements OnBackPressedListene
                 result.putInt("bundleKey9", 1);
                 result.putString("bundleKey10", (String)date.getText());
                 FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
-                fragment_BlankFragment blankfragment = new fragment_BlankFragment();//프래그먼트2 선언
+                bBlankFragment blankfragment = new bBlankFragment();//프래그먼트2 선언
                 blankfragment.setArguments(result);//번들을 프래그먼트2로 보낼 준비
                 transaction.replace(R.id.container, blankfragment);
                 transaction.commit();
@@ -322,7 +312,6 @@ public class fragment_bMainfrag extends Fragment implements OnBackPressedListene
 
     private void buttonUI(ViewGroup rootView){
         Button sort=rootView.findViewById(R.id.sort);
-        sort.setTypeface(astart_activity_aMain.face);
         sort.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
@@ -334,7 +323,6 @@ public class fragment_bMainfrag extends Fragment implements OnBackPressedListene
             }
         });
         Button search=rootView.findViewById(R.id.search);
-        search.setTypeface(astart_activity_aMain.face);
         search.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
@@ -346,7 +334,6 @@ public class fragment_bMainfrag extends Fragment implements OnBackPressedListene
             }
         });
         Button setting=rootView.findViewById(R.id.setting);
-        setting.setTypeface(astart_activity_aMain.face);
         setting.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
@@ -358,7 +345,6 @@ public class fragment_bMainfrag extends Fragment implements OnBackPressedListene
             }
         });
         Button newDiaryButton = rootView.findViewById(R.id.newDiaryButton);
-        newDiaryButton.setTypeface(astart_activity_aMain.face);
         newDiaryButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -371,97 +357,39 @@ public class fragment_bMainfrag extends Fragment implements OnBackPressedListene
                 result.putInt("bundleKey9", 1);
                 result.putString("bundleKey10", (String)date.getText());
                 FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
-                fragment_BlankFragment blankfragment = new fragment_BlankFragment();//프래그먼트2 선언
+                bBlankFragment blankfragment = new bBlankFragment();//프래그먼트2 선언
                 blankfragment.setArguments(result);//번들을 프래그먼트2로 보낼 준비
                 transaction.replace(R.id.container, blankfragment);
                 transaction.commit();
             }
         });
+<<<<<<< HEAD:app/Foregroundsample/app/src/main/java/org/techtown/foregroundsample/bMainfrag.java
+        Button record=rootView.findViewById(R.id.record);
+        record.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                if (listener != null) {
+                    Toast.makeText(getContext(), "no ", Toast.LENGTH_SHORT).show();
+                }
+                Intent torec=new Intent(getActivity(), Record.class);
+                startActivity(torec);
+            }
+        });
+=======
 
+>>>>>>> Android:app/moodots/app/src/main/java/org/techtown/moodots/bMainfrag.java
     }
     public ArrayList<Integer> bringdata(){
-        //NotificationManagerCompat notificationManagerCompat = new NotificationManagerCompat(this);
-        // notificationManagerCompat.cancelAll();
-        File folder = new File("/storage/emulated/0/Download/moodots/");
-        if(!folder.exists()){
-            folder.mkdirs();
-        }
-        File[] files = folder.listFiles();
-        Log.d("debug", "debug file length"+files.length);
-        List<String> listoffile = new ArrayList<>();
-        for (int i=0; i< files.length; i++) {
-            String filename= files[i].getName();
-            String[] checkpcm=filename.split("\\.");
-            String[] checkwavform=checkpcm[0].split("_");
-            Log.d("debug", "debug file name split  "+checkpcm[1]);
-            if(checkpcm[1].equals("wav")&&checkwavform.length==4){
-                listoffile.add("/storage/emulated/0/Download/moodots/"+files[i].getName());
-                Log.d("debug", "debug file add"+"/storage/emulated/0/Download/moodots/"+files[i].getName());
-            }
-            /*else{
-                try{
-                    File file=new File("/storage/emulated/0/Download/moodots/"+files[i].getName());
-                    Log.d("debug", "debug file delete"+files[i].getName());
-                    file.delete();
-                }
-                catch (Exception e){
-                    e.printStackTrace();
-                }
-            }*/
-        }
-        String presql = "SELECT VOICE FROM " + zDiaryDatabase.TABLE_DIARY +" ORDER BY _id DESC;";
-        int prerecordCount= 0;
-        zDiaryDatabase database = zDiaryDatabase.getInstance(context);
-        if (database != null) {
-            Cursor outCursor = database.rawQuery(presql);
-            prerecordCount = outCursor.getCount();
-            zAppConstants.println("prerecord count : " + prerecordCount + "\n");
-            //ArrayList<zDiary> items = new ArrayList<zDiary>();
-            for (int i = 0; i < prerecordCount; i++) {
-                outCursor.moveToNext();
-                String voice = outCursor.getString(0);
-                if(listoffile.contains(voice)){
-                    listoffile.remove(voice);
-                }
-            }
-            outCursor.close();
-        }
-        for(int i=0; i<listoffile.size();i++) {
-            String filename= listoffile.get(i);
-            String[] firstsplitfilename=filename.split("\\.");
-            String[] secondsplitfilename= firstsplitfilename[0].split("_");
-            String[] thirdsplitfilenam= secondsplitfilename[0].split("/");
-            StringBuffer datebuffer = new StringBuffer(thirdsplitfilenam[thirdsplitfilenam.length-1]);
-            datebuffer.insert(4,"-");
-            datebuffer.insert(7,"-");
-            String sdate = datebuffer.toString();
-            StringBuffer timebuffer = new StringBuffer(secondsplitfilename[1]);
-            timebuffer.insert(2,":");
-            timebuffer.delete(5,7);
-            String stime = timebuffer.toString();
-            int moodfromfile = Integer.parseInt(secondsplitfilename[3]);
-            String sql2 = "insert into " + zDiaryDatabase.TABLE_DIARY +
-                    "(MOOD, CONTENTS, HASHCONTENTS, CHECKMOD, DATE, TIME, VOICE) values(" +
-                    "'" + moodfromfile + "', " +
-                    "'" + "" + "', " +
-                    "'" + "" + "', " +
-                    "'" + 0 + "', " +
-                    "'" + sdate + "', " +
-                    "'" + stime + "', " +
-                    "'" + filename + "'" + ")";
-            Log.d(TAG, "sql : " + sql2);
-            database.execSQL(sql2);
-        }
         ArrayList<Integer> percent=new ArrayList<Integer>();
         String curdate= (String) date.getText();
-        String sql = "SELECT _id, MOOD, CONTENTS, HASHCONTENTS, CHECKMOD, DATE, TIME, VOICE FROM " + zDiaryDatabase.TABLE_DIARY +" ORDER BY _id DESC;";
+        String sql = "SELECT _id, MOOD, CONTENTS, HASHCONTENTS, CHECKMOD, DATE, TIME, VOICE FROM " +DiaryDatabase.TABLE_DIARY +" ORDER BY _id DESC;";
         int recordCount= 0;
-        ArrayList<zDiary> items = new ArrayList<zDiary>();
+        DiaryDatabase database = DiaryDatabase.getInstance(context);
         if (database != null) {
             Cursor outCursor = database.rawQuery(sql);
             recordCount = outCursor.getCount();
             zAppConstants.println("record count : " + recordCount + "\n");
-            //ArrayList<zDiary> items = new ArrayList<zDiary>();
+            ArrayList<Diary> items = new ArrayList<Diary>();
             for (int i = 0; i < recordCount; i++) {
                 outCursor.moveToNext();
                 int _id = outCursor.getInt(0);
@@ -472,13 +400,10 @@ public class fragment_bMainfrag extends Fragment implements OnBackPressedListene
                 String date = outCursor.getString(5);
                 String time = outCursor.getString(6);
                 String voice = outCursor.getString(7);
-                if(listoffile.contains(voice)){
-                    listoffile.remove(voice);
-                }
                 if(date.equals(curdate)) {
                     if (date != null && date.length() > 6) {
                         try {
-                            Date inDate = zAppConstants.dateFormat5.parse(date);
+                            Date inDate =zAppConstants.dateFormat5.parse(date);
                             date = zAppConstants.dateFormat5.format(inDate);
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -496,9 +421,9 @@ public class fragment_bMainfrag extends Fragment implements OnBackPressedListene
                     } else {
                         time = "";
                     }
+
                     percent.add(mood);
-                    items.add(new zDiary(_id, mood, contents, hashcontents, checkmod, date, time,voice));
-                    Log.d("debug", "debug _id"+_id);
+                    items.add(new Diary(_id, mood, contents, hashcontents, checkmod, date, time,voice));
                 }
             }
             outCursor.close();
@@ -719,7 +644,6 @@ public class fragment_bMainfrag extends Fragment implements OnBackPressedListene
 
 
     }
-
 
 }
 

@@ -31,12 +31,13 @@
         android:orientation="vertical"
         >
 
-        <Button
+        <ImageButton
             android:id="@+id/recordcontrol"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:background="@drawable/ic_baseline_close_24"
-            android:layout_gravity="center"/>
+            android:layout_gravity="center"
+            app:tint="@color/black" />
 
         <TextView
             android:id="@+id/recordcontroltext"

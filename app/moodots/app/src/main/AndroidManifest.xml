@@ -24,6 +24,7 @@
             android:enabled="true"
             android:exported="false"
             android:foregroundServiceType="microphone"/>
+
         <activity
             android:name=".service_activity_stopforeground"
             android:exported="true"/>

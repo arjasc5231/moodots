@@ -41,12 +41,4 @@
         android:layout_gravity="center_vertical"
         android:text="수정하러가기" />
 
-    <Button
-        android:id="@+id/delete"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:layout_gravity="center_vertical"
-        android:text="녹음파일삭제" />
-
 </LinearLayout>

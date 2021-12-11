@@ -1,4 +1,4 @@
-package org.techtown.moodots;
+package org.techtown.foregroundsample;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
@@ -6,13 +6,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.media.MediaPlayer;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -29,6 +22,12 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -36,33 +35,32 @@ import java.util.Calendar;
 import java.util.Date;
 
 
-public class fragment_BlankFragment extends Fragment implements OnBackPressedListener{
+public class bBlankFragment extends Fragment implements OnBackPressedListener {
     private static final String TAG = "blankfragment";
     Context context;
     OnTabItemSelectedListener listener;
-    astart_activity_aMain activity;
+    aMain activity;
     int mMode = zAppConstants.MODE_INSERT;
     int moodIndex = 1;
     int _id = -1;
-    zDiary item;
+    Diary item;
     ImageView currentmood;
     TextView moodtext;
     Button time;
     Button date;
     EditText hashcontents;
     EditText contents;
-    int moodmod=0;
+    int moodmod=1;
     String contentsmod="";
     String hashcontentsmod="";
     int checkmod;
     String datecall="";
     String timecall="";
     RecyclerView recyclerView;
-    nadapter_DiaryAdapter_blank adapter;
+    DiaryAdapter_blank adapter;
     String voice;
     MediaPlayer mediaPlayer;
     String prevdata;
-    LinearLayout linear;
     int prev;
 
     int playingposition=-1;
@@ -71,7 +69,7 @@ public class fragment_BlankFragment extends Fragment implements OnBackPressedLis
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         this.context = context;
-        activity= (astart_activity_aMain) getActivity();
+        activity= (aMain) getActivity();
         if(context instanceof OnTabItemSelectedListener){
             listener = (OnTabItemSelectedListener) context;
         }
@@ -105,7 +103,7 @@ public class fragment_BlankFragment extends Fragment implements OnBackPressedLis
             Bundle result = new Bundle();
             result.putString("bundleKey1", prevdata);
             FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
-            fragment_bMainfrag mainfragment = new fragment_bMainfrag();//프래그먼트2 선언
+            bMainfrag mainfragment = new bMainfrag();//프래그먼트2 선언
             mainfragment.setArguments(result);//번들을 프래그먼트2로 보낼 준비
             transaction.replace(R.id.container, mainfragment);
             transaction.commit();
@@ -114,7 +112,7 @@ public class fragment_BlankFragment extends Fragment implements OnBackPressedLis
             Bundle result = new Bundle();
             result.putString("bundleKey1", prevdata);
             FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
-            fragment_bSortfrag sortfragment = new fragment_bSortfrag();//프래그먼트2 선언
+            bSortfrag sortfragment = new bSortfrag();//프래그먼트2 선언
             sortfragment.setArguments(result);//번들을 프래그먼트2로 보낼 준비
             transaction.replace(R.id.container, sortfragment);
             transaction.commit();
@@ -124,7 +122,7 @@ public class fragment_BlankFragment extends Fragment implements OnBackPressedLis
             result.putString("bundleKey1", prevdata);
             result.putInt("bundelKey2", prev);
             FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
-            fragment_bSearchfrag searchfragment = new fragment_bSearchfrag();//프래그먼트2 선언
+            bSearchfrag searchfragment = new bSearchfrag();//프래그먼트2 선언
             searchfragment.setArguments(result);//번들을 프래그먼트2로 보낼 준비
             transaction.replace(R.id.container, searchfragment);
             transaction.commit();
@@ -133,7 +131,7 @@ public class fragment_BlankFragment extends Fragment implements OnBackPressedLis
             Bundle result = new Bundle();
             result.putInt("bundelKey2", prev);
             FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
-            fragment_bSettingfrag settingfragment = new fragment_bSettingfrag();//프래그먼트2 선언
+            bSettingfrag settingfragment = new bSettingfrag();//프래그먼트2 선언
             settingfragment.setArguments(result);//번들을 프래그먼트2로 보낼 준비
             transaction.replace(R.id.container, settingfragment);
             transaction.commit();
@@ -143,7 +141,7 @@ public class fragment_BlankFragment extends Fragment implements OnBackPressedLis
             result.putString("bundleKey1", prevdata);
             result.putInt("bundelKey2", prev);
             FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
-            fragment_bSearchfrag searchfragment = new fragment_bSearchfrag();//프래그먼트2 선언
+            bSearchfrag searchfragment = new bSearchfrag();//프래그먼트2 선언
             searchfragment.setArguments(result);//번들을 프래그먼트2로 보낼 준비
             transaction.replace(R.id.container, searchfragment);
             transaction.commit();
@@ -251,14 +249,14 @@ public class fragment_BlankFragment extends Fragment implements OnBackPressedLis
         GridLayoutManager layoutManager = new GridLayoutManager(getContext(),1);
         layoutManager.setOrientation(GridLayoutManager.HORIZONTAL);
         recyclerView.setLayoutManager(layoutManager);
-        adapter = new nadapter_DiaryAdapter_blank();
+        adapter = new DiaryAdapter_blank();
         recyclerView.setAdapter(adapter);
          //현재 플레이 중인 음성 파일을 알기 위함
         adapter.setOnblankItemClickListener(new OnDiaryblankItemClickListener() {
             @Override
-            public void onBlankItemClick(nadapter_DiaryAdapter_blank.ViewHolder holder, View view, int position) {
+            public void onBlankItemClick(DiaryAdapter_blank.ViewHolder holder, View view, int position) {
                 // 새로 추가할 imageView 생성
-                zDiary item = adapter.getItem(position);
+                Diary item = adapter.getItem(position);
                 File file= new File(item.getVoice());
                 if(isPlaying){
                     // 음성 녹화 파일이 여러개를 클릭했을 때 재생중인 파일의 Icon을 비활성화(비 재생중)으로 바꾸기 위함.
@@ -282,8 +280,8 @@ public class fragment_BlankFragment extends Fragment implements OnBackPressedLis
         });
         adapter.setOnblankItemLongClickListener(new OnblankItemLongClickListener() {
             @Override
-            public void onBlankItemLongClick(nadapter_DiaryAdapter_blank.ViewHolder holder, View view, int position) {
-                zDiary item = adapter.getItem(position);
+            public void onBlankItemLongClick(DiaryAdapter_blank.ViewHolder holder, View view, int position) {
+                Diary item = adapter.getItem(position);
                 Bundle result = new Bundle();
                 result.putInt("bundleKey0", item._id);
                 result.putInt("bundleKey", 2);
@@ -297,7 +295,7 @@ public class fragment_BlankFragment extends Fragment implements OnBackPressedLis
                 result.putInt("bundleKey9", prev);
                 result.putString("bundleKey10", prevdata);
                 FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
-                fragment_BlankFragment blankfragment = new fragment_BlankFragment();//프래그먼트2 선언
+                bBlankFragment blankfragment = new bBlankFragment();//프래그먼트2 선언
                 blankfragment.setArguments(result);//번들을 프래그먼트2로 보낼 준비
                 transaction.replace(R.id.container, blankfragment);
                 transaction.commit();
@@ -307,9 +305,7 @@ public class fragment_BlankFragment extends Fragment implements OnBackPressedLis
         {
             _id=getArguments().getInt("bundleKey0");
             mMode = getArguments().getInt("bundleKey");
-            zAppConstants.println("debug bBlankfragment"+mMode);
             moodmod = getArguments().getInt("bundleKey2");
-            Log.d("debug ", "debug mood  "+moodmod);
             contentsmod = getArguments().getString("bundleKey3");
             hashcontentsmod= getArguments().getString("bundleKey4");
             checkmod = getArguments().getInt("bundleKey5");
@@ -323,22 +319,9 @@ public class fragment_BlankFragment extends Fragment implements OnBackPressedLis
         }
         if(mMode==1) {
             Log.d(TAG, "active add");
-            if(datecall==null) {
-                date.setText(getDate());
-            }
-            else{
-                date.setText(datecall);
-            }
-            if(timecall==null) {
-                time.setText(getDate());
-            }
-            else{
-                time.setText(timecall);
-            }
-            if(moodmod!=0) {
-                moodIndex = moodmod;
-            }
-            linear = rootView.findViewById(R.id.diary_border);
+            date.setText(getDate());
+            time.setText(getTime());
+            LinearLayout linear = rootView.findViewById(R.id.diary_border);
             Button angry = rootView.findViewById(R.id.angry);
             angry.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -409,9 +392,7 @@ public class fragment_BlankFragment extends Fragment implements OnBackPressedLis
                     linear.setBackgroundResource(R.drawable.diaryadd_layout_border_neutral);
                 }
             });
-            if(moodmod>0){
-                setMoodImage(moodmod);
-            }
+
             Button addDiaryButton = rootView.findViewById(R.id.addDiaryButton);
             addDiaryButton.setText("추가");
             addDiaryButton.setOnClickListener(new View.OnClickListener() {
@@ -428,7 +409,7 @@ public class fragment_BlankFragment extends Fragment implements OnBackPressedLis
                             Bundle result = new Bundle();
                             result.putString("bundleKey1", prevdata);
                             FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
-                            fragment_bMainfrag mainfragment = new fragment_bMainfrag();//프래그먼트2 선언
+                            bMainfrag mainfragment = new bMainfrag();//프래그먼트2 선언
                             mainfragment.setArguments(result);//번들을 프래그먼트2로 보낼 준비
                             transaction.replace(R.id.container, mainfragment);
                             transaction.commit();
@@ -437,7 +418,7 @@ public class fragment_BlankFragment extends Fragment implements OnBackPressedLis
                             Bundle result = new Bundle();
                             result.putString("bundleKey1", prevdata);
                             FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
-                            fragment_bSortfrag sortfragment = new fragment_bSortfrag();//프래그먼트2 선언
+                            bSortfrag sortfragment = new bSortfrag();//프래그먼트2 선언
                             sortfragment.setArguments(result);//번들을 프래그먼트2로 보낼 준비
                             transaction.replace(R.id.container, sortfragment);
                             transaction.commit();
@@ -447,7 +428,7 @@ public class fragment_BlankFragment extends Fragment implements OnBackPressedLis
                             result.putString("bundleKey1", prevdata);
                             result.putInt("bundelKey2", prev);
                             FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
-                            fragment_bSearchfrag searchfragment = new fragment_bSearchfrag();//프래그먼트2 선언
+                            bSearchfrag searchfragment = new bSearchfrag();//프래그먼트2 선언
                             searchfragment.setArguments(result);//번들을 프래그먼트2로 보낼 준비
                             transaction.replace(R.id.container, searchfragment);
                             transaction.commit();
@@ -456,7 +437,7 @@ public class fragment_BlankFragment extends Fragment implements OnBackPressedLis
                             Bundle result = new Bundle();
                             result.putInt("bundelKey2", prev);
                             FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
-                            fragment_bSettingfrag settingfragment = new fragment_bSettingfrag();//프래그먼트2 선언
+                            bSettingfrag settingfragment = new bSettingfrag();//프래그먼트2 선언
                             settingfragment.setArguments(result);//번들을 프래그먼트2로 보낼 준비
                             transaction.replace(R.id.container, settingfragment);
                             transaction.commit();
@@ -466,7 +447,7 @@ public class fragment_BlankFragment extends Fragment implements OnBackPressedLis
                             result.putString("bundleKey1", prevdata);
                             result.putInt("bundelKey2", prev);
                             FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
-                            fragment_bSearchfrag searchfragment = new fragment_bSearchfrag();//프래그먼트2 선언
+                            bSearchfrag searchfragment = new bSearchfrag();//프래그먼트2 선언
                             searchfragment.setArguments(result);//번들을 프래그먼트2로 보낼 준비
                             transaction.replace(R.id.container, searchfragment);
                             transaction.commit();
@@ -500,7 +481,7 @@ public class fragment_BlankFragment extends Fragment implements OnBackPressedLis
                         public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                             try {
                                 Date indate = zAppConstants.dateFormat5.parse(year + "-" + (month + 1) + "-" + dayOfMonth);
-                                String day= zAppConstants.dateFormat5.format(indate);
+                                String day=zAppConstants.dateFormat5.format(indate);
                                 date.setText(day);
                             }catch(Exception e){
                                 e.printStackTrace();
@@ -533,13 +514,13 @@ public class fragment_BlankFragment extends Fragment implements OnBackPressedLis
             });
         }
         else if(mMode==2){
-            Log.d(TAG, "debug active modify");
+            Log.d(TAG, "active modify");
             Log.d(TAG, "active modify"+datecall);
             date.setText(datecall);
             time.setText(timecall);
             contents.setText(contentsmod);
 
-            linear = rootView.findViewById(R.id.diary_border);
+
             hashcontents.setText(hashcontentsmod);
             moodIndex= moodmod;
             setMoodImage(moodIndex);
@@ -549,7 +530,6 @@ public class fragment_BlankFragment extends Fragment implements OnBackPressedLis
                 public void onClick(View v) {
                     moodIndex = 1;
                     setMoodImage(moodIndex);
-                    linear.setBackgroundResource(R.drawable.diaryadd_layout_border_angry);
                 }
             });
             Button joy = rootView.findViewById(R.id.joy);
@@ -558,7 +538,6 @@ public class fragment_BlankFragment extends Fragment implements OnBackPressedLis
                 public void onClick(View v) {
                     moodIndex = 2;
                     setMoodImage(moodIndex);
-                    linear.setBackgroundResource(R.drawable.diaryadd_layout_border_joy);
                 }
             });
             Button fear = rootView.findViewById(R.id.fear);
@@ -567,7 +546,6 @@ public class fragment_BlankFragment extends Fragment implements OnBackPressedLis
                 public void onClick(View v) {
                     moodIndex = 3;
                     setMoodImage(moodIndex);
-                    linear.setBackgroundResource(R.drawable.diaryadd_layout_border_fear);
                 }
             });
             Button sad = rootView.findViewById(R.id.sad);
@@ -576,7 +554,6 @@ public class fragment_BlankFragment extends Fragment implements OnBackPressedLis
                 public void onClick(View v) {
                     moodIndex = 4;
                     setMoodImage(moodIndex);
-                    linear.setBackgroundResource(R.drawable.diaryadd_layout_border_sad);
                 }
             });
             Button disgust = rootView.findViewById(R.id.disgust);
@@ -585,7 +562,6 @@ public class fragment_BlankFragment extends Fragment implements OnBackPressedLis
                 public void onClick(View v) {
                     moodIndex = 5;
                     setMoodImage(moodIndex);
-                    linear.setBackgroundResource(R.drawable.diaryadd_layout_border_disgust);
                 }
             });
             Button surprise = rootView.findViewById(R.id.surprise);
@@ -594,7 +570,6 @@ public class fragment_BlankFragment extends Fragment implements OnBackPressedLis
                 public void onClick(View v) {
                     moodIndex = 6;
                     setMoodImage(moodIndex);
-                    linear.setBackgroundResource(R.drawable.diaryadd_layout_border_surprise);
                 }
             });
             Button neutral = rootView.findViewById(R.id.neutral);
@@ -603,7 +578,6 @@ public class fragment_BlankFragment extends Fragment implements OnBackPressedLis
                 public void onClick(View v) {
                     moodIndex = 7;
                     setMoodImage(moodIndex);
-                    linear.setBackgroundResource(R.drawable.diaryadd_layout_border_neutral);
                 }
             });
 
@@ -619,7 +593,7 @@ public class fragment_BlankFragment extends Fragment implements OnBackPressedLis
                         Bundle result = new Bundle();
                         result.putString("bundleKey1", prevdata);
                         FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
-                        fragment_bMainfrag mainfragment = new fragment_bMainfrag();//프래그먼트2 선언
+                        bMainfrag mainfragment = new bMainfrag();//프래그먼트2 선언
                         mainfragment.setArguments(result);//번들을 프래그먼트2로 보낼 준비
                         transaction.replace(R.id.container, mainfragment);
                         transaction.commit();
@@ -629,7 +603,7 @@ public class fragment_BlankFragment extends Fragment implements OnBackPressedLis
                         result.putString("bundleKey1", prevdata);
                         result.putInt("bundelKey2", prev);
                         FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
-                        fragment_bSearchfrag searchfragment = new fragment_bSearchfrag();//프래그먼트2 선언
+                        bSearchfrag searchfragment = new bSearchfrag();//프래그먼트2 선언
                         searchfragment.setArguments(result);//번들을 프래그먼트2로 보낼 준비
                         transaction.replace(R.id.container, searchfragment);
                         transaction.commit();
@@ -639,7 +613,7 @@ public class fragment_BlankFragment extends Fragment implements OnBackPressedLis
                         result.putString("bundleKey1", prevdata);
                         result.putInt("bundelKey2", prev);
                         FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
-                        fragment_bSearchfrag searchfragment = new fragment_bSearchfrag();//프래그먼트2 선언
+                        bSearchfrag searchfragment = new bSearchfrag();//프래그먼트2 선언
                         searchfragment.setArguments(result);//번들을 프래그먼트2로 보낼 준비
                         transaction.replace(R.id.container, searchfragment);
                         transaction.commit();
@@ -670,7 +644,7 @@ public class fragment_BlankFragment extends Fragment implements OnBackPressedLis
                         Bundle result = new Bundle();
                         result.putString("bundleKey1", prevdata);
                         FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
-                        fragment_bMainfrag mainfragment = new fragment_bMainfrag();//프래그먼트2 선언
+                        bMainfrag mainfragment = new bMainfrag();//프래그먼트2 선언
                         mainfragment.setArguments(result);//번들을 프래그먼트2로 보낼 준비
                         transaction.replace(R.id.container, mainfragment);
                         transaction.commit();
@@ -680,7 +654,7 @@ public class fragment_BlankFragment extends Fragment implements OnBackPressedLis
                         result.putString("bundleKey1", prevdata);
                         result.putInt("bundelKey2", prev);
                         FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
-                        fragment_bSearchfrag searchfragment = new fragment_bSearchfrag();//프래그먼트2 선언
+                        bSearchfrag searchfragment = new bSearchfrag();//프래그먼트2 선언
                         searchfragment.setArguments(result);//번들을 프래그먼트2로 보낼 준비
                         transaction.replace(R.id.container, searchfragment);
                         transaction.commit();
@@ -690,7 +664,7 @@ public class fragment_BlankFragment extends Fragment implements OnBackPressedLis
                         result.putString("bundleKey1", prevdata);
                         result.putInt("bundelKey2", prev);
                         FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
-                        fragment_bSearchfrag searchfragment = new fragment_bSearchfrag();//프래그먼트2 선언
+                        bSearchfrag searchfragment = new bSearchfrag();//프래그먼트2 선언
                         searchfragment.setArguments(result);//번들을 프래그먼트2로 보낼 준비
                         transaction.replace(R.id.container, searchfragment);
                         transaction.commit();
@@ -752,43 +726,38 @@ public class fragment_BlankFragment extends Fragment implements OnBackPressedLis
                 currentmood.setImageResource(R.mipmap.ic_angry);
                 moodtext.setGravity( Gravity.CENTER_VERTICAL);
                 moodtext.setText("화가 났나요?");
-                linear.setBackgroundResource(R.drawable.diaryadd_layout_border_angry);
+
                 break;
             case 2:
                 currentmood.setImageResource(R.mipmap.ic_joy);
                 moodtext.setGravity( Gravity.CENTER_VERTICAL);
                 moodtext.setText("기쁜가요?");
-                linear.setBackgroundResource(R.drawable.diaryadd_layout_border_joy);
+
                 break;
             case 3:
                 currentmood.setImageResource(R.mipmap.ic_fear);
                 moodtext.setGravity( Gravity.CENTER_VERTICAL);
                 moodtext.setText("두려운가요?");
-                linear.setBackgroundResource(R.drawable.diaryadd_layout_border_fear);
                 break;
             case 4:
                 currentmood.setImageResource(R.mipmap.ic_sad);
                 moodtext.setGravity( Gravity.CENTER_VERTICAL);
                 moodtext.setText("슬픈가요?");
-                linear.setBackgroundResource(R.drawable.diaryadd_layout_border_sad);
                 break;
             case 5:
                 currentmood.setImageResource(R.mipmap.ic_disgust);
                 moodtext.setGravity( Gravity.CENTER_VERTICAL);
                 moodtext.setText("혐오스러운가요?");
-                linear.setBackgroundResource(R.drawable.diaryadd_layout_border_disgust);
                 break;
             case 6:
                 currentmood.setImageResource(R.mipmap.ic_surprise);
                 moodtext.setGravity( Gravity.CENTER_VERTICAL);
                 moodtext.setText("놀랐나요?");
-                linear.setBackgroundResource(R.drawable.diaryadd_layout_border_surprise);
                 break;
             default:
                 currentmood.setImageResource(R.mipmap.ic_neutral);
                 moodtext.setGravity( Gravity.CENTER_VERTICAL);
                 moodtext.setText("아무런 감정이 느껴지지 않나요?");
-                linear.setBackgroundResource(R.drawable.diaryadd_layout_border_neutral);
                 break;
         }
     }
@@ -802,21 +771,19 @@ public class fragment_BlankFragment extends Fragment implements OnBackPressedLis
         }
         String sdate = date.getText().toString();
         String stime = time.getText().toString();
-        if(voice==null){
-            String voice = "";
-        }
-        String sql = "insert into " + zDiaryDatabase.TABLE_DIARY +
+        String voice = "";
+        String sql = "insert into " + DiaryDatabase.TABLE_DIARY +
                 "(MOOD, CONTENTS, HASHCONTENTS, CHECKMOD, DATE, TIME, VOICE) values(" +
                 "'"+ moodIndex + "', " +
                 "'"+ scontents + "', " +
                 "'"+ hashstring + "', " +
-                "'"+ 1 + "', " +
+                "'"+ checkmod + "', " +
                 "'"+ sdate + "', " +
                 "'"+ stime + "', " +
                 "'"+ voice + "'" +")";
 
         Log.d(TAG, "sql : " + sql);
-        zDiaryDatabase database = zDiaryDatabase.getInstance(context);
+        DiaryDatabase database = DiaryDatabase.getInstance(context);
         database.execSQL(sql);
 
     }
@@ -841,19 +808,19 @@ public class fragment_BlankFragment extends Fragment implements OnBackPressedLis
         }catch(Exception e) {
             e.printStackTrace();
         }*/
-        String sql = "UPDATE " + zDiaryDatabase.TABLE_DIARY +
+        String sql = "UPDATE " + DiaryDatabase.TABLE_DIARY +
                 " SET " +
                 " MOOD = '" + moodIndex + "'" +
                 " ,CONTENTS = '" + scontents + "'" +
                 " ,HASHCONTENTS = '" + hashstring + "'" +
-                " ,CHECKMOD = '" + 1 + "'" +
+                " ,CHECKMOD = '" + checkmod + "'" +
                 " ,DATE = '" + sdate + "'" +
                 " ,TIME = '" + stime + "'" +
                 " WHERE " +
                 "_id = "+_id+";";
 
         Log.d(TAG, "sql : " + sql);
-        zDiaryDatabase database = zDiaryDatabase.getInstance(context);
+        DiaryDatabase database = DiaryDatabase.getInstance(context);
         database.execSQL(sql);
 
     }
@@ -865,12 +832,12 @@ public class fragment_BlankFragment extends Fragment implements OnBackPressedLis
     private void deleteDiary() {
         zAppConstants.println("deleteNote called.");
         // delete note
-        String sql = "DELETE FROM " + zDiaryDatabase.TABLE_DIARY +
+        String sql = "DELETE FROM " + DiaryDatabase.TABLE_DIARY +
                 " WHERE " +
                 "_id = " + _id+";";
 
         Log.d(TAG, "sql : " + sql);
-        zDiaryDatabase database = zDiaryDatabase.getInstance(context);
+        DiaryDatabase database = DiaryDatabase.getInstance(context);
         database.execSQL(sql);
 
     }
@@ -888,9 +855,9 @@ public class fragment_BlankFragment extends Fragment implements OnBackPressedLis
     }
     public int loadDiaryListData(){
         String curdate=getDate();
-        String sql = "SELECT _id, MOOD, CONTENTS, HASHCONTENTS, CHECKMOD, DATE, TIME, VOICE FROM " + zDiaryDatabase.TABLE_DIARY +" WHERE CHECKMOD =0 ORDER BY _id DESC;";
+        String sql = "SELECT _id, MOOD, CONTENTS, HASHCONTENTS, CHECKMOD, DATE, TIME, VOICE FROM " +DiaryDatabase.TABLE_DIARY +" WHERE CHECKMOD =0 ORDER BY _id DESC;";
         int recordCount= 0;
-        zDiaryDatabase database = zDiaryDatabase.getInstance(context);
+        DiaryDatabase database = DiaryDatabase.getInstance(context);
         if (database != null) {
             Log.d(TAG, sql);
             Cursor outCursor = database.rawQuery(sql);
@@ -898,7 +865,7 @@ public class fragment_BlankFragment extends Fragment implements OnBackPressedLis
             recordCount = outCursor.getCount();
             zAppConstants.println("record count : " + recordCount + "\n");
 
-            ArrayList<zDiary> items = new ArrayList<zDiary>();
+            ArrayList<Diary> items = new ArrayList<Diary>();
 
             for (int i = 0; i < recordCount; i++) {
                 outCursor.moveToNext();
@@ -928,7 +895,7 @@ public class fragment_BlankFragment extends Fragment implements OnBackPressedLis
                     if (time != null && time.length() > 2) {
                         try {
                             Date inTime = zAppConstants.dateFormat6.parse(time);
-                            time = zAppConstants.dateFormat6.format(inTime);
+                            time =zAppConstants.dateFormat6.format(inTime);
                             Log.d(TAG, "stime" + time);
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -936,7 +903,7 @@ public class fragment_BlankFragment extends Fragment implements OnBackPressedLis
                     } else {
                         time = "";
                     }
-                    items.add(new zDiary(_id, mood, contents, hashcontents, checkmod, date, time, voice));
+                    items.add(new Diary(_id, mood, contents, hashcontents, checkmod, date, time, voice));
                 }
             }
 

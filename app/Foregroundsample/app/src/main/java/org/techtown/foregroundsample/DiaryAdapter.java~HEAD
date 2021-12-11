@@ -1,4 +1,4 @@
-package org.techtown.moodots;
+package org.techtown.foregroundsample;
 
 import android.media.MediaPlayer;
 import android.view.LayoutInflater;
@@ -7,17 +7,14 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 
-public class nadapter_DiaryAdapter extends RecyclerView.Adapter<nadapter_DiaryAdapter.ViewHolder> implements OnDiaryItemClickListener, OnItemLongClickListener, OnDiaryButtonClickListener, OnDiarySeekBarChangeListener{
-    ArrayList<zDiary> items = new ArrayList<zDiary>();
+public class DiaryAdapter extends RecyclerView.Adapter<DiaryAdapter.ViewHolder> implements OnDiaryItemClickListener, OnItemLongClickListener, OnDiaryButtonClickListener, OnDiarySeekBarChangeListener{
+    ArrayList<Diary> items = new ArrayList<Diary>();
     OnDiaryItemClickListener listener;
     OnItemLongClickListener longlistener;
     OnDiaryButtonClickListener buttonlistener;
@@ -33,7 +30,7 @@ public class nadapter_DiaryAdapter extends RecyclerView.Adapter<nadapter_DiaryAd
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int position) {
-        zDiary item = items.get(position);
+        Diary item = items.get(position);
         viewHolder.setItem(item);
     }
 
@@ -41,13 +38,13 @@ public class nadapter_DiaryAdapter extends RecyclerView.Adapter<nadapter_DiaryAd
     public int getItemCount() {
         return items.size();
     }
-    public void addItem(zDiary item){
+    public void addItem(Diary item){
         items.add(item);
     }
-    public void setItems(ArrayList<zDiary> items){
+    public void setItems(ArrayList<Diary> items){
         this.items = items;
     }
-    public zDiary getItem(int position){
+    public Diary getItem(int position){
         return items.get(position);
     }
     public void setOnItemClickListener(OnDiaryItemClickListener listener){
@@ -92,25 +89,19 @@ public class nadapter_DiaryAdapter extends RecyclerView.Adapter<nadapter_DiaryAd
         ImageView moodImageView;
         ImageButton playerbutton;
         SeekBar seekBar;
-        int checkmod;
         int mood;
         MediaPlayer mediaPlayer;
         //녹음 관련 변수
 
-        public void setItem(zDiary item){
+        public void setItem(Diary item){
             mood = item.getMood();
             int moodIndex = mood;
             setMoodImage(moodIndex);
-            checkmod=item.getCheckmod();
             voice= item.getVoice();
         }
 
         public ViewHolder(View itemView, final OnDiaryItemClickListener listener, final OnItemLongClickListener longlistener, OnDiaryButtonClickListener buttonlistener, SeekBar.OnSeekBarChangeListener seekbarlistener){
             super(itemView);
-            if(checkmod==0){
-                TextView newtext = itemView.findViewById(R.id.newtext);
-                newtext.setText("NEW");
-            }
             moodImageView = itemView.findViewById(R.id.moodImageView);
             seekBar=itemView.findViewById(R.id.seekBar);
             seekBar.setEnabled(false);
