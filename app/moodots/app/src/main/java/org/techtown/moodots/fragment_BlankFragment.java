@@ -330,7 +330,7 @@ public class fragment_BlankFragment extends Fragment implements OnBackPressedLis
                 date.setText(datecall);
             }
             if(timecall==null) {
-                time.setText(getDate());
+                time.setText(getTime());
             }
             else{
                 time.setText(timecall);

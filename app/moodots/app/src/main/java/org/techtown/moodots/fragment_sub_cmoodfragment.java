@@ -42,7 +42,7 @@ import java.util.Date;
     RecyclerView recyclerView;
     nadapter_DiaryAdapter_search adapter;
     OnTabItemSelectedListener listener;
-
+    int checked=0;
     ImageButton playerbutton;
     SeekBar seekbartemp;
     private MediaPlayer mediaPlayer = null;
@@ -210,7 +210,7 @@ import java.util.Date;
             @Override
             public void onClick(View view) {
                 AlertDialog.Builder keydialog = new AlertDialog.Builder(getContext());
-                keydialog.setSingleChoiceItems(moodlist, 0, new DialogInterface.OnClickListener() {
+                keydialog.setSingleChoiceItems(moodlist, checked, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         temp=moodlist[which];
@@ -222,29 +222,36 @@ import java.util.Date;
                                 btnkeywordPicker.setText(temp);
                                 int moodsee=0;
                                 if(temp==null){
-                                    temp=moodlist[0];
+                                    temp=moodlist[checked];
                                 }
                                 switch(temp){
                                     case "화남":
                                         moodsee=1;
+                                        checked=1;
                                         break;
                                     case "기쁨":
                                         moodsee=2;
+                                        checked=2;
                                         break;
                                     case "두려움":
                                         moodsee=3;
+                                        checked=3;
                                         break;
                                     case "슬픔":
                                         moodsee=4;
+                                        checked=4;
                                         break;
                                     case "역겨움":
                                         moodsee=5;
+                                        checked=5;
                                         break;
                                     case "놀람":
                                         moodsee=6;
+                                        checked=6;
                                         break;
                                     case "중립":
                                         moodsee=7;
+                                        checked=7;
                                         break;
                                 }
                                 ArrayList<zDiary> percent= bringdata(moodsee);

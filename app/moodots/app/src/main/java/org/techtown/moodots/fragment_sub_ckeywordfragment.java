@@ -44,7 +44,7 @@ import static android.os.SystemClock.sleep;
 public class fragment_sub_ckeywordfragment extends Fragment {
     astart_activity_aMain activity;
     Context context;
-    int checked=0;
+    int checked=0;//현재 적용되고 있는 키워드
     OnTabItemSelectedListener listener;
     PieChart pieChart;
     nadapter_DiaryAdapter adapter;
@@ -276,6 +276,7 @@ public class fragment_sub_ckeywordfragment extends Fragment {
                                 }
                                 btnkeywordPicker.setText(temp);
                                 ArrayList<zDiary> percent= bringdata(temp);
+                                checked=Arrays.asList(hashlist).indexOf(temp);
                                 piechart(rootView, percent);
                             }
                         })

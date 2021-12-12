@@ -1,6 +1,7 @@
 package org.techtown.moodots;
 
 import android.media.MediaPlayer;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -92,6 +93,7 @@ public class nadapter_DiaryAdapter extends RecyclerView.Adapter<nadapter_DiaryAd
         ImageView moodImageView;
         ImageButton playerbutton;
         SeekBar seekBar;
+        TextView newtext;
         int checkmod;
         int mood;
         MediaPlayer mediaPlayer;
@@ -102,15 +104,19 @@ public class nadapter_DiaryAdapter extends RecyclerView.Adapter<nadapter_DiaryAd
             int moodIndex = mood;
             setMoodImage(moodIndex);
             checkmod=item.getCheckmod();
+            newtext = itemView.findViewById(R.id.newtext);
+            Log.d("debug", "debug checkmod"+checkmod);
+            if(checkmod==0){
+                newtext.setText("NEW");
+            }
+            else{
+                newtext.setText("");
+            }
             voice= item.getVoice();
         }
 
         public ViewHolder(View itemView, final OnDiaryItemClickListener listener, final OnItemLongClickListener longlistener, OnDiaryButtonClickListener buttonlistener, SeekBar.OnSeekBarChangeListener seekbarlistener){
             super(itemView);
-            if(checkmod==0){
-                TextView newtext = itemView.findViewById(R.id.newtext);
-                newtext.setText("NEW");
-            }
             moodImageView = itemView.findViewById(R.id.moodImageView);
             seekBar=itemView.findViewById(R.id.seekBar);
             seekBar.setEnabled(false);
