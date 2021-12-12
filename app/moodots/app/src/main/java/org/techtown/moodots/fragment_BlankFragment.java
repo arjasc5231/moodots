@@ -3,6 +3,7 @@ package org.techtown.moodots;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -23,8 +24,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -34,6 +37,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+
+import static android.os.SystemClock.sleep;
 
 
 public class fragment_BlankFragment extends Fragment implements OnBackPressedListener{
@@ -49,6 +54,8 @@ public class fragment_BlankFragment extends Fragment implements OnBackPressedLis
     TextView moodtext;
     Button time;
     Button date;
+    ImageButton playvoice;
+    SeekBar seekbartemp;
     EditText hashcontents;
     EditText contents;
     int moodmod=0;
@@ -64,6 +71,7 @@ public class fragment_BlankFragment extends Fragment implements OnBackPressedLis
     String prevdata;
     LinearLayout linear;
     int prev;
+    int stopwhileplayvoice=0;
 
     int playingposition=-1;
     boolean isPlaying;
@@ -99,7 +107,7 @@ public class fragment_BlankFragment extends Fragment implements OnBackPressedLis
 
     @Override
     public void onBackPressed() {
-        stopAudio();
+        stopAudio(1);
         Log.d("debug prev","prev: "+prev);
         if(prev==1){
             Bundle result = new Bundle();
@@ -163,6 +171,7 @@ public class fragment_BlankFragment extends Fragment implements OnBackPressedLis
                 if (listener != null) {
                     Toast.makeText(getContext(), "no ", Toast.LENGTH_SHORT).show();
                 }
+                stopAudio(1);
                 activity.replaceFragment(1);
             }
         });
@@ -173,6 +182,7 @@ public class fragment_BlankFragment extends Fragment implements OnBackPressedLis
                 if (listener != null) {
                     Toast.makeText(getContext(), "no ", Toast.LENGTH_SHORT).show();
                 }
+                stopAudio(1);
                 activity.replaceFragment(3);
             }
         });
@@ -183,6 +193,7 @@ public class fragment_BlankFragment extends Fragment implements OnBackPressedLis
                 if (listener != null) {
                     Toast.makeText(getContext(), "no ", Toast.LENGTH_SHORT).show();
                 }
+                stopAudio(1);
                 activity.replaceFragment(4);
             }
         });
@@ -193,6 +204,7 @@ public class fragment_BlankFragment extends Fragment implements OnBackPressedLis
                 if (listener != null) {
                     Toast.makeText(getContext(), "no ", Toast.LENGTH_SHORT).show();
                 }
+                stopAudio(1);
                 activity.replaceFragment(2);
             }
         });
@@ -206,6 +218,40 @@ public class fragment_BlankFragment extends Fragment implements OnBackPressedLis
         //TextView textView=rootView.findViewById(R.id.dateadd);
         //textView.setText(getDate());
         currentmood = rootView.findViewById(R.id.currentmood);
+        seekbartemp= rootView.findViewById(R.id.seekBar);
+        seekbartemp.setEnabled(false);
+        playvoice = rootView.findViewById(R.id.playvoice);
+        playvoice.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(voice!=null) {
+                    Log.d("debug", "debug voice path not empty");
+                    File file = new File(voice);
+                    if (isPlaying) {
+                        // 음성 녹화 파일이 여러개를 클릭했을 때 재생중인 파일의 Icon을 비활성화(비 재생중)으로 바꾸기 위함.
+                        if (playvoice == (ImageButton) view) {
+                            // 같은 파일을 클릭했을 경우
+                            stopAudio(1);
+                        } else {
+                            // 다른 음성 파일을 클릭했을 경우
+                            // 기존의 재생중인 파일 중지
+
+                            stopAudio(1);
+                            sleep(600); //쓰레드의 지연시간을 적용시키기 위해서 필요.
+                            // 새로 파일 재생하기
+                            playvoice = (ImageButton) view;
+                            playAudio(file, seekbartemp);
+                        }
+                    } else {
+                        playvoice = (ImageButton) view;
+                        playAudio(file, seekbartemp);
+                    }
+                }
+                else{
+                    Toast.makeText(getContext(),"녹음 파일이 없습니다.",Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
         date = rootView.findViewById(R.id.date);
         time = rootView.findViewById(R.id.time);
         contents = rootView.findViewById(R.id.contents);
@@ -245,6 +291,7 @@ public class fragment_BlankFragment extends Fragment implements OnBackPressedLis
             public void afterTextChanged(Editable s) {
             }
         });
+
         recyclerView = rootView.findViewById(R.id.recyclerView);
         //LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         //layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
@@ -264,12 +311,11 @@ public class fragment_BlankFragment extends Fragment implements OnBackPressedLis
                     // 음성 녹화 파일이 여러개를 클릭했을 때 재생중인 파일의 Icon을 비활성화(비 재생중)으로 바꾸기 위함.
                     if(playingposition == position){
                         // 같은 파일을 클릭했을 경우
-                        stopAudio();
+                        stopAudio(0);
                     } else {
                         // 다른 음성 파일을 클릭했을 경우
                         // 기존의 재생중인 파일 중지
-                        stopAudio();
-
+                        stopAudio(1);
                         // 새로 파일 재생하기
                         playingposition = position;
                         playAudio(file);
@@ -423,7 +469,7 @@ public class fragment_BlankFragment extends Fragment implements OnBackPressedLis
                         moodIndex = 1;
                         contents.setText("");
                         hashcontents.setText("");
-                        stopAudio();
+                        stopAudio(1);
                         if(prev==1){
                             Bundle result = new Bundle();
                             result.putString("bundleKey1", prevdata);
@@ -484,7 +530,7 @@ public class fragment_BlankFragment extends Fragment implements OnBackPressedLis
                 public void onClick(View v) {
                     hashcontents.setText("");
                     contents.setText("");
-                    stopAudio();
+                    stopAudio(1);
                     activity.replaceFragment(1);
                 }
             });
@@ -614,7 +660,7 @@ public class fragment_BlankFragment extends Fragment implements OnBackPressedLis
                 public void onClick(View v) {
                     checkmod=1;
                     modifyDiary();
-                    stopAudio();
+                    stopAudio(1);
                     if(prev==1){
                         Bundle result = new Bundle();
                         result.putString("bundleKey1", prevdata);
@@ -665,7 +711,8 @@ public class fragment_BlankFragment extends Fragment implements OnBackPressedLis
                         e.printStackTrace();
                     }
                     deleteDiary();
-                    stopAudio();
+                    stopAudio(0);
+                    stopAudio(1);
                     if(prev==1){
                         Bundle result = new Bundle();
                         result.putString("bundleKey1", prevdata);
@@ -954,27 +1001,106 @@ public class fragment_BlankFragment extends Fragment implements OnBackPressedLis
         try {
             mediaPlayer.setDataSource(file.getAbsolutePath());
             mediaPlayer.prepare();
+            if(astart_activity_aMain.isServiceRunningCheck()){
+                stopwhileplayvoice=1;
+                getActivity().stopService(new Intent(getActivity().getApplicationContext(), service_MyService.class));
+            }
             mediaPlayer.start();
         } catch (IOException e) {
             e.printStackTrace();
         }
         isPlaying = true;
-
+        Log.d("debug", "debug isPlaying  "+isPlaying);
         mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mp) {
-                stopAudio();
+                stopAudio(0);
             }
         });
 
     }
 
     // 녹음 파일 중지
-    private void stopAudio() {
+    private void stopAudio(int mode) {
+        if(mode ==1){
+            playvoice.setImageResource(R.drawable.ic_audio_play);
+        }
+        Log.d("debug", "debug isPlaying  "+isPlaying);
         //playerbutton.setImageResource(R.drawable.ic_audio_play);
         if(isPlaying==true){
             isPlaying = false;
             mediaPlayer.stop();
+            if((!astart_activity_aMain.isServiceRunningCheck())&&stopwhileplayvoice==1){
+                stopwhileplayvoice=0;
+                getActivity().startService(new Intent(getActivity().getApplicationContext(), service_MyService.class));
+            }
         }
+    }
+    public void Thread(SeekBar seekbar){
+        Runnable task = new Runnable(){
+            public void run(){
+                while(isPlaying){
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    seekbar.setProgress(mediaPlayer.getCurrentPosition());
+                }
+                seekbar.setProgress(0);
+                seekbar.setEnabled(false);
+                Thread.interrupted();
+                zAppConstants.println("정상적으로 종료됨");
+            }
+        };
+        Thread thread = new Thread(task);
+        thread.start();
+    }
+    private void playAudio(File file, SeekBar seekbar) {
+        mediaPlayer = new MediaPlayer();
+        try {
+            mediaPlayer.setDataSource(file.getAbsolutePath());
+            mediaPlayer.prepare();
+            seekbar.setEnabled(true);
+            seekbar.setMax(mediaPlayer.getDuration());
+            zAppConstants.println("debug duration "+mediaPlayer.getDuration());
+            seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                @Override
+                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                    if(fromUser){
+                        mediaPlayer.seekTo(progress);
+                    }
+                }
+
+                @Override
+                public void onStartTrackingTouch(SeekBar seekBar) {
+
+                }
+
+                @Override
+                public void onStopTrackingTouch(SeekBar seekBar) {
+
+                }
+            });
+            if(astart_activity_aMain.isServiceRunningCheck()){
+                stopwhileplayvoice=1;
+                getActivity().stopService(new Intent(getActivity().getApplicationContext(), service_MyService.class));
+            }
+            mediaPlayer.start();
+            Thread(seekbar);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        isPlaying = true;
+        Log.d("debug", "debug isPlaying  "+isPlaying);
+        playvoice.setImageResource(R.drawable.ic_audio_pause);
+        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                stopAudio(1);
+            }
+        });
+
     }
 }

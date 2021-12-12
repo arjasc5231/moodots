@@ -92,7 +92,7 @@
                     <ImageButton
                         android:layout_width="30dp"
                         android:layout_height="30dp"
-                        android:id="@+id/playerbutton"
+                        android:id="@+id/playvoice"
                         android:backgroundTint="@color/white"
                         android:src="@drawable/ic_audio_play"
                         android:adjustViewBounds="true"
