@@ -5,6 +5,7 @@ import android.app.DatePickerDialog;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.media.MediaPlayer;
@@ -60,6 +61,7 @@ public class fragment_bMainfrag extends Fragment implements OnBackPressedListene
     SeekBar seekbartemp;
     String prevdata;
     String voice;
+    int stopwhileplayvoice=0;
     int current =1;
     int lastidinbringdata=-1;
     private MediaPlayer mediaPlayer = null;
@@ -586,6 +588,7 @@ public class fragment_bMainfrag extends Fragment implements OnBackPressedListene
     private void playAudio(File file, SeekBar seekbar) {
         mediaPlayer = new MediaPlayer();
         try {
+
             mediaPlayer.setDataSource(file.getAbsolutePath());
             mediaPlayer.prepare();
             seekbar.setEnabled(true);
@@ -609,6 +612,10 @@ public class fragment_bMainfrag extends Fragment implements OnBackPressedListene
 
                 }
             });
+            if(astart_activity_aMain.isServiceRunningCheck()){
+                stopwhileplayvoice=1;
+                getActivity().stopService(new Intent(getActivity().getApplicationContext(), service_MyService.class));
+            }
             mediaPlayer.start();
             Thread(seekbar);
         } catch (IOException e) {
@@ -635,6 +642,10 @@ public class fragment_bMainfrag extends Fragment implements OnBackPressedListene
         if(isPlaying==true){
             isPlaying = false;
             mediaPlayer.stop();
+            if((!astart_activity_aMain.isServiceRunningCheck())&&stopwhileplayvoice==1){
+                stopwhileplayvoice=0;
+                getActivity().startService(new Intent(getActivity().getApplicationContext(), service_MyService.class));
+            }
         }
     }
     public class MyAxisValueFormatter extends ValueFormatter implements IAxisValueFormatter {

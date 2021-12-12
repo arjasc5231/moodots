@@ -101,6 +101,7 @@ public class service_MyService extends Service {
     }
 
 
+    @RequiresApi(api = Build.VERSION_CODES.Q)
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
@@ -127,6 +128,7 @@ public class service_MyService extends Service {
         return super.stopService(name);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.Q)
     public void initializeNotification(){
         RemoteViews remoteViews = new RemoteViews(this.getPackageName(), R.layout.recordingnotification);
         Intent stopIntent= new Intent(this, service_activity_stopforeground.class);
@@ -181,11 +183,12 @@ public class service_MyService extends Service {
 
             while(isCancelled()==false){
                 startRecording();
+                if(isCancelled()==true){
+                    stopRecording(1);
+                    Log.d("debug foreground","isCancelled작동됨 in while");
+                }
                 if(recordsuccess==true){
                     recordendnotification();
-                }
-                if(isCancelled()==true){
-                    Log.d("debug foreground","isCancelled작동됨 in while");
                 }
             }
             Log.d("debug foreground","isCancelled작동됨 out while");
@@ -286,7 +289,7 @@ public class service_MyService extends Service {
                 int vol = 0;
                 vol = (total / bufferReadshort);
                 String timeStamp1 = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-                Log.d("index", "debug vol   " + vol + " debug time  " + timeStamp1 + "debug length  " + recData.size());
+                //Log.d("index", "debug vol   " + vol + " debug time  " + timeStamp1 + "debug length  " + recData.size());
                 if (isrec == false) {
                     if(isCancelled()==true){
                         endIndex = recDatashort.size() - 1;
