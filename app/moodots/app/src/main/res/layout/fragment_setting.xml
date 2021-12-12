@@ -85,7 +85,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:fontFamily="@font/nanumsquareround"
-                    android:text="글씨 크기 변경"
+                    android:text="화자 인식 녹음 다시하기"
                     android:textSize="20dp" />
 
             </LinearLayout>
@@ -105,7 +105,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:fontFamily="@font/nanumsquareround"
-                    android:text="다크모드"
+                    android:text="성별 선택"
                     android:textSize="20dp" />
             </LinearLayout>
 
@@ -123,7 +123,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:fontFamily="@font/nanumsquareround"
-                    android:text="모든 녹음파일 삭제"
+                    android:text="모든 일기 녹음파일 삭제"
                     android:textSize="20dp" />
 
             </LinearLayout>

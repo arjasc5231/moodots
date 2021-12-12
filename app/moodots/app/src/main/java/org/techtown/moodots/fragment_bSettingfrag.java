@@ -262,8 +262,9 @@ public class fragment_bSettingfrag extends Fragment implements OnBackPressedList
         audioRecordImageBtn = rootView.findViewById(R.id.audioRecordImageBtn);
         audioRecordText = rootView.findViewById(R.id.audioRecordText);
         audioRecordText.setTypeface(astart_activity_aMain.face);
-        if(isServiceRunningCheck()){
+        if(astart_activity_aMain.isServiceRunningCheck()){
             isrec=true;
+            Log.d("debug", "debug service is running");
         }
         if(isrec==true){
             audioRecordImageBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_recording_red, null)); // 녹음 상태 아이콘 변경
@@ -347,16 +348,6 @@ public class fragment_bSettingfrag extends Fragment implements OnBackPressedList
         });
 
     }
-    public boolean isServiceRunningCheck() {
-        ActivityManager manager = (ActivityManager) astart_activity_aMain.activity.getSystemService(Activity.ACTIVITY_SERVICE);
-        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-            if ("org.techtown.moodots.MyService".equals(service.service.getClassName())) {
-                Log.d("debug", "debug isServiceRnning true");
-                return true;
-            }
-        }
-        Log.d("debug", "debug isServiceRnning false");
-        return false;
-    }
+
 
 }

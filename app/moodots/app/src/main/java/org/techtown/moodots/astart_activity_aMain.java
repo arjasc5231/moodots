@@ -452,10 +452,11 @@ public class astart_activity_aMain extends AppCompatActivity implements AutoPerm
             return false;
         }
     }
-    public boolean isServiceRunningCheck() {
-        ActivityManager manager = (ActivityManager) this.getSystemService(Activity.ACTIVITY_SERVICE);
+    public static boolean isServiceRunningCheck() {
+        ActivityManager manager = (ActivityManager) maincontext.getSystemService(Activity.ACTIVITY_SERVICE);
         for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-            if ("org.techtown.moodots.MyService".equals(service.service.getClassName())) {
+            Log.d("debug", "debug running service"+service.service.getClassName());
+            if ("org.techtown.moodots.service_MyService".equals(service.service.getClassName())) {
                 Log.d("debug", "debug isServiceRnning true");
                 return true;
             }
