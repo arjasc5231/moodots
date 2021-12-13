@@ -38,6 +38,8 @@ xml코드에서 font관련해서 설정을 넣은 모든 텍스뷰나 버튼에 
 
 {textview or button}.setTypeface(astart_activity_aMain.face);
  */
+
+/*search test voice record: test--1*/
 public class astart_activity_aMain extends AppCompatActivity implements AutoPermissionsListener {
     private static final String TAG = "MainActivity";
     public static Typeface face = null;
@@ -110,7 +112,7 @@ public class astart_activity_aMain extends AppCompatActivity implements AutoPerm
         else if(checkfirst!=-3 && isServiceRunningCheck()==false){
             if(checkAudioPermission())
                 Log.d("start", "debug start service");
-            startService();
+            //startService(); test--1
             Log.d("debug", "debug aMain isservicerunning"+isServiceRunningCheck());
         }
         if(service_activity_addfromforeground.activity!=null){

@@ -40,7 +40,7 @@ import java.util.Date;
 
 import static android.os.SystemClock.sleep;
 
-
+/*search test voice record: test--1*/
 public class fragment_BlankFragment extends Fragment implements OnBackPressedListener{
     private static final String TAG = "blankfragment";
     Context context;
@@ -1032,7 +1032,7 @@ public class fragment_BlankFragment extends Fragment implements OnBackPressedLis
             mediaPlayer.stop();
             if((!astart_activity_aMain.isServiceRunningCheck())&&stopwhileplayvoice==1){
                 stopwhileplayvoice=0;
-                getActivity().startService(new Intent(getActivity().getApplicationContext(), service_MyService.class));
+                //getActivity().startService(new Intent(getActivity().getApplicationContext(), service_MyService.class)); test--1
             }
         }
     }
@@ -1084,7 +1084,7 @@ public class fragment_BlankFragment extends Fragment implements OnBackPressedLis
             });
             if(astart_activity_aMain.isServiceRunningCheck()){
                 stopwhileplayvoice=1;
-                getActivity().stopService(new Intent(getActivity().getApplicationContext(), service_MyService.class));
+                //getActivity().stopService(new Intent(getActivity().getApplicationContext(), service_MyService.class)); test--1
             }
             mediaPlayer.start();
             Thread(seekbar);

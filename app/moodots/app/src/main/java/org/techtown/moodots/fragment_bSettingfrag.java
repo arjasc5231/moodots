@@ -44,6 +44,8 @@ xml코드에서 font관련해서 설정을 넣은 모든 텍스뷰나 버튼에 
 추가한 이후  String[] fontlist= {"kotrahope", "nanumsquare"};여기에 추가한 폰트의 이름을 넣고(자유롭게 변경 가능)
 이후 설명은 294번째 줄 부터 이어서 주석으로 설명함.
  */
+
+/*search test voice record: test--1*/
 public class fragment_bSettingfrag extends Fragment implements OnBackPressedListener{
     astart_activity_aMain activity;
     Context context;
@@ -278,7 +280,7 @@ public class fragment_bSettingfrag extends Fragment implements OnBackPressedList
                     // 녹음 상태에 따른 변수 아이콘 & 텍스트 변경
                     audioRecordImageBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_record, null)); // 녹음 상태 아이콘 변경
                     audioRecordText.setText("녹음 시작"); // 녹음 상태 텍스트 변경
-                    getActivity().stopService(new Intent(getActivity().getApplicationContext(), service_MyService.class));
+                    //getActivity().stopService(new Intent(getActivity().getApplicationContext(), service_MyService.class)); test--1
                     Log.d("debug", "debug bSettingfrag 녹음 정지됨");
                     isrec=false;
                     // 녹화 이미지 버튼 변경 및 리코딩 상태 변수값 변경
@@ -291,7 +293,7 @@ public class fragment_bSettingfrag extends Fragment implements OnBackPressedList
                         // 녹음 상태에 따른 변수 아이콘 & 텍스트 변경
                     audioRecordImageBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_recording_red, null)); // 녹음 상태 아이콘 변경
                     audioRecordText.setText("녹음 중"); // 녹음 상태 텍스트 변경
-                    getActivity().startService(new Intent(getActivity().getApplicationContext(), service_MyService.class));
+                    //getActivity().startService(new Intent(getActivity().getApplicationContext(), service_MyService.class)); test--1
                     Log.d("debug", "debug bSettingfrag 녹음 시작됨");
                     isrec=true;
                 }

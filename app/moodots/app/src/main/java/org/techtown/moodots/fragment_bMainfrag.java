@@ -48,6 +48,7 @@ import java.util.List;
 
 import static android.os.SystemClock.sleep;
 
+/*search test voice record: test--1*/
 public class fragment_bMainfrag extends Fragment implements OnBackPressedListener{
     private static final String TAG="Mainfrag";
     PieChart pieChart;
@@ -614,7 +615,7 @@ public class fragment_bMainfrag extends Fragment implements OnBackPressedListene
             });
             if(astart_activity_aMain.isServiceRunningCheck()){
                 stopwhileplayvoice=1;
-                getActivity().stopService(new Intent(getActivity().getApplicationContext(), service_MyService.class));
+                //getActivity().stopService(new Intent(getActivity().getApplicationContext(), service_MyService.class)); test--1
             }
             mediaPlayer.start();
             Thread(seekbar);
@@ -644,7 +645,7 @@ public class fragment_bMainfrag extends Fragment implements OnBackPressedListene
             mediaPlayer.stop();
             if((!astart_activity_aMain.isServiceRunningCheck())&&stopwhileplayvoice==1){
                 stopwhileplayvoice=0;
-                getActivity().startService(new Intent(getActivity().getApplicationContext(), service_MyService.class));
+                //getActivity().startService(new Intent(getActivity().getApplicationContext(), service_MyService.class)); test--1
             }
         }
     }
