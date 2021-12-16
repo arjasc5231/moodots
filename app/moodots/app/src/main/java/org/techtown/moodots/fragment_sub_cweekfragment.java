@@ -109,6 +109,7 @@ public class fragment_sub_cweekfragment extends Fragment {
         scatterchart(rootView, percent);
         piechart(rootView, percent);
         date= rootView.findViewById(R.id.datepick);
+        date.setTypeface(astart_activity_aMain.face);
         date.setText(chooseyear+"-"+choosemonth+" "+chooseweek+"주차");
         date.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -183,7 +184,7 @@ public class fragment_sub_cweekfragment extends Fragment {
         ArrayList<zDiary> percent=new ArrayList<zDiary>();
         String[] cutdate={Integer.toString(year),Integer.toString(month)};
         String sql = "SELECT _id, MOOD, CONTENTS, HASHCONTENTS, CHECKMOD, DATE, TIME, VOICE FROM " + zDiaryDatabase.TABLE_DIARY +" ORDER BY DATE DESC;";
-        int recordCount= -1;
+        int recordCount= 0;
         zDiaryDatabase database = zDiaryDatabase.getInstance(context);
         if (database != null) {
             Cursor outCursor = database.rawQuery(sql);
@@ -341,12 +342,19 @@ public class fragment_sub_cweekfragment extends Fragment {
     }
     public void piechart(ViewGroup rootView, ArrayList<zDiary> percent){
         TextView angry= rootView.findViewById(R.id.angry);
+        angry.setTypeface(astart_activity_aMain.face);
         TextView joy= rootView.findViewById(R.id.joy);
+        joy.setTypeface(astart_activity_aMain.face);
         TextView fear= rootView.findViewById(R.id.fear);
+        fear.setTypeface(astart_activity_aMain.face);
         TextView sad= rootView.findViewById(R.id.sad);
+        sad.setTypeface(astart_activity_aMain.face);
         TextView disgust= rootView.findViewById(R.id.disgust);
+        disgust.setTypeface(astart_activity_aMain.face);
         TextView surprise= rootView.findViewById(R.id.surprise);
+        surprise.setTypeface(astart_activity_aMain.face);
         TextView neutral= rootView.findViewById(R.id.neutral);
+        neutral.setTypeface(astart_activity_aMain.face);
         pieChart=rootView.findViewById(R.id.piechart);
         pieChart.setUsePercentValues(true);
         pieChart.getDescription().setEnabled(false);

@@ -164,31 +164,31 @@ public class nadapter_DiaryAdapter extends RecyclerView.Adapter<nadapter_DiaryAd
             playerbutton.setImageResource(R.drawable.ic_audio_play);
             switch(moodIndex) {
                 case 1:
-                    moodImageView.setImageResource(R.mipmap.ic_angry);
+                    moodImageView.setImageResource(R.drawable.ic_anger);
                     //playerbutton.setImageResource(R.drawable.ic_baseline_play_angry);
                     break;
                 case 2:
-                    moodImageView.setImageResource(R.mipmap.ic_joy);
+                    moodImageView.setImageResource(R.drawable.ic_joy);
                     //playerbutton.setImageResource(R.drawable.ic_baseline_play_joy);
                     break;
                 case 3:
-                    moodImageView.setImageResource(R.mipmap.ic_fear);
+                    moodImageView.setImageResource(R.drawable.ic_fear);
                     //playerbutton.setImageResource(R.drawable.ic_baseline_play_fear);
                     break;
                 case 4:
-                    moodImageView.setImageResource(R.mipmap.ic_sad);
+                    moodImageView.setImageResource(R.drawable.ic_sad);
                     //playerbutton.setImageResource(R.drawable.ic_baseline_play_sad);
                     break;
                 case 5:
-                    moodImageView.setImageResource(R.mipmap.ic_disgust);
+                    moodImageView.setImageResource(R.drawable.ic_disgust);
                     //playerbutton.setImageResource(R.drawable.ic_baseline_play_disgust);
                     break;
                 case 6:
-                    moodImageView.setImageResource(R.mipmap.ic_surprise);
+                    moodImageView.setImageResource(R.drawable.ic_surprise);
                     //playerbutton.setImageResource(R.drawable.ic_baseline_play_surprise);
                     break;
                 default:
-                    moodImageView.setImageResource(R.mipmap.ic_neutral);
+                    moodImageView.setImageResource(R.drawable.ic_neutral);
                     //playerbutton.setImageResource(R.drawable.ic_baseline_play_neutral);
                     break;
             }

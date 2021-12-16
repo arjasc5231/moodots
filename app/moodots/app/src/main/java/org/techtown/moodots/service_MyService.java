@@ -151,6 +151,7 @@ public class service_MyService extends Service {
         //builder.setStyle(style);
         builder.setWhen(0);
         builder.setShowWhen(false);
+        builder.setChannelId("recordingnoti");
         //builder.setContentIntent(pendinIntent);
         NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O){

@@ -115,7 +115,9 @@ public class fragment_sub_ckeywordfragment extends Fragment {
 
     public void initUI(ViewGroup rootView, HashSet hashSet){
         TextView moodtime=rootView.findViewById(R.id.moodtime);
+        moodtime.setTypeface(astart_activity_aMain.face);
         TextView moodtext=rootView.findViewById(R.id.moodtext);
+        moodtext.setTypeface(astart_activity_aMain.face);
         PieChart piechart= rootView.findViewById(R.id.piechart);
         piechart.bringToFront();
         ImageButton iv = rootView.findViewById(R.id.moodindicate);
@@ -257,6 +259,7 @@ public class fragment_sub_ckeywordfragment extends Fragment {
         }
         checked= Arrays.asList(hashlist).indexOf(hash);
         btnkeywordPicker = rootView.findViewById(R.id.keywordpick);
+        btnkeywordPicker.setTypeface(astart_activity_aMain.face);
         btnkeywordPicker.setText(hash);
         btnkeywordPicker.setOnClickListener(new View.OnClickListener(){
             @Override

@@ -92,19 +92,22 @@ public class nadapter_DiaryAdapter_search extends RecyclerView.Adapter<nadapter_
         public void setItem(zDiary item) {
             mood = item.getMood();
             int moodIndex = mood;
+            changeborder(moodIndex);
             voice= item.getVoice();
             dateinitem=item.getDate();
         }
         public ViewHolder(View itemView, final OnSearchItemClickListener listener, final OnSearchItemLongClickListener longlistener) {
             super(itemView);
             date = itemView.findViewById(R.id.date);
+            date.setTypeface(astart_activity_aMain.face);
             time = itemView.findViewById(R.id.time);
+            time.setTypeface(astart_activity_aMain.face);
             content = itemView.findViewById(R.id.content);
+            content.setTypeface(astart_activity_aMain.face);
             keyword = itemView.findViewById(R.id.keyword);
+            keyword.setTypeface(astart_activity_aMain.face);
             linearleft = itemView.findViewById(R.id.cardview_border1);
             linearright = itemView.findViewById(R.id.cardview_border2);
-
-
             /*date.setText(item.getDate());
             time.setText(item.getTime());
             content.setText(item.getContents());

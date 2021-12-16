@@ -89,7 +89,7 @@ public class astart_activity_aMain extends AppCompatActivity implements AutoPerm
             getSupportFragmentManager().beginTransaction().replace(R.id.container, btutorial).commit();
         }
 
-        else {
+        else{
             getSupportFragmentManager().beginTransaction().replace(R.id.container, fragment_bMainfrag).commit();
         }
         openDatabase();
@@ -112,7 +112,8 @@ public class astart_activity_aMain extends AppCompatActivity implements AutoPerm
         else if(checkfirst!=-3 && isServiceRunningCheck()==false){
             if(checkAudioPermission())
                 Log.d("start", "debug start service");
-            //startService(); test--1
+            startService();
+            //zPreferencemanage.setInt(astart_activity_aMain.maincontext, "tutorial", -3);
             Log.d("debug", "debug aMain isservicerunning"+isServiceRunningCheck());
         }
         if(service_activity_addfromforeground.activity!=null){
@@ -242,6 +243,7 @@ public class astart_activity_aMain extends AppCompatActivity implements AutoPerm
             mDatabase.close();
             mDatabase = null;
         }
+
     }
 
     public void openDatabase() {
@@ -294,6 +296,12 @@ public class astart_activity_aMain extends AppCompatActivity implements AutoPerm
         }
         else if(index==20){
             getSupportFragmentManager().beginTransaction().replace(R.id.container, fragment_bMainfrag).commit();
+        }
+        else if(index==25){
+            getSupportFragmentManager().beginTransaction().replace(R.id.container, fragment_bSettingfrag).commit();
+        }
+        else if(index==30){
+            getSupportFragmentManager().beginTransaction().replace(R.id.container, btutorial).commit();
         }
     }
 

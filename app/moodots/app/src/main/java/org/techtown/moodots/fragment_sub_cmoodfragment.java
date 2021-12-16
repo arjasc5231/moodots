@@ -203,6 +203,7 @@ import java.util.Date;
     }
     public void initUI(ViewGroup rootView){
         btnkeywordPicker= rootView.findViewById(R.id.moodpick);
+        btnkeywordPicker.setTypeface(astart_activity_aMain.face);
         btnkeywordPicker.setText("화남");
         String[] moodlist= {"화남", "기쁨", "두려움", "슬픔", "역겨움", "놀람", "중립"};
 
@@ -227,31 +228,31 @@ import java.util.Date;
                                 switch(temp){
                                     case "화남":
                                         moodsee=1;
-                                        checked=1;
+                                        checked=0;
                                         break;
                                     case "기쁨":
                                         moodsee=2;
-                                        checked=2;
+                                        checked=1;
                                         break;
                                     case "두려움":
                                         moodsee=3;
-                                        checked=3;
+                                        checked=2;
                                         break;
                                     case "슬픔":
                                         moodsee=4;
-                                        checked=4;
+                                        checked=3;
                                         break;
                                     case "역겨움":
                                         moodsee=5;
-                                        checked=5;
+                                        checked=4;
                                         break;
                                     case "놀람":
                                         moodsee=6;
-                                        checked=6;
+                                        checked=5;
                                         break;
                                     case "중립":
                                         moodsee=7;
-                                        checked=7;
+                                        checked=6;
                                         break;
                                 }
                                 ArrayList<zDiary> percent= bringdata(moodsee);
@@ -312,7 +313,7 @@ import java.util.Date;
             @Override
             public void onsearchItemClick(nadapter_DiaryAdapter_search.ViewHolder holder, View view, int position) {
                 zDiary item = adapter.getItem(position);
-                Toast temp =Toast.makeText(getContext(), "item click", Toast.LENGTH_SHORT);
+                Toast temp =Toast.makeText(getContext(), "일기를 수정하려면 길게 누르세요", Toast.LENGTH_SHORT);
                 temp.show();
             }
         });

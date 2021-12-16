@@ -75,6 +75,7 @@ public class nadapter_DiaryAdapter_blank extends RecyclerView.Adapter<nadapter_D
             super(itemView);
             moodImageView = itemView.findViewById(R.id.moodblank);
             date=itemView.findViewById(R.id.date);
+            date.setTypeface(astart_activity_aMain.face);
             itemView.setOnClickListener(new View.OnClickListener(){
                 @Override
                 public void onClick(View v) {

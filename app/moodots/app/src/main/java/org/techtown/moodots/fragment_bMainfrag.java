@@ -324,6 +324,8 @@ public class fragment_bMainfrag extends Fragment implements OnBackPressedListene
     }
 
     private void buttonUI(ViewGroup rootView){
+        Button main = rootView.findViewById(R.id.main);
+        main.setTypeface(astart_activity_aMain.face);
         Button sort=rootView.findViewById(R.id.sort);
         sort.setTypeface(astart_activity_aMain.face);
         sort.setOnClickListener(new View.OnClickListener(){
@@ -383,8 +385,8 @@ public class fragment_bMainfrag extends Fragment implements OnBackPressedListene
 
     }
     public ArrayList<Integer> bringdata(){
-        //NotificationManagerCompat notificationManagerCompat = new NotificationManagerCompat(this);
-        // notificationManagerCompat.cancelAll();
+        //NotificationManager notificationManager = new NotificationManager(astart_activity_aMain.maincontext);
+        //notificationManager.cancelAll();
         File folder = new File("/storage/emulated/0/Download/moodots/");
         if(!folder.exists()){
             folder.mkdirs();
@@ -615,7 +617,7 @@ public class fragment_bMainfrag extends Fragment implements OnBackPressedListene
             });
             if(astart_activity_aMain.isServiceRunningCheck()){
                 stopwhileplayvoice=1;
-                //getActivity().stopService(new Intent(getActivity().getApplicationContext(), service_MyService.class)); test--1
+                getActivity().stopService(new Intent(getActivity().getApplicationContext(), service_MyService.class));
             }
             mediaPlayer.start();
             Thread(seekbar);
@@ -645,7 +647,7 @@ public class fragment_bMainfrag extends Fragment implements OnBackPressedListene
             mediaPlayer.stop();
             if((!astart_activity_aMain.isServiceRunningCheck())&&stopwhileplayvoice==1){
                 stopwhileplayvoice=0;
-                //getActivity().startService(new Intent(getActivity().getApplicationContext(), service_MyService.class)); test--1
+                getActivity().startService(new Intent(getActivity().getApplicationContext(), service_MyService.class));
             }
         }
     }

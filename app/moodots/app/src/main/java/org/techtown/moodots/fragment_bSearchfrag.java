@@ -58,6 +58,7 @@ public class fragment_bSearchfrag extends Fragment implements OnBackPressedListe
                              Bundle savedInstanceState) {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_search,container,false);
         textsearch=(TextView) rootView.findViewById(R.id.searchtext);
+        textsearch.setTypeface(astart_activity_aMain.face);
         //TextView datesearch=(TextView) rootView.findViewById(R.id.datesearch);
         //datesearch.setText(bSortfrag.getDate());
         getChildFragmentManager().beginTransaction().add(R.id.containersort, moodfragment).commit();
@@ -65,7 +66,7 @@ public class fragment_bSearchfrag extends Fragment implements OnBackPressedListe
         buttonUI(rootView);
 
         TextView searchtext= rootView.findViewById(R.id.searchtext);
-
+        searchtext.setTypeface(astart_activity_aMain.face);
         Button left= (Button) rootView.findViewById(R.id.leftbtn);
         left.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -112,7 +113,10 @@ public class fragment_bSearchfrag extends Fragment implements OnBackPressedListe
         }
     }
     private void buttonUI(ViewGroup rootView){
+        Button search = rootView.findViewById(R.id.search);
+        search.setTypeface(astart_activity_aMain.face);
         Button sort=rootView.findViewById(R.id.sort);
+        sort.setTypeface(astart_activity_aMain.face);
         sort.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
@@ -124,6 +128,7 @@ public class fragment_bSearchfrag extends Fragment implements OnBackPressedListe
             }
         });
         Button main=rootView.findViewById(R.id.main);
+        main.setTypeface(astart_activity_aMain.face);
         main.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
@@ -135,6 +140,7 @@ public class fragment_bSearchfrag extends Fragment implements OnBackPressedListe
             }
         });
         Button setting=rootView.findViewById(R.id.setting);
+        setting.setTypeface(astart_activity_aMain.face);
         setting.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
@@ -146,6 +152,7 @@ public class fragment_bSearchfrag extends Fragment implements OnBackPressedListe
             }
         });
         Button newDiaryButton = rootView.findViewById(R.id.newDiaryButton);
+        newDiaryButton.setTypeface(astart_activity_aMain.face);
         newDiaryButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

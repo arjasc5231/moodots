@@ -121,6 +121,8 @@ public class fragment_bSettingfrag extends Fragment implements OnBackPressedList
         return rootView;
     }
     private void buttonUI(ViewGroup rootView){
+        Button setting = rootView.findViewById(R.id.setting);
+        setting.setTypeface(astart_activity_aMain.face);
         Button sort=rootView.findViewById(R.id.sort);
         sort.setTypeface(astart_activity_aMain.face);
         sort.setOnClickListener(new View.OnClickListener(){
@@ -280,7 +282,7 @@ public class fragment_bSettingfrag extends Fragment implements OnBackPressedList
                     // 녹음 상태에 따른 변수 아이콘 & 텍스트 변경
                     audioRecordImageBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_record, null)); // 녹음 상태 아이콘 변경
                     audioRecordText.setText("녹음 시작"); // 녹음 상태 텍스트 변경
-                    //getActivity().stopService(new Intent(getActivity().getApplicationContext(), service_MyService.class)); test--1
+                    getActivity().stopService(new Intent(getActivity().getApplicationContext(), service_MyService.class));
                     Log.d("debug", "debug bSettingfrag 녹음 정지됨");
                     isrec=false;
                     // 녹화 이미지 버튼 변경 및 리코딩 상태 변수값 변경
@@ -293,10 +295,19 @@ public class fragment_bSettingfrag extends Fragment implements OnBackPressedList
                         // 녹음 상태에 따른 변수 아이콘 & 텍스트 변경
                     audioRecordImageBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_recording_red, null)); // 녹음 상태 아이콘 변경
                     audioRecordText.setText("녹음 중"); // 녹음 상태 텍스트 변경
-                    //getActivity().startService(new Intent(getActivity().getApplicationContext(), service_MyService.class)); test--1
+                    getActivity().startService(new Intent(getActivity().getApplicationContext(), service_MyService.class));
                     Log.d("debug", "debug bSettingfrag 녹음 시작됨");
                     isrec=true;
                 }
+            }
+        });
+        Button tuto = rootView.findViewById(R.id.tutorial);
+        tuto.setTypeface(astart_activity_aMain.face);
+        tuto.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                zPreferencemanage.setInt(astart_activity_aMain.maincontext, "tutorial", -2);
+                activity.replaceFragment(30);
             }
         });
         Button fontselect= rootView.findViewById(R.id.lettertype);

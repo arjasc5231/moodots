@@ -25,7 +25,13 @@
             />
         <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
             <LinearLayout
                 android:id ="@+id/diary_border"
                 android:layout_width="match_parent"
@@ -48,7 +54,7 @@
                         android:id="@+id/currentmood"
                         android:layout_width="39dp"
                         android:layout_height="39dp"
-                        app:srcCompat="@mipmap/ic_angry" />
+                        app:srcCompat="@drawable/ic_anger" />
 
                     <TextView
                         android:id="@+id/currentmoodtext"
@@ -161,54 +167,54 @@
                         android:paddingEnd="10dp"
                         android:fontFamily="@font/nanumsquareround"/>
 
-                    <Button
+                    <ImageButton
                         android:id="@+id/angry"
                         android:layout_width="43dp"
                         android:layout_height="43dp"
                         android:layout_weight="1"
-                        android:background="@mipmap/ic_angry" />
+                        android:background="@drawable/ic_anger" />
 
-                    <Button
+                    <ImageButton
                         android:id="@+id/joy"
                         android:layout_width="43dp"
                         android:layout_height="43dp"
                         android:layout_weight="1"
-                        android:background="@mipmap/ic_joy" />
+                        android:background="@drawable/ic_joy" />
 
-                    <Button
+                    <ImageButton
                         android:id="@+id/fear"
                         android:layout_width="43dp"
                         android:layout_height="43dp"
                         android:layout_weight="1"
-                        android:background="@mipmap/ic_fear" />
+                        android:background="@drawable/ic_fear" />
 
-                    <Button
+                    <ImageButton
                         android:id="@+id/sad"
                         android:layout_width="43dp"
                         android:layout_height="43dp"
                         android:layout_weight="1"
-                        android:background="@mipmap/ic_sad" />
+                        android:background="@drawable/ic_sad" />
 
-                    <Button
+                    <ImageButton
                         android:id="@+id/disgust"
                         android:layout_width="43dp"
                         android:layout_height="43dp"
                         android:layout_weight="1"
-                        android:background="@mipmap/ic_disgust" />
+                        android:background="@drawable/ic_disgust" />
 
-                    <Button
+                    <ImageButton
                         android:id="@+id/surprise"
                         android:layout_width="43dp"
                         android:layout_height="43dp"
                         android:layout_weight="1"
-                        android:background="@mipmap/ic_surprise" />
+                        android:background="@drawable/ic_surprise" />
 
-                    <Button
+                    <ImageButton
                         android:id="@+id/neutral"
                         android:layout_width="43dp"
                         android:layout_height="43dp"
                         android:layout_weight="1"
-                        android:background="@mipmap/ic_neutral" />
+                        android:background="@drawable/ic_neutral" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -221,18 +227,15 @@
                     android:paddingStart="20dp"
                     >
 
-                    <TextView
-                        android:id="@+id/textView3"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textSize="20dp"
-                        android:text="일기"
-                        android:fontFamily="@font/nanumsquareround"/>
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="13dp"
+                        android:layout_weight="1" />
 
                     <EditText
                         android:id="@+id/contents"
                         android:layout_width="match_parent"
-                        android:layout_height="150dp"
+                        android:layout_height="250dp"
                         android:layout_weight="10"
                         android:background="@drawable/diaryadd_contents_border"
                         android:ems="10"
@@ -248,7 +251,7 @@
                     <EditText
                         android:id="@+id/hashcontents"
                         android:layout_width="match_parent"
-                        android:layout_height="80dp"
+                        android:layout_height="100dp"
                         android:layout_weight="5"
                         android:background="@drawable/diaryadd_contents_border"
                         android:ems="10"
@@ -316,17 +319,18 @@
 
                 </LinearLayout>
             </LinearLayout>
-        </ScrollView>
+
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="2"
+            android:layout_height="130dp"
             android:scrollbars="horizontal"
             >
 
         </androidx.recyclerview.widget.RecyclerView>
+            </LinearLayout>
+        </ScrollView>
         <LinearLayout
             android:id="@+id/buttonlayout"
             android:layout_width="match_parent"

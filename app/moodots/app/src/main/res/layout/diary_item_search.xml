@@ -28,8 +28,6 @@
                 android:layout_marginBottom="3dp"
                 android:layout_weight="1"
                 android:background="@drawable/view_search_angry"
-
-
                 android:orientation="vertical">
 
                 <LinearLayout
@@ -44,7 +42,7 @@
                         android:layout_marginLeft="3dp"
                         android:layout_weight="1"
                         android:text="TextView"
-                        android:textSize="10sp" />
+                        android:textSize="12sp" />
 
                     <TextView
                         android:id="@+id/time"
@@ -52,7 +50,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="TextView"
-                        android:textSize="10sp" />
+                        android:textSize="12sp" />
                 </LinearLayout>
 
                 <TextView
@@ -62,7 +60,7 @@
                     android:layout_marginLeft="3dp"
                     android:layout_weight="2"
                     android:text="TextView"
-                    android:textSize="10sp" />
+                    android:textSize="15sp" />
 
                 <TextView
                     android:id="@+id/keyword"
@@ -71,7 +69,7 @@
                     android:layout_marginLeft="3dp"
                     android:layout_weight="1"
                     android:text="TextView"
-                    android:textSize="10sp" />
+                    android:textSize="13sp" />
 
 
             </LinearLayout>

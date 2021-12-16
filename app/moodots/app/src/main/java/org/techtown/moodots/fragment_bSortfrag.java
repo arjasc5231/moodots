@@ -49,6 +49,7 @@ public class fragment_bSortfrag extends Fragment implements OnBackPressedListene
                              Bundle savedInstanceState) {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_sort,container,false);
         textsort=(TextView) rootView.findViewById(R.id.sorttext);
+        textsort.setTypeface(astart_activity_aMain.face);
         //TextView datesort=(TextView) rootView.findViewById(R.id.datesort);
         //datesort.setText(getDate());
         getChildFragmentManager().beginTransaction().add(R.id.containersort, weekfragment).commit();
@@ -99,7 +100,10 @@ public class fragment_bSortfrag extends Fragment implements OnBackPressedListene
         return rootView;
     }
     private void buttonUI(ViewGroup rootView){
+        Button sort = rootView.findViewById(R.id.sort);
+        sort.setTypeface(astart_activity_aMain.face);
         Button main=rootView.findViewById(R.id.main);
+        main.setTypeface(astart_activity_aMain.face);
         main.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
@@ -110,6 +114,7 @@ public class fragment_bSortfrag extends Fragment implements OnBackPressedListene
             }
         });
         Button search=rootView.findViewById(R.id.search);
+        search.setTypeface(astart_activity_aMain.face);
         search.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
@@ -120,6 +125,7 @@ public class fragment_bSortfrag extends Fragment implements OnBackPressedListene
             }
         });
         Button setting=rootView.findViewById(R.id.setting);
+        setting.setTypeface(astart_activity_aMain.face);
         setting.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
@@ -130,6 +136,7 @@ public class fragment_bSortfrag extends Fragment implements OnBackPressedListene
             }
         });
         Button newDiaryButton = rootView.findViewById(R.id.newDiaryButton);
+        newDiaryButton.setTypeface(astart_activity_aMain.face);
         newDiaryButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

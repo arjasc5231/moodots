@@ -165,6 +165,7 @@ public class fragment_BlankFragment extends Fragment implements OnBackPressedLis
     }
     private void buttonUI(ViewGroup rootView){
         Button main=rootView.findViewById(R.id.main);
+        main.setTypeface(astart_activity_aMain.face);
         main.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
@@ -175,7 +176,10 @@ public class fragment_BlankFragment extends Fragment implements OnBackPressedLis
                 activity.replaceFragment(1);
             }
         });
+        Button addnewDiary = rootView.findViewById(R.id.newDiaryButton);
+        addnewDiary.setTypeface(astart_activity_aMain.face);
         Button search=rootView.findViewById(R.id.search);
+        search.setTypeface(astart_activity_aMain.face);
         search.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
@@ -187,6 +191,7 @@ public class fragment_BlankFragment extends Fragment implements OnBackPressedLis
             }
         });
         Button setting=rootView.findViewById(R.id.setting);
+        setting.setTypeface(astart_activity_aMain.face);
         setting.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
@@ -198,6 +203,7 @@ public class fragment_BlankFragment extends Fragment implements OnBackPressedLis
             }
         });
         Button sort = rootView.findViewById(R.id.sort);
+        sort.setTypeface(astart_activity_aMain.face);
         sort.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -210,8 +216,14 @@ public class fragment_BlankFragment extends Fragment implements OnBackPressedLis
         });
     }
     public void initUI(ViewGroup rootView){
+        TextView textView = rootView.findViewById(R.id.textView2);
+        textView.setTypeface(astart_activity_aMain.face);
+        TextView textView1 = rootView.findViewById(R.id.textView);
+        textView1.setTypeface(astart_activity_aMain.face);
         moodtext=rootView.findViewById(R.id.currentmoodtext);
+        moodtext.setTypeface(astart_activity_aMain.face);
         hashcontents=rootView.findViewById(R.id.hashcontents);
+        hashcontents.setTypeface(astart_activity_aMain.face);
         //final int[] max = {0};
         //hashcontents.setText("#");
         //hashcontents.setSelection(1);
@@ -253,9 +265,11 @@ public class fragment_BlankFragment extends Fragment implements OnBackPressedLis
             }
         });
         date = rootView.findViewById(R.id.date);
+        date.setTypeface(astart_activity_aMain.face);
         time = rootView.findViewById(R.id.time);
+        time.setTypeface(astart_activity_aMain.face);
         contents = rootView.findViewById(R.id.contents);
-
+        contents.setTypeface(astart_activity_aMain.face);
         hashcontents.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -385,71 +399,71 @@ public class fragment_BlankFragment extends Fragment implements OnBackPressedLis
                 moodIndex = moodmod;
             }
             linear = rootView.findViewById(R.id.diary_border);
-            Button angry = rootView.findViewById(R.id.angry);
+            ImageButton angry = rootView.findViewById(R.id.angry);
             angry.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    currentmood.setImageResource(R.mipmap.ic_angry);
+                    currentmood.setImageResource(R.drawable.ic_anger);
                     moodtext.setText("화가 났나요?");
                     moodIndex = 1;
                     linear.setBackgroundResource(R.drawable.diaryadd_layout_border_angry);
                 }
             });
-            Button joy = rootView.findViewById(R.id.joy);
+            ImageButton joy = rootView.findViewById(R.id.joy);
             joy.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    currentmood.setImageResource(R.mipmap.ic_joy);
+                    currentmood.setImageResource(R.drawable.ic_joy);
                     moodtext.setText("기쁜가요?");
                     moodIndex = 2;
                     linear.setBackgroundResource(R.drawable.diaryadd_layout_border_joy);
                 }
             });
-            Button fear = rootView.findViewById(R.id.fear);
+            ImageButton fear = rootView.findViewById(R.id.fear);
             fear.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    currentmood.setImageResource(R.mipmap.ic_fear);
+                    currentmood.setImageResource(R.drawable.ic_fear);
                     moodtext.setText("두려운가요?");
                     moodIndex = 3;
                     linear.setBackgroundResource(R.drawable.diaryadd_layout_border_fear);
                 }
             });
-            Button sad = rootView.findViewById(R.id.sad);
+            ImageButton sad = rootView.findViewById(R.id.sad);
             sad.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    currentmood.setImageResource(R.mipmap.ic_sad);
+                    currentmood.setImageResource(R.drawable.ic_sad);
                     moodtext.setText("슬픈가요?");
                     moodIndex = 4;
                     linear.setBackgroundResource(R.drawable.diaryadd_layout_border_sad);
                 }
             });
-            Button disgust = rootView.findViewById(R.id.disgust);
+            ImageButton disgust = rootView.findViewById(R.id.disgust);
             disgust.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    currentmood.setImageResource(R.mipmap.ic_disgust);
+                    currentmood.setImageResource(R.drawable.ic_disgust);
                     moodtext.setText("혐오스러운가요?");
                     moodIndex = 5;
                     linear.setBackgroundResource(R.drawable.diaryadd_layout_border_disgust);
                 }
             });
-            Button surprise = rootView.findViewById(R.id.surprise);
+            ImageButton surprise = rootView.findViewById(R.id.surprise);
             surprise.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    currentmood.setImageResource(R.mipmap.ic_surprise);
+                    currentmood.setImageResource(R.drawable.ic_surprise);
                     moodtext.setText("놀랐나요?");
                     moodIndex = 6;
                     linear.setBackgroundResource(R.drawable.diaryadd_layout_border_surprise);
                 }
             });
-            Button neutral = rootView.findViewById(R.id.neutral);
+            ImageButton neutral = rootView.findViewById(R.id.neutral);
             neutral.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    currentmood.setImageResource(R.mipmap.ic_neutral);
+                    currentmood.setImageResource(R.drawable.ic_neutral);
                     moodtext.setText("아무런 감정이 느껴지지 않나요?");
                     moodIndex = 7;
                     linear.setBackgroundResource(R.drawable.diaryadd_layout_border_neutral);
@@ -459,6 +473,7 @@ public class fragment_BlankFragment extends Fragment implements OnBackPressedLis
                 setMoodImage(moodmod);
             }
             Button addDiaryButton = rootView.findViewById(R.id.addDiaryButton);
+            addDiaryButton.setTypeface(astart_activity_aMain.face);
             addDiaryButton.setText("추가");
             addDiaryButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -524,6 +539,7 @@ public class fragment_BlankFragment extends Fragment implements OnBackPressedLis
                 }
             });
             Button delete = rootView.findViewById(R.id.delete);
+            delete.setTypeface(astart_activity_aMain.face);
             delete.setText("삭제");
             delete.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -589,7 +605,7 @@ public class fragment_BlankFragment extends Fragment implements OnBackPressedLis
             hashcontents.setText(hashcontentsmod);
             moodIndex= moodmod;
             setMoodImage(moodIndex);
-            Button angry = rootView.findViewById(R.id.angry);
+            ImageButton angry = rootView.findViewById(R.id.angry);
             angry.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -598,7 +614,7 @@ public class fragment_BlankFragment extends Fragment implements OnBackPressedLis
                     linear.setBackgroundResource(R.drawable.diaryadd_layout_border_angry);
                 }
             });
-            Button joy = rootView.findViewById(R.id.joy);
+            ImageButton joy = rootView.findViewById(R.id.joy);
             joy.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -607,7 +623,7 @@ public class fragment_BlankFragment extends Fragment implements OnBackPressedLis
                     linear.setBackgroundResource(R.drawable.diaryadd_layout_border_joy);
                 }
             });
-            Button fear = rootView.findViewById(R.id.fear);
+            ImageButton fear = rootView.findViewById(R.id.fear);
             fear.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -616,7 +632,7 @@ public class fragment_BlankFragment extends Fragment implements OnBackPressedLis
                     linear.setBackgroundResource(R.drawable.diaryadd_layout_border_fear);
                 }
             });
-            Button sad = rootView.findViewById(R.id.sad);
+            ImageButton sad = rootView.findViewById(R.id.sad);
             sad.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -625,7 +641,7 @@ public class fragment_BlankFragment extends Fragment implements OnBackPressedLis
                     linear.setBackgroundResource(R.drawable.diaryadd_layout_border_sad);
                 }
             });
-            Button disgust = rootView.findViewById(R.id.disgust);
+            ImageButton disgust = rootView.findViewById(R.id.disgust);
             disgust.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -634,7 +650,7 @@ public class fragment_BlankFragment extends Fragment implements OnBackPressedLis
                     linear.setBackgroundResource(R.drawable.diaryadd_layout_border_disgust);
                 }
             });
-            Button surprise = rootView.findViewById(R.id.surprise);
+            ImageButton surprise = rootView.findViewById(R.id.surprise);
             surprise.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -643,7 +659,7 @@ public class fragment_BlankFragment extends Fragment implements OnBackPressedLis
                     linear.setBackgroundResource(R.drawable.diaryadd_layout_border_surprise);
                 }
             });
-            Button neutral = rootView.findViewById(R.id.neutral);
+            ImageButton neutral = rootView.findViewById(R.id.neutral);
             neutral.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -654,6 +670,7 @@ public class fragment_BlankFragment extends Fragment implements OnBackPressedLis
             });
 
             Button addDiaryButton = rootView.findViewById(R.id.addDiaryButton);
+            addDiaryButton.setTypeface(astart_activity_aMain.face);
             addDiaryButton.setText("수정");
             addDiaryButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -697,6 +714,7 @@ public class fragment_BlankFragment extends Fragment implements OnBackPressedLis
                 }
             });
             Button delete = rootView.findViewById(R.id.delete);
+            delete.setTypeface(astart_activity_aMain.face);
             delete.setText("삭제");
             delete.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -796,43 +814,43 @@ public class fragment_BlankFragment extends Fragment implements OnBackPressedLis
     public void setMoodImage(int moodIndex) {
         switch(moodIndex) {
             case 1:
-                currentmood.setImageResource(R.mipmap.ic_angry);
+                currentmood.setImageResource(R.drawable.ic_anger);
                 moodtext.setGravity( Gravity.CENTER_VERTICAL);
                 moodtext.setText("화가 났나요?");
                 linear.setBackgroundResource(R.drawable.diaryadd_layout_border_angry);
                 break;
             case 2:
-                currentmood.setImageResource(R.mipmap.ic_joy);
+                currentmood.setImageResource(R.drawable.ic_joy);
                 moodtext.setGravity( Gravity.CENTER_VERTICAL);
                 moodtext.setText("기쁜가요?");
                 linear.setBackgroundResource(R.drawable.diaryadd_layout_border_joy);
                 break;
             case 3:
-                currentmood.setImageResource(R.mipmap.ic_fear);
+                currentmood.setImageResource(R.drawable.ic_fear);
                 moodtext.setGravity( Gravity.CENTER_VERTICAL);
                 moodtext.setText("두려운가요?");
                 linear.setBackgroundResource(R.drawable.diaryadd_layout_border_fear);
                 break;
             case 4:
-                currentmood.setImageResource(R.mipmap.ic_sad);
+                currentmood.setImageResource(R.drawable.ic_sad);
                 moodtext.setGravity( Gravity.CENTER_VERTICAL);
                 moodtext.setText("슬픈가요?");
                 linear.setBackgroundResource(R.drawable.diaryadd_layout_border_sad);
                 break;
             case 5:
-                currentmood.setImageResource(R.mipmap.ic_disgust);
+                currentmood.setImageResource(R.drawable.ic_disgust);
                 moodtext.setGravity( Gravity.CENTER_VERTICAL);
                 moodtext.setText("혐오스러운가요?");
                 linear.setBackgroundResource(R.drawable.diaryadd_layout_border_disgust);
                 break;
             case 6:
-                currentmood.setImageResource(R.mipmap.ic_surprise);
+                currentmood.setImageResource(R.drawable.ic_surprise);
                 moodtext.setGravity( Gravity.CENTER_VERTICAL);
                 moodtext.setText("놀랐나요?");
                 linear.setBackgroundResource(R.drawable.diaryadd_layout_border_surprise);
                 break;
             default:
-                currentmood.setImageResource(R.mipmap.ic_neutral);
+                currentmood.setImageResource(R.drawable.ic_neutral);
                 moodtext.setGravity( Gravity.CENTER_VERTICAL);
                 moodtext.setText("아무런 감정이 느껴지지 않나요?");
                 linear.setBackgroundResource(R.drawable.diaryadd_layout_border_neutral);
@@ -1032,7 +1050,7 @@ public class fragment_BlankFragment extends Fragment implements OnBackPressedLis
             mediaPlayer.stop();
             if((!astart_activity_aMain.isServiceRunningCheck())&&stopwhileplayvoice==1){
                 stopwhileplayvoice=0;
-                //getActivity().startService(new Intent(getActivity().getApplicationContext(), service_MyService.class)); test--1
+                getActivity().startService(new Intent(getActivity().getApplicationContext(), service_MyService.class));
             }
         }
     }
@@ -1084,7 +1102,7 @@ public class fragment_BlankFragment extends Fragment implements OnBackPressedLis
             });
             if(astart_activity_aMain.isServiceRunningCheck()){
                 stopwhileplayvoice=1;
-                //getActivity().stopService(new Intent(getActivity().getApplicationContext(), service_MyService.class)); test--1
+                getActivity().stopService(new Intent(getActivity().getApplicationContext(), service_MyService.class));
             }
             mediaPlayer.start();
             Thread(seekbar);
